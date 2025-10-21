@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chonkie.Core\Chonkie.Core.csproj" />
+    <ProjectReference Include="..\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
   </ItemGroup>
 
 </Project>
