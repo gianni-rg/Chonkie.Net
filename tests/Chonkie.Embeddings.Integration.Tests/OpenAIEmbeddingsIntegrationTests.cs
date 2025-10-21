@@ -1,0 +1,127 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Chonkie.Embeddings.OpenAI;
+using Xunit;
+
+namespace Chonkie.Embeddings.Integration.Tests;
+
+/// <summary>
+/// Integration tests for OpenAI embeddings provider
+/// These tests require OPENAI_API_KEY environment variable to be set
+/// </summary>
+public class OpenAIEmbeddingsIntegrationTests
+{
+    private const string ApiKeyEnvVar = "OPENAI_API_KEY";
+
+    [SkippableFact]
+    public async Task EmbedAsync_WithRealAPI_ReturnsValidEmbedding()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+        var text = "This is a test sentence for embedding.";
+
+        // Act
+        var result = await embeddings.EmbedAsync(text);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1536, result.Length); // text-embedding-ada-002 default dimension
+        Assert.All(result, value => Assert.InRange(value, -1f, 1f));
+    }
+
+    [SkippableFact]
+    public async Task EmbedAsync_WithCustomModel_ReturnsValidEmbedding()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey, model: "text-embedding-3-small");
+        var text = "Testing custom model.";
+
+        // Act
+        var result = await embeddings.EmbedAsync(text);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1536, result.Length); // text-embedding-3-small default dimension
+        Assert.All(result, value => Assert.InRange(value, -1f, 1f));
+    }
+
+    [SkippableFact]
+    public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+        var texts = new[] { "First sentence.", "Second sentence.", "Third sentence." };
+
+        // Act
+        var results = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.Equal(3, results.Count);
+        Assert.All(results, embedding =>
+        {
+            Assert.Equal(1536, embedding.Length);
+            Assert.All(embedding, value => Assert.InRange(value, -1f, 1f));
+        });
+    }
+
+    [SkippableFact]
+    public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+        var text1 = "The cat sits on the mat.";
+        var text2 = "A cat is sitting on a mat.";
+        var text3 = "The weather is sunny today.";
+
+        // Act
+        var embedding1 = await embeddings.EmbedAsync(text1);
+        var embedding2 = await embeddings.EmbedAsync(text2);
+        var embedding3 = await embeddings.EmbedAsync(text3);
+
+        var similarity12 = embeddings.Similarity(embedding1, embedding2);
+        var similarity13 = embeddings.Similarity(embedding1, embedding3);
+
+        // Assert
+        Assert.True(similarity12 > similarity13, 
+            $"Similar texts should have higher similarity. Got {similarity12} vs {similarity13}");
+        Assert.InRange(similarity12, 0.8f, 1.0f);
+    }
+
+    [SkippableFact]
+    public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+
+        // Act
+        var result = await embeddings.EmbedAsync(string.Empty);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1536, result.Length);
+    }
+
+    [SkippableFact]
+    public async Task EmbedAsync_LongText_ReturnsValidEmbedding()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+        var longText = string.Join(" ", Enumerable.Repeat("This is a test sentence.", 100));
+
+        // Act
+        var result = await embeddings.EmbedAsync(longText);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(1536, result.Length);
+        Assert.All(result, value => Assert.InRange(value, -1f, 1f));
+    }
+}
