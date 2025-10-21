@@ -17,9 +17,19 @@ namespace Chonkie.Embeddings.OpenAI
         private readonly string _apiKey;
         private readonly string _model;
         private readonly HttpClient _httpClient;
+        
+        /// <inheritdoc />
         public override string Name => "openai";
+        
+        /// <inheritdoc />
         public override int Dimension { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenAIEmbeddings"/> class.
+        /// </summary>
+        /// <param name="apiKey">The OpenAI API key.</param>
+        /// <param name="model">The model name to use.</param>
+        /// <param name="dimension">The dimension of the embedding vectors.</param>
         public OpenAIEmbeddings(string apiKey, string model = "text-embedding-ada-002", int dimension = 1536)
         {
             _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
@@ -29,6 +39,7 @@ namespace Chonkie.Embeddings.OpenAI
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
         }
 
+        /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
             var requestBody = new
@@ -50,6 +61,7 @@ namespace Chonkie.Embeddings.OpenAI
             return floats.ToArray();
         }
 
+        /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
             var requestBody = new

@@ -14,6 +14,9 @@ public class VoyageAIEmbeddingsIntegrationTests
 {
     private const string ApiKeyEnvVar = "VOYAGE_API_KEY";
 
+    /// <summary>
+    /// Tests embedding with real API returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_WithRealAPI_ReturnsValidEmbedding()
     {
@@ -31,6 +34,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
 
+    /// <summary>
+    /// Tests embedding with custom model returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_WithCustomModel_ReturnsValidEmbedding()
     {
@@ -48,6 +54,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
 
+    /// <summary>
+    /// Tests batch embedding with multiple texts returns valid embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
     {
@@ -69,6 +78,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         });
     }
 
+    /// <summary>
+    /// Tests that similar texts produce similar embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
     {
@@ -93,6 +105,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.InRange(similarity12, 0.7f, 1.0f);
     }
 
+    /// <summary>
+    /// Tests embedding with long text returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_LongText_ReturnsValidEmbedding()
     {
@@ -110,6 +125,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
 
+    /// <summary>
+    /// Tests embedding with empty string returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
     {
@@ -125,6 +143,9 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.True(result.Length > 0);
     }
 
+    /// <summary>
+    /// Tests that large batch embedding handles chunking properly.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
     {

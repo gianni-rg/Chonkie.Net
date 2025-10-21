@@ -6,11 +6,8 @@ using Xunit;
 namespace Chonkie.Embeddings.Integration.Tests;
 
 /// <summary>
-/// Integration tests for Azure OpenAI embeddings provider
-/// These tests require AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT environment variables to be set
-/// </summary>
-/// <summary>
 /// Integration tests for Azure OpenAI embeddings provider.
+/// These tests require AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT environment variables to be set.
 /// </summary>
 public class AzureOpenAIEmbeddingsIntegrationTests
 {
@@ -18,10 +15,10 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     private const string EndpointEnvVar = "AZURE_OPENAI_ENDPOINT";
     private const string DeploymentEnvVar = "AZURE_OPENAI_DEPLOYMENT";
 
-    [SkippableFact]
     /// <summary>
     /// Tests embedding with real API returns a valid embedding.
     /// </summary>
+    [SkippableFact]
     public async Task EmbedAsync_WithRealAPI_ReturnsValidEmbedding()
     {
         // Arrange
@@ -41,6 +38,9 @@ public class AzureOpenAIEmbeddingsIntegrationTests
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
 
+    /// <summary>
+    /// Tests batch embedding with multiple texts returns valid embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
     {
@@ -65,6 +65,9 @@ public class AzureOpenAIEmbeddingsIntegrationTests
         });
     }
 
+    /// <summary>
+    /// Tests that similar texts produce similar embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
     {
@@ -92,6 +95,9 @@ public class AzureOpenAIEmbeddingsIntegrationTests
         Assert.InRange(similarity12, 0.7f, 1.0f);
     }
 
+    /// <summary>
+    /// Tests embedding with empty string returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
     {
@@ -110,6 +116,9 @@ public class AzureOpenAIEmbeddingsIntegrationTests
         Assert.True(result.Length > 0);
     }
 
+    /// <summary>
+    /// Tests that large batch embedding handles chunking properly.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
     {

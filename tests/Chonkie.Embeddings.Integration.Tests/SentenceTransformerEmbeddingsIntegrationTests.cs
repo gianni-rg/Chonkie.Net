@@ -15,6 +15,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
 {
     private const string ModelPathEnvVar = "SENTENCE_TRANSFORMER_MODEL_PATH";
 
+    /// <summary>
+    /// Tests embedding with real model returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_WithRealModel_ReturnsValidEmbedding()
     {
@@ -37,6 +40,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         Assert.All(result, value => Assert.True(float.IsFinite(value), "All values should be finite"));
     }
 
+    /// <summary>
+    /// Tests batch embedding with multiple texts returns valid embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
     {
@@ -63,6 +69,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         });
     }
 
+    /// <summary>
+    /// Tests that similar texts produce similar embeddings.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
     {
@@ -91,6 +100,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
             $"Similar texts should have higher similarity. Got {similarity12} vs {similarity13}");
     }
 
+    /// <summary>
+    /// Tests embedding with empty string returns a valid embedding.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
     {
@@ -111,6 +123,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         Assert.True(result.Length > 0);
     }
 
+    /// <summary>
+    /// Tests that disposing releases resources without throwing exceptions.
+    /// </summary>
     [SkippableFact]
     public void Dispose_ReleasesResources_NoExceptionThrown()
     {
@@ -128,6 +143,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         embeddings.Dispose(); // Second dispose should not throw
     }
 
+    /// <summary>
+    /// Tests that large batch embedding handles chunking properly.
+    /// </summary>
     [SkippableFact]
     public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
     {

@@ -17,9 +17,19 @@ namespace Chonkie.Embeddings.Gemini
         private readonly string _apiKey;
         private readonly string _model;
         private readonly HttpClient _httpClient;
+        
+        /// <inheritdoc />
         public override string Name => "gemini";
+        
+        /// <inheritdoc />
         public override int Dimension { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GeminiEmbeddings"/> class.
+        /// </summary>
+        /// <param name="apiKey">The Google Gemini API key.</param>
+        /// <param name="model">The model name to use.</param>
+        /// <param name="dimension">The dimension of the embedding vectors.</param>
         public GeminiEmbeddings(string apiKey, string model = "embedding-001", int dimension = 768)
         {
             _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
@@ -28,6 +38,7 @@ namespace Chonkie.Embeddings.Gemini
             _httpClient = new HttpClient();
         }
 
+        /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
             var requestBody = new
@@ -49,6 +60,7 @@ namespace Chonkie.Embeddings.Gemini
             return floats.ToArray();
         }
 
+        /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
             var results = new List<float[]>();

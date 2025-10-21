@@ -18,7 +18,10 @@ namespace Chonkie.Embeddings.SentenceTransformers
         private readonly string _modelPath;
         private bool _disposed;
 
+        /// <inheritdoc />
         public override string Name => "sentence-transformers";
+        
+        /// <inheritdoc />
         public override int Dimension { get; }
 
         /// <summary>
@@ -39,6 +42,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
             _session = new InferenceSession(modelPath, sessionOptions);
         }
 
+        /// <inheritdoc />
         public override Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
             return Task.Run(() =>
@@ -72,6 +76,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
             }, cancellationToken);
         }
 
+        /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
             var results = new List<float[]>();
@@ -94,6 +99,9 @@ namespace Chonkie.Embeddings.SentenceTransformers
             return words.Select(w => (long)w.GetHashCode() % 30000).ToArray();
         }
 
+        /// <summary>
+        /// Disposes the ONNX inference session.
+        /// </summary>
         public void Dispose()
         {
             if (!_disposed)

@@ -10,11 +10,30 @@ namespace Chonkie.Embeddings.Base
     /// </summary>
     public abstract class BaseEmbeddings : Interfaces.IEmbeddings
     {
+        /// <summary>
+        /// Gets the name of the embedding provider.
+        /// </summary>
         public abstract string Name { get; }
+        
+        /// <summary>
+        /// Gets the dimension of the embedding vectors.
+        /// </summary>
         public abstract int Dimension { get; }
 
+        /// <summary>
+        /// Generates an embedding vector for the given text.
+        /// </summary>
+        /// <param name="text">The text to embed.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The embedding vector.</returns>
         public abstract Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Generates embedding vectors for multiple texts.
+        /// </summary>
+        /// <param name="texts">The texts to embed.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>A collection of embedding vectors.</returns>
         public virtual async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
             var results = new List<float[]>();

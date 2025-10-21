@@ -17,9 +17,19 @@ namespace Chonkie.Embeddings.Cohere
         private readonly string _apiKey;
         private readonly string _model;
         private readonly HttpClient _httpClient;
+        
+        /// <inheritdoc />
         public override string Name => "cohere";
+        
+        /// <inheritdoc />
         public override int Dimension { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CohereEmbeddings"/> class.
+        /// </summary>
+        /// <param name="apiKey">The Cohere API key.</param>
+        /// <param name="model">The model name to use.</param>
+        /// <param name="dimension">The dimension of the embedding vectors.</param>
         public CohereEmbeddings(string apiKey, string model = "embed-english-v3.0", int dimension = 1024)
         {
             _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
@@ -29,6 +39,7 @@ namespace Chonkie.Embeddings.Cohere
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
         }
 
+        /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
             var requestBody = new
@@ -51,6 +62,7 @@ namespace Chonkie.Embeddings.Cohere
             return floats.ToArray();
         }
 
+        /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
             var requestBody = new
