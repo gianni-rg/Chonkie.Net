@@ -276,17 +276,32 @@ Python tests for chunkers not yet ported:
 
 **Status**: Planned for Phase 3+. These require embeddings infrastructure (Phase 5).
 
+## Behavioral Differences
+
+While striving for functional equivalence, there are some **intentional behavioral differences** between the Python and .NET implementations. These are documented in detail in [`PYTHON_NET_BEHAVIOR_DIFFERENCES.md`](PYTHON_NET_BEHAVIOR_DIFFERENCES.md).
+
+### Key Differences:
+
+1. **WordTokenizer Empty String**: .NET returns `[]` for empty input, Python returns `[1]` (single empty token). The .NET behavior is more intuitive and consistent.
+
+2. **Recipe System**: Not yet implemented in .NET. This is a Python-specific feature for language-specific configurations.
+
+3. **External Tokenizers**: HuggingFace, Tiktoken integration planned for future phases.
+
+All core chunking algorithms, tokenization logic, and index mapping produce **functionally equivalent** results.
+
 ## Conclusion
 
 The .NET port has **comprehensive test coverage** for all implemented components (Phases 1 & 2). We've achieved:
 
 - ✅ **138 tests** (100% passing)
 - ✅ All core Python test scenarios covered
-- ✅ Additional edge case and integration tests
+- ✅ Additional edge case and integration tests  
 - ✅ Strong focus on correctness and consistency
+- ✅ Intentional differences documented and justified
 - ⚠️ Missing only Python-specific features (recipes) that don't affect core functionality
 
-The test suite provides a solid foundation for continued development and ensures the .NET implementation behaves equivalently to the Python original.
+The test suite provides a solid foundation for continued development and ensures the .NET implementation is **functionally equivalent** to the Python original.
 
 ## Next Steps
 
