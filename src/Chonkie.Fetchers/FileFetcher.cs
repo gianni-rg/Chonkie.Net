@@ -12,6 +12,7 @@ namespace Chonkie.Fetchers
     /// </summary>
     public class FileFetcher : IFetcher
     {
+        /// <inheritdoc />
         public async Task<IReadOnlyList<(string Path, string Content)>> FetchAsync(string path, string? filter = null, CancellationToken cancellationToken = default)
         {
             var results = new List<(string Path, string Content)>();

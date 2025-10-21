@@ -10,6 +10,7 @@ namespace Chonkie.Chefs
     /// </summary>
     public class TableChef : IChef
     {
+        /// <inheritdoc />
         public Task<string> ProcessAsync(string text, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(text))

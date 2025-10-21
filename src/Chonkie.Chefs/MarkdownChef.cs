@@ -11,11 +11,16 @@ namespace Chonkie.Chefs
     {
         private readonly MarkdownPipeline _pipeline;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarkdownChef"/> class.
+        /// </summary>
+        /// <param name="pipeline">Optional custom Markdig pipeline configuration.</param>
         public MarkdownChef(MarkdownPipeline? pipeline = null)
         {
             _pipeline = pipeline ?? new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
         }
 
+        /// <inheritdoc />
         public Task<string> ProcessAsync(string text, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(text))

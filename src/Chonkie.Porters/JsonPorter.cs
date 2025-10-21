@@ -12,6 +12,7 @@ namespace Chonkie.Porters
     /// </summary>
     public class JsonPorter : IPorter
     {
+        /// <inheritdoc />
         public async Task<bool> ExportAsync(IReadOnlyList<Chunk> chunks, string destination, CancellationToken cancellationToken = default)
         {
             var options = new JsonSerializerOptions { WriteIndented = true };

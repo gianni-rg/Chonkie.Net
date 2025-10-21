@@ -12,11 +12,17 @@ namespace Chonkie.Refineries
     public class OverlapRefinery : IRefinery
     {
         private readonly int _minOverlap;
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OverlapRefinery"/> class.
+        /// </summary>
+        /// <param name="minOverlap">Minimum overlap threshold for merging chunks.</param>
         public OverlapRefinery(int minOverlap = 16)
         {
             _minOverlap = minOverlap;
         }
 
+        /// <inheritdoc />
         public Task<IReadOnlyList<Chunk>> RefineAsync(IReadOnlyList<Chunk> chunks, CancellationToken cancellationToken = default)
         {
             if (chunks.Count < 2)

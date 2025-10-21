@@ -1,0 +1,4 @@
+Quantum computing promises exponential speedups for certain computational problems. 
+Edge AI brings artificial intelligence processing closer to data sources for faster response times. 
+Explainable AI aims to make machine learning models more transparent and interpretable. 
+Federated learning enables collaborative model training while keeping data decentralized and private.

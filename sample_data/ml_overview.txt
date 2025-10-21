@@ -1,0 +1,4 @@
+Supervised learning algorithms learn from labeled training data to make predictions on unseen data. 
+Unsupervised learning identifies patterns in data without pre-existing labels or categories. 
+Reinforcement learning trains agents to make sequential decisions by rewarding desired behaviors. 
+Feature engineering transforms raw data into features that better represent the underlying problem.
