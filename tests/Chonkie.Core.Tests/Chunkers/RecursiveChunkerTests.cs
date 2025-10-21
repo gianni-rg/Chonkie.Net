@@ -3,7 +3,6 @@ namespace Chonkie.Core.Tests.Chunkers;
 using Chonkie.Chunkers;
 using Chonkie.Core.Types;
 using Chonkie.Tokenizers;
-using FluentAssertions;
 using Xunit;
 
 public class RecursiveChunkerTests
@@ -16,9 +15,9 @@ public class RecursiveChunkerTests
         var chunker = new RecursiveChunker(tokenizer);
 
         // Assert
-        chunker.ChunkSize.Should().Be(2048);
-        chunker.MinCharactersPerChunk.Should().Be(24);
-        chunker.Rules.Count.Should().Be(5); // Default 5 levels
+        Assert.Equal(2048, chunker.ChunkSize);
+        Assert.Equal(24, chunker.MinCharactersPerChunk);
+        Assert.Equal(5, chunker.Rules.Count); // Default 5 levels
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public class RecursiveChunkerTests
         var chunker = new RecursiveChunker(tokenizer, rules: customRules);
 
         // Assert
-        chunker.Rules.Count.Should().Be(2);
+        Assert.Equal(2, chunker.Rules.Count);
     }
 
     [Theory]
@@ -48,9 +47,8 @@ public class RecursiveChunkerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        var act = () => new RecursiveChunker(tokenizer, chunkSize: chunkSize);
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*chunk_size must be greater than 0*");
+        var ex = Assert.Throws<ArgumentException>(() => new RecursiveChunker(tokenizer, chunkSize: chunkSize));
+        Assert.Contains("chunk_size must be greater than 0", ex.Message);
     }
 
     [Fact]
@@ -64,7 +62,7 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk("");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -78,7 +76,7 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk("   \t\n  ");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -93,9 +91,9 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().ContainSingle();
-        chunks[0].Text.Should().Be(text);
-        chunks[0].TokenCount.Should().Be(10);
+        Assert.Single(chunks);
+        Assert.Equal(text, chunks[0].Text);
+        Assert.Equal(10, chunks[0].TokenCount);
     }
 
     [Fact]
@@ -110,10 +108,10 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
+        Assert.True(chunks.Count > 1);
         // Verify all text is covered
         var totalLength = chunks.Sum(c => c.Text.Length);
-        totalLength.Should().Be(text.Length);
+        Assert.Equal(text.Length, totalLength);
     }
 
     [Fact]
@@ -128,11 +126,11 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
+        Assert.True(chunks.Count > 1);
         // Verify indices are continuous
         for (int i = 1; i < chunks.Count; i++)
         {
-            chunks[i].StartIndex.Should().Be(chunks[i - 1].EndIndex);
+            Assert.Equal(chunks[i - 1].EndIndex, chunks[i].StartIndex);
         }
     }
 
@@ -152,8 +150,8 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
-        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(3));
+        Assert.True(chunks.Count > 1);
+        Assert.All(chunks, c => Assert.True(c.TokenCount <= 3));
     }
 
     [Fact]
@@ -168,10 +166,10 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Most chunks should meet minimum (except possibly last)
-        chunks.Take(chunks.Count - 1).Should().AllSatisfy(c => 
-            c.Text.Length.Should().BeGreaterThanOrEqualTo(20));
+        var allButLast = chunks.Take(chunks.Count - 1);
+        Assert.All(allButLast, c => Assert.True(c.Text.Length >= 20));
     }
 
     [Fact]
@@ -186,25 +184,25 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         
         // First chunk should start at 0
-        chunks[0].StartIndex.Should().Be(0);
+        Assert.Equal(0, chunks[0].StartIndex);
         
         // Verify each chunk's indices
         foreach (var chunk in chunks)
         {
-            chunk.EndIndex.Should().Be(chunk.StartIndex + chunk.Text.Length);
+            Assert.Equal(chunk.StartIndex + chunk.Text.Length, chunk.EndIndex);
             
             // Verify chunk text matches original text at those indices
             if (chunk.EndIndex <= text.Length)
             {
-                text.Substring(chunk.StartIndex, chunk.Text.Length).Should().Be(chunk.Text);
+                Assert.Equal(chunk.Text, text.Substring(chunk.StartIndex, chunk.Text.Length));
             }
         }
         
         // Last chunk should end at text length
-        chunks[chunks.Count - 1].EndIndex.Should().Be(text.Length);
+        Assert.Equal(text.Length, chunks[chunks.Count - 1].EndIndex);
     }
 
     [Fact]
@@ -223,13 +221,13 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Verify all parts are present in the combined output
         var combined = string.Concat(chunks.Select(c => c.Text));
-        combined.Should().Contain("part1");
-        combined.Should().Contain("part2");
-        combined.Should().Contain("part3");
-        combined.Should().Contain("part4");
+        Assert.Contains("part1", combined);
+        Assert.Contains("part2", combined);
+        Assert.Contains("part3", combined);
+        Assert.Contains("part4", combined);
     }
 
     [Fact]
@@ -250,8 +248,8 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
-        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(30));
+        Assert.NotEmpty(chunks);
+        Assert.All(chunks, c => Assert.True(c.TokenCount <= 30));
     }
 
     [Fact]
@@ -266,9 +264,9 @@ public class RecursiveChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Small splits should be merged
-        chunks.Should().AllSatisfy(c => c.Text.Length.Should().BeGreaterThan(5));
+        Assert.All(chunks, c => Assert.True(c.Text.Length > 5));
     }
 
     [Fact]
@@ -283,9 +281,9 @@ public class RecursiveChunkerTests
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().HaveCount(2);
-        results[0].Should().NotBeEmpty();
-        results[1].Should().NotBeEmpty();
+        Assert.Equal(2, results.Count);
+        Assert.NotEmpty(results[0]);
+        Assert.NotEmpty(results[1]);
     }
 
     [Fact]
@@ -299,8 +297,8 @@ public class RecursiveChunkerTests
         var result = chunker.ToString();
 
         // Assert
-        result.Should().Contain("512");
-        result.Should().Contain("5"); // 5 levels
+        Assert.Contains("512", result);
+        Assert.Contains("5", result); // 5 levels
     }
 
     [Fact]
@@ -321,9 +319,9 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
-        reconstructed.Should().Be(text);
+        Assert.Equal(text, reconstructed);
     }
 
     [Fact]
@@ -338,16 +336,15 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         
         // Verify chunks are continuous (no gaps)
-        chunks[0].StartIndex.Should().Be(0);
+        Assert.Equal(0, chunks[0].StartIndex);
         for (int i = 1; i < chunks.Count; i++)
         {
-            chunks[i].StartIndex.Should().Be(chunks[i - 1].EndIndex,
-                "because chunks should be continuous without gaps");
+            Assert.Equal(chunks[i - 1].EndIndex, chunks[i].StartIndex);
         }
-        chunks[chunks.Count - 1].EndIndex.Should().Be(text.Length);
+        Assert.Equal(text.Length, chunks[chunks.Count - 1].EndIndex);
     }
 
     [Fact]
@@ -362,11 +359,11 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         foreach (var chunk in chunks)
         {
-            chunk.TokenCount.Should().BeLessThanOrEqualTo(512);
-            chunk.Text.Length.Should().BeGreaterThanOrEqualTo(12);
+            Assert.True(chunk.TokenCount <= 512);
+            Assert.True(chunk.Text.Length >= 12);
         }
     }
 
@@ -384,10 +381,10 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk("a");
 
         // Assert
-        chunks.Should().ContainSingle();
-        chunks[0].Text.Should().Be("a");
-        chunks[0].StartIndex.Should().Be(0);
-        chunks[0].EndIndex.Should().Be(1);
+        Assert.Single(chunks);
+        Assert.Equal("a", chunks[0].Text);
+        Assert.Equal(0, chunks[0].StartIndex);
+        Assert.Equal(1, chunks[0].EndIndex);
     }
 
     [Fact]
@@ -402,8 +399,8 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().ContainSingle();
-        chunks[0].Text.Should().Be("Hello!");
+        Assert.Single(chunks);
+        Assert.Equal("Hello!", chunks[0].Text);
     }
 
     [Fact]
@@ -427,9 +424,9 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
-        reconstructed.Should().Be(text);
+        Assert.Equal(text, reconstructed);
     }
 
     [Fact]
@@ -453,9 +450,9 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
-        reconstructed.Should().Be(text);
+        Assert.Equal(text, reconstructed);
     }
 
     [Fact]
@@ -479,9 +476,9 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
-        reconstructed.Should().Be(text);
+        Assert.Equal(text, reconstructed);
     }
 
     [Fact]
@@ -505,10 +502,10 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
-        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(512));
+        Assert.NotEmpty(chunks);
+        Assert.All(chunks, c => Assert.True(c.TokenCount <= 512));
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
-        reconstructed.Should().Be(text);
+        Assert.Equal(text, reconstructed);
     }
 
     [Fact]
@@ -522,6 +519,6 @@ Fixed-size chunking represents the most straightforward approach to document seg
         var results = chunker.ChunkBatch(Array.Empty<string>());
 
         // Assert
-        results.Should().BeEmpty();
+        Assert.Empty(results);
     }
 }

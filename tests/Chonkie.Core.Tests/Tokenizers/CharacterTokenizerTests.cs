@@ -1,5 +1,4 @@
 using Chonkie.Tokenizers;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
@@ -16,8 +15,8 @@ public class CharacterTokenizerTests
         var tokens = tokenizer.Encode(text);
 
         // Assert
-        tokens.Should().HaveCount(3);
-        tokens.Should().AllBeOfType<int>();
+        Assert.Equal(3, tokens.Count);
+        Assert.All(tokens, token => Assert.IsType<int>(token));
     }
 
     [Fact]
@@ -30,7 +29,7 @@ public class CharacterTokenizerTests
         var tokens = tokenizer.Encode("");
 
         // Assert
-        tokens.Should().BeEmpty();
+        Assert.Empty(tokens);
     }
 
     [Fact]
@@ -45,7 +44,7 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.Decode(encoded);
 
         // Assert
-        decoded.Should().Be(text);
+        Assert.Equal(text, decoded);
     }
 
     [Fact]
@@ -58,7 +57,7 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.Decode(Array.Empty<int>());
 
         // Assert
-        decoded.Should().BeEmpty();
+        Assert.Empty(decoded);
     }
 
     [Fact]
@@ -68,12 +67,9 @@ public class CharacterTokenizerTests
         var tokenizer = new CharacterTokenizer();
         var invalidTokens = new[] { 99999 };
 
-        // Act
-        var act = () => tokenizer.Decode(invalidTokens);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*not found in vocabulary*");
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => tokenizer.Decode(invalidTokens));
+        Assert.Contains("not found in vocabulary", ex.Message);
     }
 
     [Fact]
@@ -83,10 +79,10 @@ public class CharacterTokenizerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        tokenizer.CountTokens("").Should().Be(0);
-        tokenizer.CountTokens("a").Should().Be(1);
-        tokenizer.CountTokens("Hello").Should().Be(5);
-        tokenizer.CountTokens("Hello World!").Should().Be(12);
+        Assert.Equal(0, tokenizer.CountTokens(""));
+        Assert.Equal(1, tokenizer.CountTokens("a"));
+        Assert.Equal(5, tokenizer.CountTokens("Hello"));
+        Assert.Equal(12, tokenizer.CountTokens("Hello World!"));
     }
 
     [Fact]
@@ -110,7 +106,7 @@ public class CharacterTokenizerTests
             var decoded = tokenizer.Decode(encoded);
 
             // Assert
-            decoded.Should().Be(text);
+            Assert.Equal(text, decoded);
         }
     }
 
@@ -125,10 +121,10 @@ public class CharacterTokenizerTests
         var encoded = tokenizer.EncodeBatch(texts);
 
         // Assert
-        encoded.Should().HaveCount(3);
-        encoded[0].Should().HaveCount(3);
-        encoded[1].Should().HaveCount(3);
-        encoded[2].Should().HaveCount(3);
+        Assert.Equal(3, encoded.Count);
+        Assert.Equal(3, encoded[0].Count);
+        Assert.Equal(3, encoded[1].Count);
+        Assert.Equal(3, encoded[2].Count);
     }
 
     [Fact]
@@ -143,10 +139,10 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.DecodeBatch(encoded);
 
         // Assert
-        decoded.Should().HaveCount(3);
-        decoded[0].Should().Be("abc");
-        decoded[1].Should().Be("def");
-        decoded[2].Should().Be("ghi");
+        Assert.Equal(3, decoded.Count);
+        Assert.Equal("abc", decoded[0]);
+        Assert.Equal("def", decoded[1]);
+        Assert.Equal("ghi", decoded[2]);
     }
 
     [Fact]
@@ -160,10 +156,10 @@ public class CharacterTokenizerTests
         var counts = tokenizer.CountTokensBatch(texts);
 
         // Assert
-        counts.Should().HaveCount(3);
-        counts[0].Should().Be(1);
-        counts[1].Should().Be(2);
-        counts[2].Should().Be(3);
+        Assert.Equal(3, counts.Count);
+        Assert.Equal(1, counts[0]);
+        Assert.Equal(2, counts[1]);
+        Assert.Equal(3, counts[2]);
     }
 
     [Fact]
@@ -177,8 +173,8 @@ public class CharacterTokenizerTests
         var result = tokenizer.ToString();
 
         // Assert
-        result.Should().Contain("CharacterTokenizer");
-        result.Should().Contain("vocab_size");
+        Assert.Contains("CharacterTokenizer", result);
+        Assert.Contains("vocab_size", result);
     }
 
     [Fact]
@@ -193,8 +189,8 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(text);
-        tokens.Should().HaveCount(text.Length);
+        Assert.Equal(text, decoded);
+        Assert.Equal(text.Length, tokens.Count);
     }
 
     [Fact]
@@ -206,18 +202,18 @@ public class CharacterTokenizerTests
         // Test multiple spaces
         var textWithSpaces = "hello    world";
         var tokensSpaces = tokenizer.Encode(textWithSpaces);
-        tokensSpaces.Should().HaveCount(textWithSpaces.Length);
-        tokenizer.Decode(tokensSpaces).Should().Be(textWithSpaces);
+        Assert.Equal(textWithSpaces.Length, tokensSpaces.Count);
+        Assert.Equal(textWithSpaces, tokenizer.Decode(tokensSpaces));
 
         // Test tabs and newlines
         var textWithWhitespace = "hello\tworld\ntest";
         var tokensWhitespace = tokenizer.Encode(textWithWhitespace);
-        tokenizer.Decode(tokensWhitespace).Should().Be(textWithWhitespace);
+        Assert.Equal(textWithWhitespace, tokenizer.Decode(tokensWhitespace));
 
         // Test leading/trailing spaces
         var textPadded = "  hello world  ";
         var tokensPadded = tokenizer.Encode(textPadded);
-        tokenizer.Decode(tokensPadded).Should().Be(textPadded);
+        Assert.Equal(textPadded, tokenizer.Decode(tokensPadded));
     }
 
     [Fact]
@@ -233,8 +229,8 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        tokens.Should().HaveCount(largeText.Length);
-        decoded.Should().Be(largeText);
+        Assert.Equal(largeText.Length, tokens.Count);
+        Assert.Equal(largeText, decoded);
     }
 
     [Fact]
@@ -249,8 +245,8 @@ public class CharacterTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(numericText);
-        tokens.Should().HaveCount(numericText.Length);
+        Assert.Equal(numericText, decoded);
+        Assert.Equal(numericText.Length, tokens.Count);
     }
 
     [Fact]
@@ -267,13 +263,13 @@ public class CharacterTokenizerTests
         // Encode same text again - vocab should not grow
         tokenizer.Encode(text1);
         var vocabAfterRepeat = tokenizer.GetVocabulary().Count;
-        vocabAfterFirst.Should().Be(vocabAfterRepeat);
+        Assert.Equal(vocabAfterFirst, vocabAfterRepeat);
         
         // Encode new text - vocab should grow
         var text2 = "xyz";
         tokenizer.Encode(text2);
         var vocabAfterNew = tokenizer.GetVocabulary().Count;
-        vocabAfterNew.Should().BeGreaterThan(vocabAfterRepeat);
+        Assert.True(vocabAfterNew > vocabAfterRepeat);
     }
 
     [Fact]
@@ -288,8 +284,8 @@ public class CharacterTokenizerTests
         var countFromEncode = tokenizer.Encode(text).Count;
 
         // Assert
-        countDirect.Should().Be(countFromEncode);
-        countDirect.Should().Be(text.Length);
+        Assert.Equal(countFromEncode, countDirect);
+        Assert.Equal(text.Length, countDirect);
     }
 
     [Fact]
@@ -305,22 +301,22 @@ public class CharacterTokenizerTests
         var tokenMapping = tokenizer.GetTokenMapping();
 
         // Assert
-        vocab.Should().Contain("H");
-        vocab.Should().Contain("e");
-        vocab.Should().Contain("l");
-        vocab.Should().Contain("o");
-        vocab.Should().Contain(" ");
-        vocab.Should().Contain("W");
-        vocab.Should().Contain("r");
-        vocab.Should().Contain("d");
-        vocab.Should().Contain("!");
+        Assert.Contains("H", vocab);
+        Assert.Contains("e", vocab);
+        Assert.Contains("l", vocab);
+        Assert.Contains("o", vocab);
+        Assert.Contains(" ", vocab);
+        Assert.Contains("W", vocab);
+        Assert.Contains("r", vocab);
+        Assert.Contains("d", vocab);
+        Assert.Contains("!", vocab);
 
         // Verify mapping consistency
         foreach (var character in text)
         {
             var charStr = character.ToString();
-            vocab.Should().Contain(charStr);
-            tokenMapping.Should().ContainKey(charStr);
+            Assert.Contains(charStr, vocab);
+            Assert.True(tokenMapping.ContainsKey(charStr));
         }
     }
 }

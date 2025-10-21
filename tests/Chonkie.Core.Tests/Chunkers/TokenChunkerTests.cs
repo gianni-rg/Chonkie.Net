@@ -2,7 +2,6 @@ namespace Chonkie.Core.Tests.Chunkers;
 
 using Chonkie.Chunkers;
 using Chonkie.Tokenizers;
-using FluentAssertions;
 using Xunit;
 
 public class TokenChunkerTests
@@ -15,8 +14,8 @@ public class TokenChunkerTests
         var chunker = new TokenChunker(tokenizer);
 
         // Assert
-        chunker.ChunkSize.Should().Be(2048);
-        chunker.ChunkOverlap.Should().Be(0);
+        Assert.Equal(2048, chunker.ChunkSize);
+        Assert.Equal(0, chunker.ChunkOverlap);
     }
 
     [Fact]
@@ -27,8 +26,8 @@ public class TokenChunkerTests
         var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 50);
 
         // Assert
-        chunker.ChunkSize.Should().Be(512);
-        chunker.ChunkOverlap.Should().Be(50);
+        Assert.Equal(512, chunker.ChunkSize);
+        Assert.Equal(50, chunker.ChunkOverlap);
     }
 
     [Theory]
@@ -40,9 +39,8 @@ public class TokenChunkerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        var act = () => new TokenChunker(tokenizer, chunkSize: chunkSize);
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*chunk_size must be positive*");
+        var ex = Assert.Throws<ArgumentException>(() => new TokenChunker(tokenizer, chunkSize: chunkSize));
+        Assert.Contains("chunk_size must be positive", ex.Message);
     }
 
     [Fact]
@@ -52,9 +50,8 @@ public class TokenChunkerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        var act = () => new TokenChunker(tokenizer, chunkSize: 100, chunkOverlap: 100);
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*chunk_overlap must be less than chunk_size*");
+        var ex = Assert.Throws<ArgumentException>(() => new TokenChunker(tokenizer, chunkSize: 100, chunkOverlap: 100));
+        Assert.Contains("chunk_overlap must be less than chunk_size", ex.Message);
     }
 
     [Fact]
@@ -68,7 +65,7 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk("");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -82,7 +79,7 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk("   \t\n  ");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -97,11 +94,11 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().ContainSingle();
-        chunks[0].Text.Should().Be(text);
-        chunks[0].TokenCount.Should().Be(11); // 11 characters
-        chunks[0].StartIndex.Should().Be(0);
-        chunks[0].EndIndex.Should().Be(11);
+        Assert.Single(chunks);
+        Assert.Equal(text, chunks[0].Text);
+        Assert.Equal(11, chunks[0].TokenCount); // 11 characters
+        Assert.Equal(0, chunks[0].StartIndex);
+        Assert.Equal(11, chunks[0].EndIndex);
     }
 
     [Fact]
@@ -116,11 +113,11 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCount(4); // 10, 10, 10, 6
-        chunks[0].Text.Should().Be("0123456789");
-        chunks[1].Text.Should().Be("ABCDEFGHIJ");
-        chunks[2].Text.Should().Be("KLMNOPQRST");
-        chunks[3].Text.Should().Be("UVWXYZ");
+        Assert.Equal(4, chunks.Count); // 10, 10, 10, 6
+        Assert.Equal("0123456789", chunks[0].Text);
+        Assert.Equal("ABCDEFGHIJ", chunks[1].Text);
+        Assert.Equal("KLMNOPQRST", chunks[2].Text);
+        Assert.Equal("UVWXYZ", chunks[3].Text);
     }
 
     [Fact]
@@ -135,23 +132,23 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCount(3);
+        Assert.Equal(3, chunks.Count);
         
         // First chunk: chars 0-9 (indices 0-10)
-        chunks[0].Text.Should().Be("0123456789");
-        chunks[0].StartIndex.Should().Be(0);
-        chunks[0].EndIndex.Should().Be(10);
-        chunks[0].TokenCount.Should().Be(10);
+        Assert.Equal("0123456789", chunks[0].Text);
+        Assert.Equal(0, chunks[0].StartIndex);
+        Assert.Equal(10, chunks[0].EndIndex);
+        Assert.Equal(10, chunks[0].TokenCount);
 
         // Second chunk starts at 7 (10 - 3 overlap) and contains 10 tokens: chars 7-16
         // Which means "789ABCDEFG"
-        chunks[1].Text.Should().Be("789ABCDEFG");
-        chunks[1].StartIndex.Should().Be(7);
-        chunks[1].TokenCount.Should().Be(10);
+        Assert.Equal("789ABCDEFG", chunks[1].Text);
+        Assert.Equal(7, chunks[1].StartIndex);
+        Assert.Equal(10, chunks[1].TokenCount);
 
         // Third chunk starts at position (17 - 3) = 14, contains remaining chars
-        chunks[2].Text.Should().Be("EFGHIJ");
-        chunks[2].StartIndex.Should().Be(14);
+        Assert.Equal("EFGHIJ", chunks[2].Text);
+        Assert.Equal(14, chunks[2].StartIndex);
     }
 
     [Fact]
@@ -166,12 +163,12 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
-        chunks[0].TokenCount.Should().BeLessThanOrEqualTo(3);
+        Assert.True(chunks.Count > 1);
+        Assert.True(chunks[0].TokenCount <= 3);
 
         // Verify all text is covered
         var firstChunkLength = chunks[0].Text.Length;
-        firstChunkLength.Should().BeGreaterThan(0);
+        Assert.True(firstChunkLength > 0);
     }
 
     [Fact]
@@ -189,10 +186,10 @@ public class TokenChunkerTests
         for (int i = 0; i < chunks.Count; i++)
         {
             var chunk = chunks[i];
-            chunk.EndIndex.Should().Be(chunk.StartIndex + chunk.Text.Length);
+            Assert.Equal(chunk.StartIndex + chunk.Text.Length, chunk.EndIndex);
 
             // Verify chunk text matches original text at those indices
-            text.Substring(chunk.StartIndex, chunk.Text.Length).Should().Be(chunk.Text);
+            Assert.Equal(chunk.Text, text.Substring(chunk.StartIndex, chunk.Text.Length));
         }
     }
 
@@ -208,10 +205,10 @@ public class TokenChunkerTests
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().HaveCount(3);
-        results[0].Should().ContainSingle(); // "Hello" = 5 chars, fits in one chunk
-        results[1].Should().ContainSingle(); // "Test" = 4 chars, fits in one chunk
-        results[2].Should().HaveCount(2); // 16 chars = 2 chunks of 10 and 6
+        Assert.Equal(3, results.Count);
+        Assert.Single(results[0]); // "Hello" = 5 chars, fits in one chunk
+        Assert.Single(results[1]); // "Test" = 4 chars, fits in one chunk
+        Assert.Equal(2, results[2].Count); // 16 chars = 2 chunks of 10 and 6
     }
 
     [Fact]
@@ -226,7 +223,7 @@ public class TokenChunkerTests
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().BeEmpty();
+        Assert.Empty(results);
     }
 
     [Fact]
@@ -244,9 +241,9 @@ public class TokenChunkerTests
         var result = chunker.ChunkDocument(document);
 
         // Assert
-        result.Chunks.Should().HaveCount(2);
-        result.Chunks[0].Text.Should().Be("0123456789");
-        result.Chunks[1].Text.Should().Be("ABCDEFGHIJ");
+        Assert.Equal(2, result.Chunks.Count);
+        Assert.Equal("0123456789", result.Chunks[0].Text);
+        Assert.Equal("ABCDEFGHIJ", result.Chunks[1].Text);
     }
 
     [Fact]
@@ -260,8 +257,8 @@ public class TokenChunkerTests
         var result = chunker.ToString();
 
         // Assert
-        result.Should().Contain("512");
-        result.Should().Contain("50");
+        Assert.Contains("512", result);
+        Assert.Contains("50", result);
     }
 
     [Fact]
@@ -276,9 +273,9 @@ public class TokenChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert - verify the method works (simulating __call__ in Python)
-        chunks.Should().HaveCount(2);
-        chunks[0].Text.Should().Be("0123456789");
-        chunks[1].Text.Should().Be("ABCDEF");
+        Assert.Equal(2, chunks.Count);
+        Assert.Equal("0123456789", chunks[0].Text);
+        Assert.Equal("ABCDEF", chunks[1].Text);
     }
 
     [Fact]
@@ -298,7 +295,7 @@ public class TokenChunkerTests
         foreach (var chunk in chunks)
         {
             var extractedText = text.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
-            extractedText.Trim().Should().Be(chunk.Text.Trim());
+            Assert.Equal(chunk.Text.Trim(), extractedText.Trim());
         }
     }
 
@@ -317,8 +314,8 @@ public class TokenChunkerTests
         foreach (var chunk in chunks)
         {
             var expectedCount = tokenizer.CountTokens(chunk.Text);
-            chunk.TokenCount.Should().Be(expectedCount);
-            chunk.TokenCount.Should().BeLessThanOrEqualTo(512);
+            Assert.Equal(expectedCount, chunk.TokenCount);
+            Assert.True(chunk.TokenCount <= 512);
         }
     }
 
@@ -343,20 +340,19 @@ Another paragraph.";
         var chunks = chunker.Chunk(markdown);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         
         // Note: Due to whitespace trimming, we verify indices match correctly
         // rather than exact text reconstruction
         foreach (var chunk in chunks)
         {
             var extractedText = markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
-            extractedText.Should().Be(chunk.Text, 
-                "because chunk text should match the substring from original text");
+            Assert.Equal(chunk.Text, extractedText);
         }
         
         // Verify chunks cover the entire text
-        chunks[0].StartIndex.Should().Be(0);
-        chunks[chunks.Count - 1].EndIndex.Should().Be(markdown.Length);
+        Assert.Equal(0, chunks[0].StartIndex);
+        Assert.Equal(markdown.Length, chunks[chunks.Count - 1].EndIndex);
     }
 
     [Fact]
@@ -372,13 +368,13 @@ Another paragraph.";
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
-        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(10));
+        Assert.True(chunks.Count > 1);
+        Assert.All(chunks, c => Assert.True(c.TokenCount <= 10));
         
         // Verify overlap is working
         if (chunks.Count > 1)
         {
-            chunks[1].StartIndex.Should().BeLessThan(chunks[0].EndIndex);
+            Assert.True(chunks[1].StartIndex < chunks[0].EndIndex);
         }
     }
 
@@ -396,8 +392,8 @@ Another paragraph.";
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().HaveCount(10);
-        results.Should().AllSatisfy(chunks => chunks.Should().NotBeEmpty());
+        Assert.Equal(10, results.Count);
+        Assert.All(results, chunks => Assert.NotEmpty(chunks));
     }
 
     [Fact]
@@ -408,9 +404,9 @@ Another paragraph.";
         var chunker = new TokenChunker(tokenizer, chunkSize: 100);
 
         // Act & Assert
-        chunker.Chunk("").Should().BeEmpty();
-        chunker.Chunk("   ").Should().BeEmpty();
-        chunker.Chunk("\t\n\r").Should().BeEmpty();
-        chunker.Chunk("     \t\t\n\n   ").Should().BeEmpty();
+        Assert.Empty(chunker.Chunk(""));
+        Assert.Empty(chunker.Chunk("   "));
+        Assert.Empty(chunker.Chunk("\t\n\r"));
+        Assert.Empty(chunker.Chunk("     \t\t\n\n   "));
     }
 }

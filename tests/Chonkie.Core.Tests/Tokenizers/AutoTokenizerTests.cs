@@ -1,6 +1,5 @@
 using Chonkie.Core.Interfaces;
 using Chonkie.Tokenizers;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
@@ -13,7 +12,7 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.Create("character");
 
         // Assert
-        tokenizer.Should().BeOfType<CharacterTokenizer>();
+        Assert.IsType<CharacterTokenizer>(tokenizer);
     }
 
     [Fact]
@@ -23,7 +22,7 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.Create("char");
 
         // Assert
-        tokenizer.Should().BeOfType<CharacterTokenizer>();
+        Assert.IsType<CharacterTokenizer>(tokenizer);
     }
 
     [Fact]
@@ -33,7 +32,7 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.Create("word");
 
         // Assert
-        tokenizer.Should().BeOfType<WordTokenizer>();
+        Assert.IsType<WordTokenizer>(tokenizer);
     }
 
     [Fact]
@@ -46,52 +45,43 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.Create(existingTokenizer);
 
         // Assert
-        tokenizer.Should().BeSameAs(existingTokenizer);
+        Assert.Same(existingTokenizer, tokenizer);
     }
 
     [Fact]
     public void Create_WithInvalidIdentifier_ThrowsException()
     {
-        // Act
-        var act = () => AutoTokenizer.Create("invalid");
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Unknown tokenizer identifier*")
-            .WithMessage("*invalid*");
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => AutoTokenizer.Create("invalid"));
+        Assert.Contains("Unknown tokenizer identifier", ex.Message);
+        Assert.Contains("invalid", ex.Message);
     }
 
     [Fact]
     public void Create_WithInvalidType_ThrowsException()
     {
-        // Act
-        var act = () => AutoTokenizer.Create(123);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Unsupported tokenizer type*");
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => AutoTokenizer.Create(123));
+        Assert.Contains("Unsupported tokenizer type", ex.Message);
     }
 
     [Fact]
     public void CreateFromIdentifier_WithValidIdentifiers_ReturnsCorrectTokenizers()
     {
         // Act & Assert
-        AutoTokenizer.CreateFromIdentifier("character").Should().BeOfType<CharacterTokenizer>();
-        AutoTokenizer.CreateFromIdentifier("char").Should().BeOfType<CharacterTokenizer>();
-        AutoTokenizer.CreateFromIdentifier("word").Should().BeOfType<WordTokenizer>();
-        AutoTokenizer.CreateFromIdentifier("CHARACTER").Should().BeOfType<CharacterTokenizer>();
-        AutoTokenizer.CreateFromIdentifier("WORD").Should().BeOfType<WordTokenizer>();
+        Assert.IsType<CharacterTokenizer>(AutoTokenizer.CreateFromIdentifier("character"));
+        Assert.IsType<CharacterTokenizer>(AutoTokenizer.CreateFromIdentifier("char"));
+        Assert.IsType<WordTokenizer>(AutoTokenizer.CreateFromIdentifier("word"));
+        Assert.IsType<CharacterTokenizer>(AutoTokenizer.CreateFromIdentifier("CHARACTER"));
+        Assert.IsType<WordTokenizer>(AutoTokenizer.CreateFromIdentifier("WORD"));
     }
 
     [Fact]
     public void CreateFromIdentifier_WithInvalidIdentifier_ThrowsException()
     {
-        // Act
-        var act = () => AutoTokenizer.CreateFromIdentifier("unknown");
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Unknown tokenizer identifier*");
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => AutoTokenizer.CreateFromIdentifier("unknown"));
+        Assert.Contains("Unknown tokenizer identifier", ex.Message);
     }
 
     [Fact]
@@ -101,8 +91,8 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.CreateCharacter();
 
         // Assert
-        tokenizer.Should().BeOfType<CharacterTokenizer>();
-        tokenizer.Should().BeAssignableTo<ITokenizer>();
+        Assert.IsType<CharacterTokenizer>(tokenizer);
+        Assert.IsAssignableFrom<ITokenizer>(tokenizer);
     }
 
     [Fact]
@@ -112,8 +102,8 @@ public class AutoTokenizerTests
         var tokenizer = AutoTokenizer.CreateWord();
 
         // Assert
-        tokenizer.Should().BeOfType<WordTokenizer>();
-        tokenizer.Should().BeAssignableTo<ITokenizer>();
+        Assert.IsType<WordTokenizer>(tokenizer);
+        Assert.IsAssignableFrom<ITokenizer>(tokenizer);
     }
 
     [Fact]
@@ -128,7 +118,7 @@ public class AutoTokenizerTests
             var tokenizer = AutoTokenizer.Create(identifier);
 
             // Assert
-            tokenizer.Should().BeAssignableTo<ITokenizer>($"because '{identifier}' should create an ITokenizer");
+            Assert.IsAssignableFrom<ITokenizer>(tokenizer);
         }
     }
 }

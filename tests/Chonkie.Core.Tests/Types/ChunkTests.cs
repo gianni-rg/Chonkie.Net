@@ -1,5 +1,4 @@
 using Chonkie.Core.Types;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Types;
 
@@ -15,13 +14,13 @@ public class ChunkTests
         };
 
         // Assert
-        chunk.Text.Should().Be("Test chunk");
-        chunk.Id.Should().StartWith("chnk_");
-        chunk.StartIndex.Should().Be(0);
-        chunk.EndIndex.Should().Be(0);
-        chunk.TokenCount.Should().Be(0);
-        chunk.Context.Should().BeNull();
-        chunk.Embedding.Should().BeNull();
+        Assert.Equal("Test chunk", chunk.Text);
+        Assert.StartsWith("chnk_", chunk.Id);
+        Assert.Equal(0, chunk.StartIndex);
+        Assert.Equal(0, chunk.EndIndex);
+        Assert.Equal(0, chunk.TokenCount);
+        Assert.Null(chunk.Context);
+        Assert.Null(chunk.Embedding);
     }
 
     [Fact]
@@ -41,13 +40,13 @@ public class ChunkTests
         };
 
         // Assert
-        chunk.Id.Should().Be("custom_id");
-        chunk.Text.Should().Be("Test chunk");
-        chunk.StartIndex.Should().Be(10);
-        chunk.EndIndex.Should().Be(20);
-        chunk.TokenCount.Should().Be(5);
-        chunk.Context.Should().Be("test context");
-        chunk.Embedding.Should().BeSameAs(embedding);
+        Assert.Equal("custom_id", chunk.Id);
+        Assert.Equal("Test chunk", chunk.Text);
+        Assert.Equal(10, chunk.StartIndex);
+        Assert.Equal(20, chunk.EndIndex);
+        Assert.Equal(5, chunk.TokenCount);
+        Assert.Equal("test context", chunk.Context);
+        Assert.Same(embedding, chunk.Embedding);
     }
 
     [Fact]
@@ -57,7 +56,7 @@ public class ChunkTests
         var chunk = new Chunk { Text = "Hello World" };
 
         // Act & Assert
-        chunk.Length.Should().Be(11);
+        Assert.Equal(11, chunk.Length);
     }
 
     [Fact]
@@ -79,13 +78,13 @@ public class ChunkTests
         var dict = chunk.ToDictionary();
 
         // Assert
-        dict["Id"].Should().Be("test_id");
-        dict["Text"].Should().Be("Test");
-        dict["StartIndex"].Should().Be(5);
-        dict["EndIndex"].Should().Be(9);
-        dict["TokenCount"].Should().Be(1);
-        dict["Context"].Should().Be("context");
-        dict["Embedding"].Should().BeEquivalentTo(new float[] { 1.0f, 2.0f });
+        Assert.Equal("test_id", dict["Id"]);
+        Assert.Equal("Test", dict["Text"]);
+        Assert.Equal(5, dict["StartIndex"]);
+        Assert.Equal(9, dict["EndIndex"]);
+        Assert.Equal(1, dict["TokenCount"]);
+        Assert.Equal("context", dict["Context"]);
+        Assert.Equal(new float[] { 1.0f, 2.0f }, dict["Embedding"]);
     }
 
     [Fact]
@@ -107,13 +106,13 @@ public class ChunkTests
         var chunk = Chunk.FromDictionary(dict);
 
         // Assert
-        chunk.Id.Should().Be("test_id");
-        chunk.Text.Should().Be("Test");
-        chunk.StartIndex.Should().Be(5);
-        chunk.EndIndex.Should().Be(9);
-        chunk.TokenCount.Should().Be(1);
-        chunk.Context.Should().Be("context");
-        chunk.Embedding.Should().BeEquivalentTo(new float[] { 1.0f, 2.0f });
+        Assert.Equal("test_id", chunk.Id);
+        Assert.Equal("Test", chunk.Text);
+        Assert.Equal(5, chunk.StartIndex);
+        Assert.Equal(9, chunk.EndIndex);
+        Assert.Equal(1, chunk.TokenCount);
+        Assert.Equal("context", chunk.Context);
+        Assert.Equal(new float[] { 1.0f, 2.0f }, chunk.Embedding);
     }
 
     [Fact]
@@ -129,13 +128,13 @@ public class ChunkTests
         var chunk = Chunk.FromDictionary(dict);
 
         // Assert
-        chunk.Text.Should().Be("Test");
-        chunk.Id.Should().StartWith("chnk_");
-        chunk.StartIndex.Should().Be(0);
-        chunk.EndIndex.Should().Be(0);
-        chunk.TokenCount.Should().Be(0);
-        chunk.Context.Should().BeNull();
-        chunk.Embedding.Should().BeNull();
+        Assert.Equal("Test", chunk.Text);
+        Assert.StartsWith("chnk_", chunk.Id);
+        Assert.Equal(0, chunk.StartIndex);
+        Assert.Equal(0, chunk.EndIndex);
+        Assert.Equal(0, chunk.TokenCount);
+        Assert.Null(chunk.Context);
+        Assert.Null(chunk.Embedding);
     }
 
     [Fact]
@@ -154,8 +153,8 @@ public class ChunkTests
         var copy = original.Copy();
 
         // Assert
-        copy.Should().Be(original);
-        copy.Should().NotBeSameAs(original);
+        Assert.Equal(original, copy);
+        Assert.NotSame(original, copy);
     }
 
     [Fact]
@@ -190,7 +189,7 @@ public class ChunkTests
         };
 
         // Act & Assert
-        chunk1.Should().Be(chunk2);
-        chunk1.Should().NotBe(chunk3);
+        Assert.Equal(chunk1, chunk2);
+        Assert.NotEqual(chunk1, chunk3);
     }
 }

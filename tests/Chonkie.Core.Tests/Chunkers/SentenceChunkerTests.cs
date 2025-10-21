@@ -2,7 +2,6 @@ namespace Chonkie.Core.Tests.Chunkers;
 
 using Chonkie.Chunkers;
 using Chonkie.Tokenizers;
-using FluentAssertions;
 using Xunit;
 
 public class SentenceChunkerTests
@@ -15,10 +14,10 @@ public class SentenceChunkerTests
         var chunker = new SentenceChunker(tokenizer);
 
         // Assert
-        chunker.ChunkSize.Should().Be(2048);
-        chunker.ChunkOverlap.Should().Be(0);
-        chunker.MinSentencesPerChunk.Should().Be(1);
-        chunker.MinCharactersPerSentence.Should().Be(12);
+        Assert.Equal(2048, chunker.ChunkSize);
+        Assert.Equal(0, chunker.ChunkOverlap);
+        Assert.Equal(1, chunker.MinSentencesPerChunk);
+        Assert.Equal(12, chunker.MinCharactersPerSentence);
     }
 
     [Fact]
@@ -34,10 +33,10 @@ public class SentenceChunkerTests
             minCharactersPerSentence: 20);
 
         // Assert
-        chunker.ChunkSize.Should().Be(512);
-        chunker.ChunkOverlap.Should().Be(50);
-        chunker.MinSentencesPerChunk.Should().Be(2);
-        chunker.MinCharactersPerSentence.Should().Be(20);
+        Assert.Equal(512, chunker.ChunkSize);
+        Assert.Equal(50, chunker.ChunkOverlap);
+        Assert.Equal(2, chunker.MinSentencesPerChunk);
+        Assert.Equal(20, chunker.MinCharactersPerSentence);
     }
 
     [Theory]
@@ -49,9 +48,8 @@ public class SentenceChunkerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        var act = () => new SentenceChunker(tokenizer, chunkSize: chunkSize);
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*chunk_size must be positive*");
+        var ex = Assert.Throws<ArgumentException>(() => new SentenceChunker(tokenizer, chunkSize: chunkSize));
+        Assert.Contains("chunk_size must be positive", ex.Message);
     }
 
     [Fact]
@@ -61,9 +59,8 @@ public class SentenceChunkerTests
         var tokenizer = new CharacterTokenizer();
 
         // Act & Assert
-        var act = () => new SentenceChunker(tokenizer, chunkSize: 100, chunkOverlap: 100);
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*chunk_overlap must be less than chunk_size*");
+        var ex = Assert.Throws<ArgumentException>(() => new SentenceChunker(tokenizer, chunkSize: 100, chunkOverlap: 100));
+        Assert.Contains("chunk_overlap must be less than chunk_size", ex.Message);
     }
 
     [Fact]
@@ -77,7 +74,7 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk("");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -91,7 +88,7 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk("   \t\n  ");
 
         // Assert
-        chunks.Should().BeEmpty();
+        Assert.Empty(chunks);
     }
 
     [Fact]
@@ -106,8 +103,8 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().ContainSingle();
-        chunks[0].Text.Should().Be(text);
+        Assert.Single(chunks);
+        Assert.Equal(text, chunks[0].Text);
     }
 
     [Fact]
@@ -122,12 +119,12 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().HaveCountGreaterThan(1);
+        Assert.True(chunks.Count > 1);
         // Each chunk should end with a complete sentence
-        chunks.Should().AllSatisfy(c => {
-            var lastChunk = chunks[chunks.Count - 1];
-            c.Text.TrimEnd().Should().Match(s => 
-                s.EndsWith(".") || s == lastChunk.Text.TrimEnd());
+        var lastChunk = chunks[chunks.Count - 1];
+        Assert.All(chunks, c => {
+            var trimmed = c.Text.TrimEnd();
+            Assert.True(trimmed.EndsWith(".") || trimmed == lastChunk.Text.TrimEnd());
         });
     }
 
@@ -149,10 +146,10 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Verify text is fully covered
         var totalText = string.Concat(chunks.Select(c => c.Text));
-        totalText.Length.Should().BeGreaterThan(0);
+        Assert.True(totalText.Length > 0);
     }
 
     [Fact]
@@ -172,14 +169,14 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Most chunks should have at least 2 sentences (except possibly the last)
         var sentenceCounts = chunks.Select(c => 
             c.Text.Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries).Length).ToList();
         
         for (int i = 0; i < chunks.Count - 1; i++)
         {
-            sentenceCounts[i].Should().BeGreaterThanOrEqualTo(2);
+            Assert.True(sentenceCounts[i] >= 2);
         }
     }
 
@@ -199,11 +196,11 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         var totalText = string.Concat(chunks.Select(c => c.Text));
-        totalText.Should().Contain("First");
-        totalText.Should().Contain("Second");
-        totalText.Should().Contain("Third");
+        Assert.Contains("First", totalText);
+        Assert.Contains("Second", totalText);
+        Assert.Contains("Third", totalText);
     }
 
     [Fact]
@@ -222,9 +219,9 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Short sentences should be merged with adjacent ones
-        chunks[0].Text.Should().Contain("longer sentence");
+        Assert.Contains("longer sentence", chunks[0].Text);
     }
 
     [Fact]
@@ -239,15 +236,16 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         foreach (var chunk in chunks)
         {
-            chunk.EndIndex.Should().Be(chunk.StartIndex + chunk.Text.Length);
+            Assert.Equal(chunk.StartIndex + chunk.Text.Length, chunk.EndIndex);
             // Verify chunk text matches original text at those indices
             if (chunk.StartIndex < text.Length && chunk.EndIndex <= text.Length)
             {
-                text.Substring(chunk.StartIndex, Math.Min(chunk.Text.Length, text.Length - chunk.StartIndex))
-                    .Should().Be(chunk.Text.Substring(0, Math.Min(chunk.Text.Length, text.Length - chunk.StartIndex)));
+                var expectedText = text.Substring(chunk.StartIndex, Math.Min(chunk.Text.Length, text.Length - chunk.StartIndex));
+                var actualText = chunk.Text.Substring(0, Math.Min(chunk.Text.Length, text.Length - chunk.StartIndex));
+                Assert.Equal(expectedText, actualText);
             }
         }
     }
@@ -269,9 +267,9 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Delimiters should be included with previous sentence
-        chunks[0].Text.Should().Contain(".");
+        Assert.Contains(".", chunks[0].Text);
     }
 
     [Fact]
@@ -286,9 +284,9 @@ public class SentenceChunkerTests
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().HaveCount(2);
-        results[0].Should().NotBeEmpty();
-        results[1].Should().NotBeEmpty();
+        Assert.Equal(2, results.Count);
+        Assert.NotEmpty(results[0]);
+        Assert.NotEmpty(results[1]);
     }
 
     [Fact]
@@ -302,8 +300,8 @@ public class SentenceChunkerTests
         var result = chunker.ToString();
 
         // Assert
-        result.Should().Contain("512");
-        result.Should().Contain("50");
+        Assert.Contains("512", result);
+        Assert.Contains("50", result);
     }
 
     [Fact]
@@ -323,11 +321,11 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         
         // Note: SentenceChunker may not always create overlap if sentences are too large
         // We verify that if we have multiple chunks, they respect the chunk size constraint
-        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(100));
+        Assert.All(chunks, c => Assert.True(c.TokenCount <= 100));
         
         // If we have multiple chunks, check for potential overlap or at least continuity
         if (chunks.Count > 1)
@@ -335,8 +333,7 @@ public class SentenceChunkerTests
             for (int i = 1; i < chunks.Count; i++)
             {
                 // Chunks should either overlap or be continuous
-                chunks[i].StartIndex.Should().BeLessThanOrEqualTo(chunks[i - 1].EndIndex,
-                    "because chunks should overlap or be continuous");
+                Assert.True(chunks[i].StartIndex <= chunks[i - 1].EndIndex);
             }
         }
     }
@@ -353,13 +350,12 @@ public class SentenceChunkerTests
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         foreach (var chunk in chunks)
         {
             var expectedCount = tokenizer.CountTokens(chunk.Text);
-            chunk.TokenCount.Should().Be(expectedCount,
-                $"Chunk token count should match tokenizer count.\nChunk text: {chunk.Text}");
-            chunk.TokenCount.Should().BeLessThanOrEqualTo(512);
+            Assert.Equal(expectedCount, chunk.TokenCount);
+            Assert.True(chunk.TokenCount <= 512);
         }
     }
 
@@ -385,15 +381,15 @@ Finally, a paragraph at the end.";
         var chunks = chunker.Chunk(markdown);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         
         // Verify indices map correctly
         foreach (var chunk in chunks)
         {
             if (chunk.EndIndex <= markdown.Length)
             {
-                markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex)
-                    .Trim().Should().Be(chunk.Text.Trim());
+                var expectedText = markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex).Trim();
+                Assert.Equal(expectedText, chunk.Text.Trim());
             }
         }
     }
@@ -414,10 +410,10 @@ Finally, a paragraph at the end.";
         var chunks = chunker.Chunk(text);
 
         // Assert
-        chunks.Should().NotBeEmpty();
+        Assert.NotEmpty(chunks);
         // Short sentences should be merged with adjacent ones
         var firstChunk = chunks[0].Text;
-        firstChunk.Should().Contain("longer sentence");
+        Assert.Contains("longer sentence", firstChunk);
     }
 
     [Fact]
@@ -428,9 +424,9 @@ Finally, a paragraph at the end.";
         var chunker = new SentenceChunker(tokenizer, chunkSize: 100);
 
         // Act & Assert
-        chunker.Chunk("").Should().BeEmpty();
-        chunker.Chunk("   ").Should().BeEmpty();
-        chunker.Chunk("\t\n\r").Should().BeEmpty();
+        Assert.Empty(chunker.Chunk(""));
+        Assert.Empty(chunker.Chunk("   "));
+        Assert.Empty(chunker.Chunk("\t\n\r"));
     }
 
     [Fact]
@@ -450,7 +446,7 @@ Finally, a paragraph at the end.";
         var results = chunker.ChunkBatch(texts);
 
         // Assert
-        results.Should().HaveCount(3);
-        results.Should().AllSatisfy(chunks => chunks.Should().NotBeEmpty());
+        Assert.Equal(3, results.Count);
+        Assert.All(results, chunks => Assert.NotEmpty(chunks));
     }
 }

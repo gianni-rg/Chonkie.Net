@@ -1,5 +1,4 @@
 using Chonkie.Core.Types;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Types;
 
@@ -15,10 +14,10 @@ public class SentenceTests
         };
 
         // Assert
-        sentence.Text.Should().Be("This is a sentence.");
-        sentence.StartIndex.Should().Be(0);
-        sentence.EndIndex.Should().Be(0);
-        sentence.TokenCount.Should().Be(0);
+        Assert.Equal("This is a sentence.", sentence.Text);
+        Assert.Equal(0, sentence.StartIndex);
+        Assert.Equal(0, sentence.EndIndex);
+        Assert.Equal(0, sentence.TokenCount);
     }
 
     [Fact]
@@ -34,10 +33,10 @@ public class SentenceTests
         };
 
         // Assert
-        sentence.Text.Should().Be("This is a sentence.");
-        sentence.StartIndex.Should().Be(10);
-        sentence.EndIndex.Should().Be(29);
-        sentence.TokenCount.Should().Be(5);
+        Assert.Equal("This is a sentence.", sentence.Text);
+        Assert.Equal(10, sentence.StartIndex);
+        Assert.Equal(29, sentence.EndIndex);
+        Assert.Equal(5, sentence.TokenCount);
     }
 
     [Fact]
@@ -69,7 +68,7 @@ public class SentenceTests
         };
 
         // Act & Assert
-        sentence1.Should().Be(sentence2);
-        sentence1.Should().NotBe(sentence3);
+        Assert.Equal(sentence1, sentence2);
+        Assert.NotEqual(sentence1, sentence3);
     }
 }

@@ -1,5 +1,4 @@
 using Chonkie.Tokenizers;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
@@ -16,8 +15,8 @@ public class WordTokenizerTests
         var tokens = tokenizer.Encode(text);
 
         // Assert
-        tokens.Should().HaveCount(3);
-        tokens.Should().AllBeOfType<int>();
+        Assert.Equal(3, tokens.Count);
+        Assert.All(tokens, token => Assert.IsType<int>(token));
     }
 
     [Fact]
@@ -30,7 +29,7 @@ public class WordTokenizerTests
         var tokens = tokenizer.Encode("");
 
         // Assert
-        tokens.Should().BeEmpty();
+        Assert.Empty(tokens);
     }
 
     [Fact]
@@ -43,7 +42,7 @@ public class WordTokenizerTests
         var tokens = tokenizer.Encode("hello");
 
         // Assert
-        tokens.Should().ContainSingle();
+        Assert.Single(tokens);
     }
 
     [Fact]
@@ -58,7 +57,7 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(encoded);
 
         // Assert
-        decoded.Should().Be(text);
+        Assert.Equal(text, decoded);
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(Array.Empty<int>());
 
         // Assert
-        decoded.Should().BeEmpty();
+        Assert.Empty(decoded);
     }
 
     [Fact]
@@ -81,12 +80,9 @@ public class WordTokenizerTests
         var tokenizer = new WordTokenizer();
         var invalidTokens = new[] { 99999 };
 
-        // Act
-        var act = () => tokenizer.Decode(invalidTokens);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*not found in vocabulary*");
+        // Act & Assert
+        var ex = Assert.Throws<ArgumentException>(() => tokenizer.Decode(invalidTokens));
+        Assert.Contains("not found in vocabulary", ex.Message);
     }
 
     [Fact]
@@ -96,10 +92,10 @@ public class WordTokenizerTests
         var tokenizer = new WordTokenizer();
 
         // Act & Assert
-        tokenizer.CountTokens("").Should().Be(0);
-        tokenizer.CountTokens("word").Should().Be(1);
-        tokenizer.CountTokens("two words").Should().Be(2);
-        tokenizer.CountTokens("the quick brown fox").Should().Be(4);
+        Assert.Equal(0, tokenizer.CountTokens(""));
+        Assert.Equal(1, tokenizer.CountTokens("word"));
+        Assert.Equal(2, tokenizer.CountTokens("two words"));
+        Assert.Equal(4, tokenizer.CountTokens("the quick brown fox"));
     }
 
     [Fact]
@@ -113,7 +109,7 @@ public class WordTokenizerTests
 
         // Assert
         // Split behavior: "word", "", "double", "", "space"
-        count.Should().Be(5);
+        Assert.Equal(5, count);
     }
 
     [Fact]
@@ -137,7 +133,7 @@ public class WordTokenizerTests
             var decoded = tokenizer.Decode(encoded);
 
             // Assert
-            decoded.Should().Be(text);
+            Assert.Equal(text, decoded);
         }
     }
 
@@ -152,10 +148,10 @@ public class WordTokenizerTests
         var encoded = tokenizer.EncodeBatch(texts);
 
         // Assert
-        encoded.Should().HaveCount(3);
-        encoded[0].Should().HaveCount(2);
-        encoded[1].Should().HaveCount(2);
-        encoded[2].Should().HaveCount(1);
+        Assert.Equal(3, encoded.Count);
+        Assert.Equal(2, encoded[0].Count);
+        Assert.Equal(2, encoded[1].Count);
+        Assert.Equal(1, encoded[2].Count);
     }
 
     [Fact]
@@ -170,10 +166,10 @@ public class WordTokenizerTests
         var decoded = tokenizer.DecodeBatch(encoded);
 
         // Assert
-        decoded.Should().HaveCount(3);
-        decoded[0].Should().Be("one two");
-        decoded[1].Should().Be("three four");
-        decoded[2].Should().Be("five");
+        Assert.Equal(3, decoded.Count);
+        Assert.Equal("one two", decoded[0]);
+        Assert.Equal("three four", decoded[1]);
+        Assert.Equal("five", decoded[2]);
     }
 
     [Fact]
@@ -187,10 +183,10 @@ public class WordTokenizerTests
         var counts = tokenizer.CountTokensBatch(texts);
 
         // Assert
-        counts.Should().HaveCount(3);
-        counts[0].Should().Be(1);
-        counts[1].Should().Be(2);
-        counts[2].Should().Be(3);
+        Assert.Equal(3, counts.Count);
+        Assert.Equal(1, counts[0]);
+        Assert.Equal(2, counts[1]);
+        Assert.Equal(3, counts[2]);
     }
 
     [Fact]
@@ -204,8 +200,8 @@ public class WordTokenizerTests
         var result = tokenizer.ToString();
 
         // Assert
-        result.Should().Contain("WordTokenizer");
-        result.Should().Contain("vocab_size");
+        Assert.Contains("WordTokenizer", result);
+        Assert.Contains("vocab_size", result);
     }
 
     [Fact]
@@ -220,7 +216,7 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(text);
+        Assert.Equal(text, decoded);
     }
 
     [Fact]
@@ -232,12 +228,12 @@ public class WordTokenizerTests
         // Test tabs and newlines
         var textWithWhitespace = "hello\tworld\ntest";
         var tokens = tokenizer.Encode(textWithWhitespace);
-        tokenizer.Decode(tokens).Should().Be(textWithWhitespace);
+        Assert.Equal(textWithWhitespace, tokenizer.Decode(tokens));
 
         // Test leading/trailing spaces
         var textPadded = "  hello world  ";
         var tokensPadded = tokenizer.Encode(textPadded);
-        tokenizer.Decode(tokensPadded).Should().Be(textPadded);
+        Assert.Equal(textPadded, tokenizer.Decode(tokensPadded));
     }
 
     [Fact]
@@ -252,8 +248,8 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(text);
-        tokenizer.CountTokens(text).Should().Be(text.Split(' ').Length);
+        Assert.Equal(text, decoded);
+        Assert.Equal(text.Split(' ').Length, tokenizer.CountTokens(text));
     }
 
     [Fact]
@@ -269,7 +265,7 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(largeText);
+        Assert.Equal(largeText, decoded);
     }
 
     [Fact]
@@ -284,7 +280,7 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(numericText);
+        Assert.Equal(numericText, decoded);
     }
 
     [Fact]
@@ -303,10 +299,10 @@ public class WordTokenizerTests
         var vocabSize2 = tokenizer.GetVocabulary().Count;
 
         // Assert
-        vocabSize2.Should().BeGreaterThan(vocabSize1);
-        tokenizer.GetVocabulary().Should().Contain("Wall-E");
-        tokenizer.GetVocabulary().Should().Contain("Ratatouille");
-        tokenizer.GetTokenMapping().Should().ContainKey("truly");
+        Assert.True(vocabSize2 > vocabSize1);
+        Assert.Contains("Wall-E", tokenizer.GetVocabulary());
+        Assert.Contains("Ratatouille", tokenizer.GetVocabulary());
+        Assert.True(tokenizer.GetTokenMapping().ContainsKey("truly"));
     }
 
     [Fact]
@@ -321,7 +317,7 @@ public class WordTokenizerTests
         var countFromEncode = tokenizer.Encode(text).Count;
 
         // Assert
-        countDirect.Should().Be(countFromEncode);
+        Assert.Equal(countFromEncode, countDirect);
     }
 
     [Fact]
@@ -336,8 +332,8 @@ public class WordTokenizerTests
         var decoded = tokenizer.Decode(tokens);
 
         // Assert
-        decoded.Should().Be(text);
+        Assert.Equal(text, decoded);
         // Splitting on space will create empty strings for consecutive spaces
-        tokens.Count.Should().Be(text.Split(' ').Length);
+        Assert.Equal(text.Split(' ').Length, tokens.Count);
     }
 }

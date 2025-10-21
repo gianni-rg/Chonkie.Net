@@ -1,5 +1,4 @@
 using Chonkie.Core.Types;
-using FluentAssertions;
 
 namespace Chonkie.Core.Tests.Types;
 
@@ -15,11 +14,11 @@ public class DocumentTests
         };
 
         // Assert
-        document.Content.Should().Be("Test content");
-        document.Id.Should().StartWith("doc_");
-        document.Chunks.Should().BeEmpty();
-        document.Metadata.Should().BeEmpty();
-        document.Source.Should().BeNull();
+        Assert.Equal("Test content", document.Content);
+        Assert.StartsWith("doc_", document.Id);
+        Assert.Empty(document.Chunks);
+        Assert.Empty(document.Metadata);
+        Assert.Null(document.Source);
     }
 
     [Fact]
@@ -48,11 +47,11 @@ public class DocumentTests
         };
 
         // Assert
-        document.Id.Should().Be("custom_doc_id");
-        document.Content.Should().Be("Test content");
-        document.Chunks.Should().HaveCount(2);
-        document.Metadata.Should().HaveCount(2);
-        document.Source.Should().Be("test.txt");
+        Assert.Equal("custom_doc_id", document.Id);
+        Assert.Equal("Test content", document.Content);
+        Assert.Equal(2, document.Chunks.Count);
+        Assert.Equal(2, document.Metadata.Count);
+        Assert.Equal("test.txt", document.Source);
     }
 
     [Fact]
@@ -66,8 +65,8 @@ public class DocumentTests
         document.Chunks.Add(chunk);
 
         // Assert
-        document.Chunks.Should().ContainSingle();
-        document.Chunks[0].Should().BeSameAs(chunk);
+        Assert.Single(document.Chunks);
+        Assert.Same(chunk, document.Chunks[0]);
     }
 
     [Fact]
@@ -75,13 +74,14 @@ public class DocumentTests
     {
         // Arrange
         var document = new Document { Content = "Test" };
+        var now = DateTime.Now;
 
         // Act
         document.Metadata["author"] = "Test Author";
-        document.Metadata["date"] = DateTime.Now;
+        document.Metadata["date"] = now;
 
         // Assert
-        document.Metadata.Should().HaveCount(2);
-        document.Metadata["author"].Should().Be("Test Author");
+        Assert.Equal(2, document.Metadata.Count);
+        Assert.Equal("Test Author", document.Metadata["author"]);
     }
 }
