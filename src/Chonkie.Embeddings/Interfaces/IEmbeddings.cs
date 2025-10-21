@@ -29,5 +29,13 @@ namespace Chonkie.Embeddings.Interfaces
         /// Generates embeddings for a batch of texts.
         /// </summary>
         Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Computes the cosine similarity between two embedding vectors.
+        /// </summary>
+        /// <param name="u">First embedding vector.</param>
+        /// <param name="v">Second embedding vector.</param>
+        /// <returns>Cosine similarity score between 0 and 1.</returns>
+        float Similarity(float[] u, float[] v);
     }
 }
