@@ -3,8 +3,14 @@ using Chonkie.Embeddings.Azure;
 
 namespace Chonkie.Embeddings.Tests.Providers
 {
+    /// <summary>
+    /// Unit tests for the <see cref="AzureOpenAIEmbeddings"/> provider.
+    /// </summary>
     public class AzureOpenAIEmbeddingsTests
     {
+        /// <summary>
+        /// Tests that the constructor initializes properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_InitializesProperties()
         {

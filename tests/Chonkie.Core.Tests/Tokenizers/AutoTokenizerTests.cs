@@ -3,9 +3,15 @@ using Chonkie.Tokenizers;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
+/// <summary>
+/// Unit tests for the <see cref="AutoTokenizer"/> class.
+/// </summary>
 public class AutoTokenizerTests
 {
     [Fact]
+    /// <summary>
+    /// Tests that creating with 'character' identifier returns a CharacterTokenizer.
+    /// </summary>
     public void Create_WithCharacterIdentifier_ReturnsCharacterTokenizer()
     {
         // Act

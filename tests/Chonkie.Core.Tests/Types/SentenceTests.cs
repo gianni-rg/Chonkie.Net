@@ -2,9 +2,15 @@ using Chonkie.Core.Types;
 
 namespace Chonkie.Core.Tests.Types;
 
+/// <summary>
+/// Unit tests for the <see cref="Sentence"/> type.
+/// </summary>
 public class SentenceTests
 {
     [Fact]
+    /// <summary>
+    /// Tests that the constructor creates a sentence with required text.
+    /// </summary>
     public void Constructor_WithRequiredText_CreatesSentence()
     {
         // Arrange & Act

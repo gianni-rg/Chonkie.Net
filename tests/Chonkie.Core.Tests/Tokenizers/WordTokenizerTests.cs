@@ -2,9 +2,15 @@ using Chonkie.Tokenizers;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
+/// <summary>
+/// Unit tests for the <see cref="WordTokenizer"/> class.
+/// </summary>
 public class WordTokenizerTests
 {
     [Fact]
+    /// <summary>
+    /// Tests encoding of simple text returns correct token IDs.
+    /// </summary>
     public void Encode_SimpleText_ReturnsTokenIds()
     {
         // Arrange
@@ -15,7 +21,7 @@ public class WordTokenizerTests
         var tokens = tokenizer.Encode(text);
 
         // Assert
-        Assert.Equal(3, tokens.Count);
+    Assert.Equal(3, tokens.Count); // This is correct for multiple items, but if you want to check for a single item, use Assert.Single(tokens)
         Assert.All(tokens, token => Assert.IsType<int>(token));
     }
 
@@ -151,7 +157,7 @@ public class WordTokenizerTests
         Assert.Equal(3, encoded.Count);
         Assert.Equal(2, encoded[0].Count);
         Assert.Equal(2, encoded[1].Count);
-        Assert.Equal(1, encoded[2].Count);
+        Assert.Single(encoded[2]);
     }
 
     [Fact]

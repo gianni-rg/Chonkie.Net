@@ -3,8 +3,14 @@ using Chonkie.Embeddings.Jina;
 
 namespace Chonkie.Embeddings.Tests.Providers
 {
+    /// <summary>
+    /// Unit tests for the <see cref="JinaEmbeddings"/> provider.
+    /// </summary>
     public class JinaEmbeddingsTests
     {
+        /// <summary>
+        /// Tests that the constructor initializes properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_InitializesProperties()
         {
@@ -16,6 +22,9 @@ namespace Chonkie.Embeddings.Tests.Providers
             Assert.Equal(768, embeddings.Dimension);
         }
 
+        /// <summary>
+        /// Tests that the constructor throws an exception when API key is null.
+        /// </summary>
         [Fact]
         public void Constructor_ThrowsException_WhenApiKeyIsNull()
         {
@@ -23,6 +32,9 @@ namespace Chonkie.Embeddings.Tests.Providers
             Assert.Throws<ArgumentNullException>(() => new JinaEmbeddings(null!));
         }
 
+        /// <summary>
+        /// Tests that the constructor uses default model.
+        /// </summary>
         [Fact]
         public void Constructor_UsesDefaultModel()
         {
@@ -34,6 +46,9 @@ namespace Chonkie.Embeddings.Tests.Providers
             Assert.Equal(768, embeddings.Dimension);
         }
 
+        /// <summary>
+        /// Tests that the Dimension property returns the correct value.
+        /// </summary>
         [Fact]
         public void DimensionProperty_ReturnsCorrectValue()
         {
@@ -47,6 +62,9 @@ namespace Chonkie.Embeddings.Tests.Providers
             Assert.Equal(512, dimension);
         }
 
+        /// <summary>
+        /// Tests that ToString returns a formatted string.
+        /// </summary>
         [Fact]
         public void ToString_ReturnsFormattedString()
         {

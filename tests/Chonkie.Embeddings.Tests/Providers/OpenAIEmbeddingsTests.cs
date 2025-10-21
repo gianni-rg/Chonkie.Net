@@ -3,8 +3,14 @@ using Chonkie.Embeddings.OpenAI;
 
 namespace Chonkie.Embeddings.Tests.Providers
 {
+    /// <summary>
+    /// Unit tests for the <see cref="OpenAIEmbeddings"/> provider.
+    /// </summary>
     public class OpenAIEmbeddingsTests
     {
+        /// <summary>
+        /// Tests that the constructor initializes properties correctly.
+        /// </summary>
         [Fact]
         public void Constructor_InitializesProperties()
         {
@@ -16,6 +22,9 @@ namespace Chonkie.Embeddings.Tests.Providers
             Assert.Equal(1536, embeddings.Dimension);
         }
 
+        /// <summary>
+        /// Tests that the constructor throws an exception when API key is null.
+        /// </summary>
         [Fact]
         public void Constructor_ThrowsException_WhenApiKeyIsNull()
         {

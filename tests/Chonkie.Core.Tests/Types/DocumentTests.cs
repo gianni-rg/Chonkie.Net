@@ -2,9 +2,15 @@ using Chonkie.Core.Types;
 
 namespace Chonkie.Core.Tests.Types;
 
+/// <summary>
+/// Unit tests for the <see cref="Document"/> type.
+/// </summary>
 public class DocumentTests
 {
     [Fact]
+    /// <summary>
+    /// Tests that the constructor creates a document with required content.
+    /// </summary>
     public void Constructor_WithRequiredContent_CreatesDocument()
     {
         // Arrange & Act

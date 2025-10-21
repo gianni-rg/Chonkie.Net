@@ -2,9 +2,15 @@ using Chonkie.Tokenizers;
 
 namespace Chonkie.Core.Tests.Tokenizers;
 
+/// <summary>
+/// Unit tests for the <see cref="CharacterTokenizer"/> class.
+/// </summary>
 public class CharacterTokenizerTests
 {
     [Fact]
+    /// <summary>
+    /// Tests encoding of simple text returns correct token IDs.
+    /// </summary>
     public void Encode_SimpleText_ReturnsTokenIds()
     {
         // Arrange
@@ -20,6 +26,9 @@ public class CharacterTokenizerTests
     }
 
     [Fact]
+    /// <summary>
+    /// Tests encoding of an empty string returns an empty list.
+    /// </summary>
     public void Encode_EmptyString_ReturnsEmptyList()
     {
         // Arrange

@@ -9,6 +9,9 @@ namespace Chonkie.Embeddings.Integration.Tests;
 /// Integration tests for Azure OpenAI embeddings provider
 /// These tests require AZURE_OPENAI_API_KEY and AZURE_OPENAI_ENDPOINT environment variables to be set
 /// </summary>
+/// <summary>
+/// Integration tests for Azure OpenAI embeddings provider.
+/// </summary>
 public class AzureOpenAIEmbeddingsIntegrationTests
 {
     private const string ApiKeyEnvVar = "AZURE_OPENAI_API_KEY";
@@ -16,6 +19,9 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     private const string DeploymentEnvVar = "AZURE_OPENAI_DEPLOYMENT";
 
     [SkippableFact]
+    /// <summary>
+    /// Tests embedding with real API returns a valid embedding.
+    /// </summary>
     public async Task EmbedAsync_WithRealAPI_ReturnsValidEmbedding()
     {
         // Arrange

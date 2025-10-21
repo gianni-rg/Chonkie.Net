@@ -3,8 +3,14 @@ using Chonkie.Embeddings;
 
 namespace Chonkie.Embeddings.Tests
 {
+    /// <summary>
+    /// Unit tests for the <see cref="AutoEmbeddings"/> class.
+    /// </summary>
     public class AutoEmbeddingsTests
     {
+        /// <summary>
+        /// Tests that registering a provider adds it to the dictionary.
+        /// </summary>
         [Fact]
         public void RegisterProvider_AddsProviderToDictionary()
         {
@@ -20,6 +26,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Contains(providerName, providers);
         }
 
+        /// <summary>
+        /// Tests that GetProvider throws an exception when the provider is not found.
+        /// </summary>
         [Fact]
         public void GetProvider_ThrowsException_WhenProviderNotFound()
         {
@@ -31,6 +40,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Contains("not found", exception.Message);
         }
 
+        /// <summary>
+        /// Tests that GetProvider is case insensitive.
+        /// </summary>
         [Fact]
         public void GetProvider_IsCaseInsensitive()
         {
@@ -45,6 +57,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.NotNull(provider3);
         }
 
+        /// <summary>
+        /// Tests that ListProviders returns all registered providers.
+        /// </summary>
         [Fact]
         public void ListProviders_ReturnsAllRegisteredProviders()
         {
@@ -62,6 +77,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Contains("voyage", providers);
         }
 
+        /// <summary>
+        /// Tests that ListProviders returns at least seven providers.
+        /// </summary>
         [Fact]
         public void ListProviders_ReturnsAtLeastSevenProviders()
         {
@@ -72,6 +90,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.True(providers.Count >= 7, $"Expected at least 7 providers, but found {providers.Count}");
         }
 
+        /// <summary>
+        /// Tests that registering a provider overwrites an existing provider.
+        /// </summary>
         [Fact]
         public void RegisterProvider_OverwritesExistingProvider()
         {
@@ -89,6 +110,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.NotNull(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("OpenAI") returns an OpenAIEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_OpenAI_ReturnsOpenAIEmbeddings()
         {
@@ -100,6 +124,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<OpenAI.OpenAIEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("AzureOpenAI") returns an AzureOpenAIEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_AzureOpenAI_ReturnsAzureOpenAIEmbeddings()
         {
@@ -119,6 +146,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<Azure.AzureOpenAIEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("Cohere") returns a CohereEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_Cohere_ReturnsCohereEmbeddings()
         {
@@ -130,6 +160,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<Cohere.CohereEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("Gemini") returns a GeminiEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_Gemini_ReturnsGeminiEmbeddings()
         {
@@ -141,6 +174,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<Gemini.GeminiEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("Jina") returns a JinaEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_Jina_ReturnsJinaEmbeddings()
         {
@@ -152,6 +188,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<Jina.JinaEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("Voyage") returns a VoyageAIEmbeddings instance.
+        /// </summary>
         [Fact]
         public void GetProvider_Voyage_ReturnsVoyageAIEmbeddings()
         {
@@ -163,6 +202,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.IsType<VoyageAI.VoyageAIEmbeddings>(provider);
         }
 
+        /// <summary>
+        /// Tests that GetProvider("SentenceTransformers") returns the correct type.
+        /// </summary>
         [Fact]
         public void GetProvider_SentenceTransformers_ReturnsType()
         {

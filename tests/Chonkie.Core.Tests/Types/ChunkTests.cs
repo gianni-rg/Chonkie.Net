@@ -2,9 +2,15 @@ using Chonkie.Core.Types;
 
 namespace Chonkie.Core.Tests.Types;
 
+/// <summary>
+/// Unit tests for the <see cref="Chunk"/> type.
+/// </summary>
 public class ChunkTests
 {
     [Fact]
+    /// <summary>
+    /// Tests that the constructor creates a chunk with required text.
+    /// </summary>
     public void Constructor_WithRequiredText_CreatesChunk()
     {
         // Arrange & Act

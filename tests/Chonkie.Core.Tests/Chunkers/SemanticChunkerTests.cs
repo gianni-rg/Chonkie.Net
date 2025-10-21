@@ -6,6 +6,9 @@ using Chonkie.Embeddings.Base;
 
 namespace Chonkie.Core.Tests.Chunkers;
 
+/// <summary>
+/// Unit tests for the <see cref="SemanticChunker"/> class.
+/// </summary>
 public class SemanticChunkerTests
 {
     private class TestEmbeddings : BaseEmbeddings
@@ -37,6 +40,9 @@ public class SemanticChunkerTests
     }
 
     [Fact]
+    /// <summary>
+    /// Tests that SemanticChunker initializes with default parameters.
+    /// </summary>
     public void SemanticChunker_ShouldInitializeWithDefaultParameters()
     {
         // Arrange

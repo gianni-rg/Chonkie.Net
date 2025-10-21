@@ -3,8 +3,14 @@ using Chonkie.Embeddings.Base;
 
 namespace Chonkie.Embeddings.Tests
 {
+    /// <summary>
+    /// Unit tests for the <see cref="BaseEmbeddings"/> class.
+    /// </summary>
     public class BaseEmbeddingsTests
     {
+        /// <summary>
+        /// Tests that embedding async returns an embedding array.
+        /// </summary>
         [Fact]
         public async Task EmbedAsync_ReturnsEmbeddingArray()
         {
@@ -20,6 +26,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Equal(embeddings.Dimension, result.Length);
         }
 
+        /// <summary>
+        /// Tests that EmbedBatchAsync returns multiple embeddings.
+        /// </summary>
         [Fact]
         public async Task EmbedBatchAsync_ReturnsMultipleEmbeddings()
         {
@@ -39,6 +48,9 @@ namespace Chonkie.Embeddings.Tests
             }
         }
 
+        /// <summary>
+        /// Tests that EmbedBatchAsync handles empty input.
+        /// </summary>
         [Fact]
         public async Task EmbedBatchAsync_HandlesEmptyInput()
         {
@@ -54,6 +66,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Empty(results);
         }
 
+        /// <summary>
+        /// Tests that Similarity computes cosine similarity.
+        /// </summary>
         [Fact]
         public async Task Similarity_ComputesCosineSimilarity()
         {
@@ -70,6 +85,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.True(similarity >= 0.0f || MathF.Abs(similarity) < 0.01f);
         }
 
+        /// <summary>
+        /// Tests that Similarity returns a perfect score for identical vectors.
+        /// </summary>
         [Fact]
         public async Task Similarity_ReturnsPerfectScoreForIdenticalVectors()
         {
@@ -84,6 +102,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Equal(1.0f, similarity, precision: 5);
         }
 
+        /// <summary>
+        /// Tests that Similarity throws an exception when the vector is null.
+        /// </summary>
         [Fact]
         public void Similarity_ThrowsException_WhenVectorIsNull()
         {
@@ -96,6 +117,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Throws<ArgumentNullException>(() => embeddings.Similarity(validVector, null!));
         }
 
+        /// <summary>
+        /// Tests that Similarity throws an exception when vectors have different lengths.
+        /// </summary>
         [Fact]
         public void Similarity_ThrowsException_WhenVectorsHaveDifferentLengths()
         {
@@ -108,6 +132,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Throws<ArgumentException>(() => embeddings.Similarity(vector1, vector2));
         }
 
+        /// <summary>
+        /// Tests that ToString returns a formatted string.
+        /// </summary>
         [Fact]
         public void ToString_ReturnsFormattedString()
         {
@@ -123,6 +150,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Contains("dimension=128", result);
         }
 
+        /// <summary>
+        /// Tests that the Dimension property returns a positive value.
+        /// </summary>
         [Fact]
         public void DimensionProperty_ReturnsPositiveValue()
         {
@@ -137,6 +167,9 @@ namespace Chonkie.Embeddings.Tests
             Assert.Equal(128, dimension);
         }
 
+        /// <summary>
+        /// Tests that the Name property returns the provider name.
+        /// </summary>
         [Fact]
         public void NameProperty_ReturnsProviderName()
         {
