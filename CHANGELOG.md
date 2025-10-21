@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Complete ✅
+- **Chunker Infrastructure**:
+  - `IChunker` interface defining chunking contract
+  - `BaseChunker` abstract class with batch processing support (sequential and parallel)
+  - `TokenChunker` - Token-based chunking with configurable overlap
+  - `SentenceChunker` - Sentence-aware chunking respecting token limits
+  - `RecursiveChunker` - Hierarchical chunking with delimiter hierarchy
+- **Core Types**:
+  - `RecursiveLevel` - Define chunking rules at specific hierarchy level
+  - `RecursiveRules` - Container for recursive chunking hierarchy (5 default levels)
+- **Testing**:
+  - 16 comprehensive tests for TokenChunker covering all scenarios
+  - Total test count: 66 tests (100% passing)
+- Chonkie.Chunkers project with complete chunker implementations
+
 ### Changed
 - Updated target framework from .NET 8.0 to .NET 10.0 (Preview/RC)
 - Updated language version from C# 12 to C# 13

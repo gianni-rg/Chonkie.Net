@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Chonkie.Core\Chonkie.Core.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Tokenizers\Chonkie.Tokenizers.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Chunkers\Chonkie.Chunkers.csproj" />
   </ItemGroup>
 
 </Project>
