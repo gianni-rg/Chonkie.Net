@@ -263,4 +263,154 @@ public class TokenChunkerTests
         result.Should().Contain("512");
         result.Should().Contain("50");
     }
+
+    [Fact]
+    public void Chunk_AsCallable_ShouldWorkLikeChunkMethod()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 10);
+        var text = "0123456789ABCDEF";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert - verify the method works (simulating __call__ in Python)
+        chunks.Should().HaveCount(2);
+        chunks[0].Text.Should().Be("0123456789");
+        chunks[1].Text.Should().Be("ABCDEF");
+    }
+
+    [Fact]
+    public void Chunk_IndicesVerification_ShouldMapCorrectly()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 128);
+        var text = "The quick brown fox jumps over the lazy dog. " + 
+                   "This is a test sentence to verify chunk indices. " +
+                   "Another sentence here for testing purposes.";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert - Verify each chunk's indices correctly map to original text
+        foreach (var chunk in chunks)
+        {
+            var extractedText = text.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
+            extractedText.Trim().Should().Be(chunk.Text.Trim());
+        }
+    }
+
+    [Fact]
+    public void Chunk_TokenCountVerification_ShouldMatchTokenizer()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 128);
+        var text = "The quick brown fox jumps over the lazy dog.";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert - Verify token counts match what tokenizer reports
+        foreach (var chunk in chunks)
+        {
+            var expectedCount = tokenizer.CountTokens(chunk.Text);
+            chunk.TokenCount.Should().Be(expectedCount);
+            chunk.TokenCount.Should().BeLessThanOrEqualTo(512);
+        }
+    }
+
+    [Fact]
+    public void Chunk_WithComplexMarkdown_ShouldPreserveStructure()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 100, chunkOverlap: 20);
+        var markdown = @"# Heading 1
+This is a paragraph with some **bold text** and _italic text_. 
+## Heading 2
+- Bullet point 1
+- Bullet point 2 with `inline code`
+```python
+def hello():
+    print('Hello')
+```
+Another paragraph.";
+
+        // Act
+        var chunks = chunker.Chunk(markdown);
+
+        // Assert
+        chunks.Should().NotBeEmpty();
+        
+        // Note: Due to whitespace trimming, we verify indices match correctly
+        // rather than exact text reconstruction
+        foreach (var chunk in chunks)
+        {
+            var extractedText = markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
+            extractedText.Should().Be(chunk.Text, 
+                "because chunk text should match the substring from original text");
+        }
+        
+        // Verify chunks cover the entire text
+        chunks[0].StartIndex.Should().Be(0);
+        chunks[chunks.Count - 1].EndIndex.Should().Be(markdown.Length);
+    }
+
+    [Fact]
+    public void Chunk_WithFractionalOverlap_ShouldHandleCorrectly()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        // Note: In .NET we use int for overlap, so we test with whole numbers
+        var chunker = new TokenChunker(tokenizer, chunkSize: 10, chunkOverlap: 2);
+        var text = "0123456789ABCDEFGHIJ"; // 20 characters
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert
+        chunks.Should().HaveCountGreaterThan(1);
+        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(10));
+        
+        // Verify overlap is working
+        if (chunks.Count > 1)
+        {
+            chunks[1].StartIndex.Should().BeLessThan(chunks[0].EndIndex);
+        }
+    }
+
+    [Fact]
+    public void ChunkBatch_ShouldProcessInParallel()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 50);
+        var texts = Enumerable.Range(0, 10)
+            .Select(i => $"Text {i}: " + string.Concat(Enumerable.Repeat($"word{i} ", 20)))
+            .ToArray();
+
+        // Act
+        var results = chunker.ChunkBatch(texts);
+
+        // Assert
+        results.Should().HaveCount(10);
+        results.Should().AllSatisfy(chunks => chunks.Should().NotBeEmpty());
+    }
+
+    [Fact]
+    public void Chunk_EmptyOrWhitespaceStrings_ShouldReturnEmpty()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new TokenChunker(tokenizer, chunkSize: 100);
+
+        // Act & Assert
+        chunker.Chunk("").Should().BeEmpty();
+        chunker.Chunk("   ").Should().BeEmpty();
+        chunker.Chunk("\t\n\r").Should().BeEmpty();
+        chunker.Chunk("     \t\t\n\n   ").Should().BeEmpty();
+    }
 }

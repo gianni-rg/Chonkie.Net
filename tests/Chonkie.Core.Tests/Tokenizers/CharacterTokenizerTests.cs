@@ -180,4 +180,147 @@ public class CharacterTokenizerTests
         result.Should().Contain("CharacterTokenizer");
         result.Should().Contain("vocab_size");
     }
+
+    [Fact]
+    public void Encode_SpecialCharactersAndUnicode_HandlesCorrectly()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var text = "Hello! 😀 你好 🌍 Café naïve résumé";
+
+        // Act
+        var tokens = tokenizer.Encode(text);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(text);
+        tokens.Should().HaveCount(text.Length);
+    }
+
+    [Fact]
+    public void Encode_WhitespaceVariations_PreservesWhitespace()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        
+        // Test multiple spaces
+        var textWithSpaces = "hello    world";
+        var tokensSpaces = tokenizer.Encode(textWithSpaces);
+        tokensSpaces.Should().HaveCount(textWithSpaces.Length);
+        tokenizer.Decode(tokensSpaces).Should().Be(textWithSpaces);
+
+        // Test tabs and newlines
+        var textWithWhitespace = "hello\tworld\ntest";
+        var tokensWhitespace = tokenizer.Encode(textWithWhitespace);
+        tokenizer.Decode(tokensWhitespace).Should().Be(textWithWhitespace);
+
+        // Test leading/trailing spaces
+        var textPadded = "  hello world  ";
+        var tokensPadded = tokenizer.Encode(textPadded);
+        tokenizer.Decode(tokensPadded).Should().Be(textPadded);
+    }
+
+    [Fact]
+    public void Encode_LargeText_HandlesEfficiently()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var baseText = "The quick brown fox jumps over the lazy dog. ";
+        var largeText = string.Concat(Enumerable.Repeat(baseText, 100)); // 4500+ characters
+
+        // Act
+        var tokens = tokenizer.Encode(largeText);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        tokens.Should().HaveCount(largeText.Length);
+        decoded.Should().Be(largeText);
+    }
+
+    [Fact]
+    public void Encode_NumericContent_HandlesCorrectly()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var numericText = "123 456.789 -10 +20 1.23e-4";
+
+        // Act
+        var tokens = tokenizer.Encode(numericText);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(numericText);
+        tokens.Should().HaveCount(numericText.Length);
+    }
+
+    [Fact]
+    public void Vocabulary_PersistsAcrossOperations()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        
+        // Encode first text
+        var text1 = "hello";
+        tokenizer.Encode(text1);
+        var vocabAfterFirst = tokenizer.GetVocabulary().Count;
+        
+        // Encode same text again - vocab should not grow
+        tokenizer.Encode(text1);
+        var vocabAfterRepeat = tokenizer.GetVocabulary().Count;
+        vocabAfterFirst.Should().Be(vocabAfterRepeat);
+        
+        // Encode new text - vocab should grow
+        var text2 = "xyz";
+        tokenizer.Encode(text2);
+        var vocabAfterNew = tokenizer.GetVocabulary().Count;
+        vocabAfterNew.Should().BeGreaterThan(vocabAfterRepeat);
+    }
+
+    [Fact]
+    public void CountTokens_ConsistentWithEncode()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var text = "The quick brown fox jumps over the lazy dog.";
+
+        // Act
+        var countDirect = tokenizer.CountTokens(text);
+        var countFromEncode = tokenizer.Encode(text).Count;
+
+        // Assert
+        countDirect.Should().Be(countFromEncode);
+        countDirect.Should().Be(text.Length);
+    }
+
+    [Fact]
+    public void GetVocabulary_ReturnsAllEncodedCharacters()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var text = "Hello World!";
+
+        // Act
+        tokenizer.Encode(text);
+        var vocab = tokenizer.GetVocabulary();
+        var tokenMapping = tokenizer.GetTokenMapping();
+
+        // Assert
+        vocab.Should().Contain("H");
+        vocab.Should().Contain("e");
+        vocab.Should().Contain("l");
+        vocab.Should().Contain("o");
+        vocab.Should().Contain(" ");
+        vocab.Should().Contain("W");
+        vocab.Should().Contain("r");
+        vocab.Should().Contain("d");
+        vocab.Should().Contain("!");
+
+        // Verify mapping consistency
+        foreach (var character in text)
+        {
+            var charStr = character.ToString();
+            vocab.Should().Contain(charStr);
+            tokenMapping.Should().ContainKey(charStr);
+        }
+    }
 }

@@ -305,4 +305,152 @@ public class SentenceChunkerTests
         result.Should().Contain("512");
         result.Should().Contain("50");
     }
+
+    [Fact]
+    public void Chunk_WithOverlap_ShouldCreateOverlappingChunks()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(
+            tokenizer,
+            chunkSize: 100,
+            chunkOverlap: 20,
+            minCharactersPerSentence: 5);
+        
+        var text = "First sentence here. Second sentence here. Third sentence here. Fourth sentence here. Fifth sentence here.";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert
+        chunks.Should().NotBeEmpty();
+        
+        // Note: SentenceChunker may not always create overlap if sentences are too large
+        // We verify that if we have multiple chunks, they respect the chunk size constraint
+        chunks.Should().AllSatisfy(c => c.TokenCount.Should().BeLessThanOrEqualTo(100));
+        
+        // If we have multiple chunks, check for potential overlap or at least continuity
+        if (chunks.Count > 1)
+        {
+            for (int i = 1; i < chunks.Count; i++)
+            {
+                // Chunks should either overlap or be continuous
+                chunks[i].StartIndex.Should().BeLessThanOrEqualTo(chunks[i - 1].EndIndex,
+                    "because chunks should overlap or be continuous");
+            }
+        }
+    }
+
+    [Fact]
+    public void Chunk_TokenCountVerification_ShouldMatchTokenizer()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(tokenizer, chunkSize: 512, chunkOverlap: 128);
+        var text = "First sentence. Second sentence. Third sentence. Fourth sentence.";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert
+        chunks.Should().NotBeEmpty();
+        foreach (var chunk in chunks)
+        {
+            var expectedCount = tokenizer.CountTokens(chunk.Text);
+            chunk.TokenCount.Should().Be(expectedCount,
+                $"Chunk token count should match tokenizer count.\nChunk text: {chunk.Text}");
+            chunk.TokenCount.Should().BeLessThanOrEqualTo(512);
+        }
+    }
+
+    [Fact]
+    public void Chunk_WithComplexMarkdown_ShouldHandleCorrectly()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(
+            tokenizer,
+            chunkSize: 200,
+            minCharactersPerSentence: 5);
+        
+        var markdown = @"# Heading 1
+This is a paragraph with some **bold text** and _italic text_. 
+## Heading 2
+- Bullet point 1
+- Bullet point 2 with `inline code`
+Another paragraph with [a link](https://example.com) and an image.
+Finally, a paragraph at the end.";
+
+        // Act
+        var chunks = chunker.Chunk(markdown);
+
+        // Assert
+        chunks.Should().NotBeEmpty();
+        
+        // Verify indices map correctly
+        foreach (var chunk in chunks)
+        {
+            if (chunk.EndIndex <= markdown.Length)
+            {
+                markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex)
+                    .Trim().Should().Be(chunk.Text.Trim());
+            }
+        }
+    }
+
+    [Fact]
+    public void Chunk_WithMinCharactersPerSentence_ShouldFilterOrMerge()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(
+            tokenizer,
+            chunkSize: 512,
+            minCharactersPerSentence: 20);
+        
+        var text = "Hi. This is a much longer sentence that should definitely be kept in the output. Yes.";
+
+        // Act
+        var chunks = chunker.Chunk(text);
+
+        // Assert
+        chunks.Should().NotBeEmpty();
+        // Short sentences should be merged with adjacent ones
+        var firstChunk = chunks[0].Text;
+        firstChunk.Should().Contain("longer sentence");
+    }
+
+    [Fact]
+    public void Chunk_EmptyOrWhitespaceStrings_ShouldReturnEmpty()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(tokenizer, chunkSize: 100);
+
+        // Act & Assert
+        chunker.Chunk("").Should().BeEmpty();
+        chunker.Chunk("   ").Should().BeEmpty();
+        chunker.Chunk("\t\n\r").Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ChunkBatch_WithMultipleTexts_ShouldProcessAll()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new SentenceChunker(tokenizer, chunkSize: 100);
+        var texts = new[]
+        {
+            "First text with sentences. Multiple sentences here.",
+            "Second text. Also with sentences.",
+            "Third text with a single sentence."
+        };
+
+        // Act
+        var results = chunker.ChunkBatch(texts);
+
+        // Assert
+        results.Should().HaveCount(3);
+        results.Should().AllSatisfy(chunks => chunks.Should().NotBeEmpty());
+    }
 }

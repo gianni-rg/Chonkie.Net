@@ -207,4 +207,137 @@ public class WordTokenizerTests
         result.Should().Contain("WordTokenizer");
         result.Should().Contain("vocab_size");
     }
+
+    [Fact]
+    public void Encode_SpecialCharacters_HandlesCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "Hello! 😀 你好 🌍 Café naïve résumé";
+
+        // Act
+        var tokens = tokenizer.Encode(text);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(text);
+    }
+
+    [Fact]
+    public void Encode_WhitespaceVariations_PreservesWhitespace()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        
+        // Test tabs and newlines
+        var textWithWhitespace = "hello\tworld\ntest";
+        var tokens = tokenizer.Encode(textWithWhitespace);
+        tokenizer.Decode(tokens).Should().Be(textWithWhitespace);
+
+        // Test leading/trailing spaces
+        var textPadded = "  hello world  ";
+        var tokensPadded = tokenizer.Encode(textPadded);
+        tokenizer.Decode(tokensPadded).Should().Be(textPadded);
+    }
+
+    [Fact]
+    public void Encode_SingleCharacterWords_HandlesSeparately()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "I a m t e s t i n g";
+
+        // Act
+        var tokens = tokenizer.Encode(text);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(text);
+        tokenizer.CountTokens(text).Should().Be(text.Split(' ').Length);
+    }
+
+    [Fact]
+    public void Encode_LargeText_HandlesEfficiently()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var baseText = "The quick brown fox jumps over the lazy dog. ";
+        var largeText = string.Concat(Enumerable.Repeat(baseText, 100));
+
+        // Act
+        var tokens = tokenizer.Encode(largeText);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(largeText);
+    }
+
+    [Fact]
+    public void Encode_NumericContent_HandlesCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var numericText = "123 456.789 -10 +20 1.23e-4";
+
+        // Act
+        var tokens = tokenizer.Encode(numericText);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(numericText);
+    }
+
+    [Fact]
+    public void Vocabulary_PersistsAndGrowsCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        
+        var text1 = "Wall-E is truly a masterpiece that should be required viewing.";
+        var text2 = "Ratatouille is truly a delightful film that every kid should watch.";
+
+        // Act
+        tokenizer.Encode(text1);
+        var vocabSize1 = tokenizer.GetVocabulary().Count;
+        tokenizer.Encode(text2);
+        var vocabSize2 = tokenizer.GetVocabulary().Count;
+
+        // Assert
+        vocabSize2.Should().BeGreaterThan(vocabSize1);
+        tokenizer.GetVocabulary().Should().Contain("Wall-E");
+        tokenizer.GetVocabulary().Should().Contain("Ratatouille");
+        tokenizer.GetTokenMapping().Should().ContainKey("truly");
+    }
+
+    [Fact]
+    public void CountTokens_ConsistentWithEncode()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "The quick brown fox jumps over the lazy dog.";
+
+        // Act
+        var countDirect = tokenizer.CountTokens(text);
+        var countFromEncode = tokenizer.Encode(text).Count;
+
+        // Assert
+        countDirect.Should().Be(countFromEncode);
+    }
+
+    [Fact]
+    public void Encode_WithMultipleSpaces_HandlesCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "hello  world   test";
+
+        // Act
+        var tokens = tokenizer.Encode(text);
+        var decoded = tokenizer.Decode(tokens);
+
+        // Assert
+        decoded.Should().Be(text);
+        // Splitting on space will create empty strings for consecutive spaces
+        tokens.Count.Should().Be(text.Split(' ').Length);
+    }
 }
