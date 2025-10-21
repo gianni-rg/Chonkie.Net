@@ -18,8 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `RecursiveLevel` - Define chunking rules at specific hierarchy level
   - `RecursiveRules` - Container for recursive chunking hierarchy (5 default levels)
 - **Testing**:
-  - 16 comprehensive tests for TokenChunker covering all scenarios
-  - Total test count: 66 tests (100% passing)
+  - 16 comprehensive tests for TokenChunker
+  - 17 comprehensive tests for SentenceChunker
+  - 17 comprehensive tests for RecursiveChunker
+  - Total test count: 100 tests (100% passing)
 - Chonkie.Chunkers project with complete chunker implementations
 
 ### Changed
