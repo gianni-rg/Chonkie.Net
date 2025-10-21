@@ -109,4 +109,44 @@ public class VoyageAIEmbeddingsIntegrationTests
         Assert.True(result.Length > 0);
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
+
+    [SkippableFact]
+    public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new VoyageAIEmbeddings(apiKey: apiKey);
+
+        // Act
+        var result = await embeddings.EmbedAsync(string.Empty);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Length > 0);
+    }
+
+    [SkippableFact]
+    public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new VoyageAIEmbeddings(apiKey: apiKey);
+        // Create a batch larger than typical API limits
+        var texts = Enumerable.Range(0, 150)
+            .Select(i => $"Test sentence number {i}.")
+            .ToArray();
+
+        // Act
+        var results = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.Equal(150, results.Count);
+        Assert.All(results, embedding =>
+        {
+            Assert.True(embedding.Length > 0);
+            Assert.All(embedding, value => Assert.InRange(value, -1f, 1f));
+        });
+    }
 }
+

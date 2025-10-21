@@ -106,4 +106,29 @@ public class GeminiEmbeddingsIntegrationTests
         Assert.NotNull(result);
         Assert.True(result.Length > 0);
     }
+
+    [SkippableFact]
+    public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new GeminiEmbeddings(apiKey: apiKey);
+        // Create a batch to test batch processing
+        var texts = Enumerable.Range(0, 50)
+            .Select(i => $"Test sentence number {i}.")
+            .ToArray();
+
+        // Act
+        var results = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.Equal(50, results.Count);
+        Assert.All(results, embedding =>
+        {
+            Assert.True(embedding.Length > 0);
+            Assert.All(embedding, value => Assert.InRange(value, -1f, 1f));
+        });
+    }
 }
+

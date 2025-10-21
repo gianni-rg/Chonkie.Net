@@ -124,4 +124,29 @@ public class OpenAIEmbeddingsIntegrationTests
         Assert.Equal(1536, result.Length);
         Assert.All(result, value => Assert.InRange(value, -1f, 1f));
     }
+
+    [SkippableFact]
+    public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
+    {
+        // Arrange
+        var apiKey = TestHelpers.GetEnvironmentVariableOrSkip(ApiKeyEnvVar);
+        var embeddings = new OpenAIEmbeddings(apiKey: apiKey);
+        // Create a batch larger than typical API limits
+        var texts = Enumerable.Range(0, 100)
+            .Select(i => $"Test sentence number {i}.")
+            .ToArray();
+
+        // Act
+        var results = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.Equal(100, results.Count);
+        Assert.All(results, embedding =>
+        {
+            Assert.Equal(1536, embedding.Length);
+            Assert.All(embedding, value => Assert.InRange(value, -1f, 1f));
+        });
+    }
 }
+

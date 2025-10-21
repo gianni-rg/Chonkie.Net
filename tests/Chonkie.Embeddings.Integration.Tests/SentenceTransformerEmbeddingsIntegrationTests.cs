@@ -127,4 +127,34 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         embeddings.Dispose();
         embeddings.Dispose(); // Second dispose should not throw
     }
+
+    [SkippableFact]
+    public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!File.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        // Create a batch to test batch processing
+        var texts = Enumerable.Range(0, 50)
+            .Select(i => $"Test sentence number {i}.")
+            .ToArray();
+
+        // Act
+        var results = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.Equal(50, results.Count);
+        Assert.All(results, embedding =>
+        {
+            Assert.True(embedding.Length > 0);
+            Assert.All(embedding, value => Assert.True(float.IsFinite(value), "All values should be finite"));
+        });
+    }
 }
+
