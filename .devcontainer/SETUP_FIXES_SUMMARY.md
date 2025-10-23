@@ -5,6 +5,14 @@ Branch: feat/dev-container-experiments
 
 This document summarizes all fixes applied to resolve build and runtime issues in the Chonkie.Net dev container setup with proxy-based network filtering.
 
+## TL;DR
+
+- Keep default .NET bin/obj inside the workspace; do not redirect MSBuild outputs.
+- Fix workspace permissions at container start in entrypoint, then switch to the vscode user.
+- Grant only minimal capabilities (SETUID, SETGID, CHOWN, FOWNER); fall back to chmod when chown isn’t allowed on Windows mounts.
+- Apply proxy configs post-create at user level (pip, NuGet); avoid sudo due to no-new-privileges.
+- Allowlist Copilot domains in the proxy; verify connectivity with the included diagnostics.
+
 ---
 
 ## Issues fixed
