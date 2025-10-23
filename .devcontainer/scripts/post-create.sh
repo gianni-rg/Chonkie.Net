@@ -4,36 +4,90 @@ set -e
 
 echo "🚀 Running post-create setup..."
 
-# Wait for proxy to be ready (with timeout)
-echo "⏳ Waiting for proxy service to be ready..."
-PROXY_READY=false
-for i in {1..30}; do
-    if nc -z proxy 3128 2>/dev/null; then
-        PROXY_READY=true
-        echo "✅ Proxy is ready!"
-        break
-    fi
-    echo "⏳ Waiting for proxy... ($i/30)"
-    sleep 2
-done
+# Check if proxy is enabled
+if [ ! -z "$http_proxy" ]; then
+    echo "⏳ Waiting for proxy service to be ready..."
+    PROXY_READY=false
+    
+    # Wait up to 120 seconds for proxy to be ready
+    for i in {1..60}; do
+        # Test both port connectivity and actual HTTP functionality
+        if nc -z proxy 3128 2>/dev/null && curl -x http://proxy:3128 -s -o /dev/null -w "%{http_code}" http://www.google.com 2>/dev/null | grep -q "200\|301\|302"; then
+            PROXY_READY=true
+            echo "✅ Proxy is ready and functional!"
+            break
+        fi
+        echo "⏳ Waiting for proxy to be functional... ($i/60)"
+        sleep 2
+    done
 
-if [ "$PROXY_READY" = false ]; then
-    echo "⚠️  Warning: Proxy service not available. Attempting to install packages without proxy..."
-    # Unset proxy environment variables
-    unset http_proxy
-    unset https_proxy
-    unset HTTP_PROXY
-    unset HTTPS_PROXY
+    if [ "$PROXY_READY" = false ]; then
+        echo "⚠️  Warning: Proxy service not available after 120 seconds."
+        echo "⚠️  Package installation may fail or be incomplete."
+        echo "⚠️  Check proxy logs with: podman compose logs proxy"
+        echo "⚠️  Continuing anyway - you can manually install packages later."
+        # Don't exit - allow container to continue starting
+    fi
+else
+    echo "ℹ️  Proxy is disabled - using direct internet connection"
 fi
 
 # Install AI CLI tools
 echo "📦 Installing AI CLI tools..."
 
+# Verify pip can see proxy settings
+echo "📡 Checking pip proxy configuration..."
+echo "System pip.conf:"
+cat /etc/pip.conf || true
+echo ""
+echo "User pip.conf:"
+cat /home/vscode/.config/pip/pip.conf || echo "User pip.conf not found"
+echo ""
+echo "Pip config list:"
+pip3 config list || true
+echo ""
+
+# Verify environment proxy settings
+echo "📡 Proxy environment variables:"
+echo "  http_proxy=$http_proxy"
+echo "  https_proxy=$https_proxy"
+echo "  PIP_TRUSTED_HOST=$PIP_TRUSTED_HOST"
+echo "  PIP_DEFAULT_TIMEOUT=$PIP_DEFAULT_TIMEOUT"
+echo ""
+
+# Test pip connectivity
+echo "🔍 Testing pip connectivity to PyPI..."
+if pip3 install --dry-run --no-cache-dir requests 2>&1 | grep -q "Successfully"; then
+    echo "✅ Pip can successfully reach PyPI"
+else
+    echo "⚠️  Pip connectivity test failed. Trying verbose mode..."
+    pip3 install --dry-run --no-cache-dir --verbose requests 2>&1 | tail -20
+fi
+echo ""
+
+# Install .NET global tools
+echo "📦 Installing .NET global tools..."
+dotnet tool install -g dotnet-ef || echo "⚠️  dotnet-ef installation failed"
+dotnet tool install -g dotnet-format || echo "⚠️  dotnet-format installation failed"
+dotnet tool install -g dotnet-outdated-tool || echo "⚠️  dotnet-outdated-tool installation failed"
+echo ""
+
+# Install base Python packages first
+echo "📦 Installing base Python packages..."
+pip3 install --user --break-system-packages --no-cache-dir \
+    openai \
+    anthropic \
+    google-generativeai \
+    requests \
+    rich \
+|| echo "⚠️  Some base packages failed to install"
+echo ""
+
 # Install OpenAI CLI (unofficial)
-pip3 install --user --break-system-packages openai-cli
+pip3 install --user --break-system-packages openai-cli || echo "⚠️  OpenAI CLI installation failed"
 
 # Install Anthropic Claude CLI (unofficial)
-pip3 install --user --break-system-packages anthropic-cli
+pip3 install --user --break-system-packages anthropic-cli || echo "⚠️  Anthropic CLI installation failed"
 
 # Install Google Generative AI CLI tools
 pip3 install --user --break-system-packages google-generativeai-cli || echo "⚠️  Google CLI not available via pip"
@@ -104,8 +158,50 @@ if ! grep -q "/home/vscode/bin" /home/vscode/.bashrc; then
     echo 'export PATH="$HOME/bin:$PATH"' >> /home/vscode/.bashrc
 fi
 
-# Set up git safe directory
-git config --global --add safe.directory /workspace
+# Set up git safe directory (with retry logic)
+echo "📝 Configuring git..."
+for i in {1..3}; do
+    if git config --global --add safe.directory /workspace 2>/dev/null; then
+        echo "✅ Git configured successfully"
+        break
+    else
+        echo "⏳ Waiting for git config to be writable... ($i/3)"
+        sleep 2
+    fi
+done
+
+# Apply git proxy configuration
+if [ -f "/tmp/gitconfig-proxy" ]; then
+    echo "📝 Configuring git proxy..."
+    cat /tmp/gitconfig-proxy >> /home/vscode/.gitconfig
+    echo "✅ Git proxy configured"
+fi
+
+# Apply NuGet proxy configuration
+if [ -f "/tmp/nuget.config" ]; then
+    echo "📝 Configuring NuGet proxy..."
+    mkdir -p /home/vscode/.nuget/NuGet
+    cp /tmp/nuget.config /home/vscode/.nuget/NuGet/NuGet.Config
+    echo "✅ NuGet proxy configured"
+fi
+
+# Apply APT proxy configuration
+if [ -f "/tmp/apt-proxy.conf" ]; then
+    echo "📝 Configuring APT proxy..."
+    sudo cp /tmp/apt-proxy.conf /etc/apt/apt.conf.d/99proxy
+    echo "✅ APT proxy configured"
+    echo "ℹ️  APT will now use proxy for future package installations"
+fi
+
+# Apply pip proxy configuration
+if [ -f "/tmp/pip.conf" ]; then
+    echo "📝 Configuring pip proxy..."
+    sudo cp /tmp/pip.conf /etc/pip.conf
+    mkdir -p /home/vscode/.config/pip
+    cp /tmp/pip.conf /home/vscode/.config/pip/pip.conf
+    echo "✅ Pip proxy configured"
+    echo "ℹ️  Pip will now use proxy for package installations"
+fi
 
 # Create helpful aliases
 cat >> /home/vscode/.bashrc << 'EOF'

@@ -3,21 +3,23 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
-	
+
 	// Features to install
 	"features": {
 		"ghcr.io/devcontainers/features/dotnet:2": {
-			"version": "8.0",
+			"version": "10.0",
 			"installUsingApt": false
 		},
 		"ghcr.io/devcontainers/features/git:1": {
 			"version": "latest"
 		},
-		"ghcr.io/devcontainers/features/github-cli:1": {
-			"version": "latest"
-		},
+		// GitHub CLI removed - install manually in post-create if needed
+		// The feature downloads from GitHub which may fail with proxy
+		// "ghcr.io/devcontainers/features/github-cli:1": {
+		// 	"version": "latest"
+		// },
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "20"
+			"version": "22"
 		},
 		"ghcr.io/devcontainers/features/python:1": {
 			"version": "3.11"
@@ -32,7 +34,11 @@
 				"dotnet.defaultSolution": "Chonkie.Net.sln",
 				"omnisharp.useModernNet": true,
 				// Security: Disable telemetry
-				"telemetry.telemetryLevel": "off"
+				"telemetry.telemetryLevel": "off",
+				// Proxy settings for VS Code and extensions
+				"http.proxy": "http://proxy:3128",
+				"http.proxyStrictSSL": false,
+				"http.proxySupport": "on"
 			},
 			"extensions": [
 				"ms-dotnettools.csharp",
@@ -61,10 +67,16 @@
 		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
 		"DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
 		"ASPNETCORE_ENVIRONMENT": "Development",
+		// Pip configuration
+		"PIP_DEFAULT_TIMEOUT": "100",
+		"PIP_TRUSTED_HOST": "pypi.org pypi.python.org files.pythonhosted.org",
 		// Proxy settings for network filtering
-		"http_proxy": "http://localhost:3128",
-		"https_proxy": "http://localhost:3128",
-		"no_proxy": "localhost,127.0.0.1"
+		"http_proxy": "http://proxy:3128",
+		"https_proxy": "http://proxy:3128",
+		"HTTP_PROXY": "http://proxy:3128",
+		"HTTPS_PROXY": "http://proxy:3128",
+		"no_proxy": "localhost,127.0.0.1,devcontainer",
+		"NO_PROXY": "localhost,127.0.0.1,devcontainer"
 	},
 
 	// Port forwarding

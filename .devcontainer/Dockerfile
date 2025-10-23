@@ -1,5 +1,5 @@
 # Base image with .NET SDK
-FROM mcr.microsoft.com/devcontainers/dotnet:8.0
+FROM mcr.microsoft.com/devcontainers/dotnet:10.0
 
 # Build arguments
 ARG USER_UID=1000
@@ -9,7 +9,9 @@ ARG USER_GID=1000
 ENV DEBIAN_FRONTEND=noninteractive \
     DOTNET_CLI_TELEMETRY_OPTOUT=1 \
     DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 \
-    ASPNETCORE_ENVIRONMENT=Development
+    ASPNETCORE_ENVIRONMENT=Development \
+    PIP_DEFAULT_TIMEOUT=100 \
+    PIP_TRUSTED_HOST="pypi.org pypi.python.org files.pythonhosted.org"
 
 # Install additional packages
 RUN apt-get update && apt-get install -y \
@@ -53,6 +55,36 @@ RUN echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/vscode \
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Copy pip configuration for proxy support (will be applied in post-create)
+# NOTE: Do NOT apply during build as proxy container doesn't exist yet
+# The Python feature installation will fail if it tries to use proxy during build
+COPY pip.conf /tmp/pip.conf
+
+# Copy npm configuration for proxy support
+COPY npmrc /home/vscode/.npmrc
+RUN chown vscode:vscode /home/vscode/.npmrc
+
+# Copy wget configuration for proxy support
+COPY wgetrc /etc/wgetrc
+
+# Copy curl configuration for proxy support  
+COPY curlrc /home/vscode/.curlrc
+RUN chown vscode:vscode /home/vscode/.curlrc
+
+# Copy git proxy configuration (will be applied in post-create)
+COPY gitconfig-proxy /tmp/gitconfig-proxy
+
+# Copy NuGet proxy configuration (will be applied in post-create)
+COPY nuget.config /tmp/nuget.config
+
+# Copy APT proxy configuration (will be applied in post-create)
+# NOTE: Do NOT apply during build as proxy container doesn't exist yet
+COPY apt-proxy.conf /tmp/apt-proxy.conf
+
+# Copy Docker CLI proxy configuration (for docker-in-docker scenarios)
+COPY docker-config.json /home/vscode/.docker/config.json
+RUN mkdir -p /home/vscode/.docker && chown -R vscode:vscode /home/vscode/.docker
+
 # Create directories for writable areas
 RUN mkdir -p \
     /home/vscode/.nuget \
@@ -69,23 +101,17 @@ RUN mkdir -p \
 # Switch to vscode user
 USER vscode
 
-# Install global .NET tools
-RUN dotnet tool install -g dotnet-ef \
-    && dotnet tool install -g dotnet-format \
-    && dotnet tool install -g dotnet-outdated-tool
+# NOTE: .NET tools will be installed in post-create script
+# This is because they need network access through the proxy,
+# which is only available after the container is running
 
-# Add .NET tools to PATH
+# Add .NET tools to PATH (tools will be installed later)
 ENV PATH="${PATH}:/home/vscode/.dotnet/tools"
 
-# Install Python AI CLI tools (will be completed in post-create script)
-# Pre-install some common packages to speed up container creation
-# Using --break-system-packages is safe in containers (PEP 668)
-RUN python3 -m pip install --user --no-cache-dir --break-system-packages \
-    openai \
-    anthropic \
-    google-generativeai \
-    requests \
-    rich
+# NOTE: Python packages will be installed in post-create script
+# This is because they need network access through the proxy,
+# which is only available after the container is running with docker-compose
+# The proxy service must be up before pip can access PyPI
 
 # Set up bash history persistence
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/home/vscode/commandhistory/.bash_history" \
