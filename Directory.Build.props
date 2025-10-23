@@ -37,4 +37,12 @@
     <DockerBuildContext>.</DockerBuildContext>
     <DockerfilePath>.devcontainer\Dockerfile.dotnet</DockerfilePath>
   </PropertyGroup>
+
+  <!-- Redirect outputs for Docker Compose MSBuild projects so bin/obj don't clutter the repo root -->
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.dcproj'">
+    <!-- Put compose outputs under artifacts/docker-compose/{obj|bin} -->
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts/docker-compose/obj/</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)artifacts/docker-compose/bin/</OutputPath>
+  </PropertyGroup>
 </Project>
