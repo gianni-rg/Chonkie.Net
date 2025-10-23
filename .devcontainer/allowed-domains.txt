@@ -17,6 +17,10 @@
 .github.com
 .githubusercontent.com
 
+# GitHub Copilot specific domains
+.githubcopilot.com
+.githubapp.com
+
 # Microsoft & VS Code
 .microsoft.com
 .visualstudio.com

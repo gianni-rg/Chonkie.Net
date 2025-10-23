@@ -95,11 +95,12 @@ RUN mkdir -p \
     /home/vscode/.cache \
     /home/vscode/.config \
     /home/vscode/bin \
+    /home/vscode/.dotnet-build \
     /workspace \
     && chown -R vscode:vscode /home/vscode /workspace
 
-# Switch to vscode user
-USER vscode
+# NOTE: Do NOT set USER here - entrypoint.sh will switch to vscode user
+# This allows entrypoint to run as root and fix permissions first
 
 # NOTE: .NET tools will be installed in post-create script
 # This is because they need network access through the proxy,
@@ -116,7 +117,8 @@ ENV PATH="${PATH}:/home/vscode/.dotnet/tools"
 # Set up bash history persistence
 RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/home/vscode/commandhistory/.bash_history" \
     && mkdir -p /home/vscode/commandhistory \
-    && echo "$SNIPPET" >> "/home/vscode/.bashrc"
+    && echo "$SNIPPET" >> "/home/vscode/.bashrc" \
+    && chown -R vscode:vscode /home/vscode/commandhistory
 
 # Create workspace directory
 WORKDIR /workspace
