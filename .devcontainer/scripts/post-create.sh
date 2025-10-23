@@ -173,6 +173,11 @@ for i in {1..3}; do
     fi
 done
 
+# Ensure line-ending policy is consistent in the container
+# Rely on .gitattributes for normalization and keep autocrlf disabled
+git config --file /home/vscode/.config/git/config core.autocrlf false || true
+git config --file /home/vscode/.config/git/config core.eol lf || true
+
 # Apply git proxy configuration (XDG global config)
 if [ -f "/tmp/gitconfig-proxy" ]; then
     echo "📝 Configuring git proxy (XDG)..."
