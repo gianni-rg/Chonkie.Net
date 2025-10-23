@@ -160,20 +160,24 @@ fi
 
 # Set up git safe directory (with retry logic)
 echo "📝 Configuring git..."
+# We can't write to /home/vscode/.gitconfig because it's bind-mounted read-only.
+# Use XDG global config at /home/vscode/.config/git/config instead.
+mkdir -p /home/vscode/.config/git
 for i in {1..3}; do
-    if git config --global --add safe.directory /workspace 2>/dev/null; then
-        echo "✅ Git configured successfully"
+    if git config --file /home/vscode/.config/git/config --add safe.directory /workspace 2>/dev/null; then
+        echo "✅ Git configured successfully (XDG global config)"
         break
     else
-        echo "⏳ Waiting for git config to be writable... ($i/3)"
+        echo "⏳ Retrying git config... ($i/3)"
         sleep 2
     fi
 done
 
-# Apply git proxy configuration
+# Apply git proxy configuration (XDG global config)
 if [ -f "/tmp/gitconfig-proxy" ]; then
-    echo "📝 Configuring git proxy..."
-    cat /tmp/gitconfig-proxy >> /home/vscode/.gitconfig
+    echo "📝 Configuring git proxy (XDG)..."
+    mkdir -p /home/vscode/.config/git
+    cat /tmp/gitconfig-proxy >> /home/vscode/.config/git/config
     echo "✅ Git proxy configured"
 fi
 
