@@ -8,7 +8,7 @@ echo "🚀 Running post-create setup..."
 if [ ! -z "$http_proxy" ]; then
     echo "⏳ Waiting for proxy service to be ready..."
     PROXY_READY=false
-    
+
     # Wait up to 120 seconds for proxy to be ready
     for i in {1..60}; do
         # Test both port connectivity and actual HTTP functionality
