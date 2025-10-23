@@ -185,21 +185,18 @@ if [ -f "/tmp/nuget.config" ]; then
     echo "✅ NuGet proxy configured"
 fi
 
-# Apply APT proxy configuration
-if [ -f "/tmp/apt-proxy.conf" ]; then
-    echo "📝 Configuring APT proxy..."
-    sudo cp /tmp/apt-proxy.conf /etc/apt/apt.conf.d/99proxy
-    echo "✅ APT proxy configured"
-    echo "ℹ️  APT will now use proxy for future package installations"
-fi
+# Note: APT proxy configuration skipped in post-create due to no-new-privileges
+# The container already has all needed packages installed during build
+# If you need apt during runtime, temporarily disable no-new-privileges in docker-compose.yml
 
-# Apply pip proxy configuration
+# Apply pip proxy configuration (user-level only)
 if [ -f "/tmp/pip.conf" ]; then
     echo "📝 Configuring pip proxy..."
-    sudo cp /tmp/pip.conf /etc/pip.conf
+    # System-level config requires sudo (skipped due to no-new-privileges)
+    # User-level config works fine for all pip operations as vscode user
     mkdir -p /home/vscode/.config/pip
     cp /tmp/pip.conf /home/vscode/.config/pip/pip.conf
-    echo "✅ Pip proxy configured"
+    echo "✅ Pip proxy configured (user-level)"
     echo "ℹ️  Pip will now use proxy for package installations"
 fi
 
