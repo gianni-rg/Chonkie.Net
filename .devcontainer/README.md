@@ -1,237 +1,317 @@
-# DevContainer Setup for Secure AI Agent Development
+# VS Code Dev Container - Secure Sandboxed Environment
 
-This devcontainer provides a secure, isolated development environment for testing AI coding assistants like GitHub Copilot, Gemini CLI, and others.
+This Dev Container provides a secure, sandboxed environment for running AI-assisted tools and .NET development with controlled network access and filesystem isolation.
 
-## Features
+## 🔐 Security Features
 
-### Security
-- **Network Isolation**: All outbound traffic routes through a Squid proxy
-- **Allow-List Configuration**: Only approved AI service domains are accessible
-- **Logging**: All network requests are logged for audit
+### Network Security
+- **Controlled Internet Access**: All network traffic routes through a Squid proxy
+- **Whitelist-based filtering**: Only approved domains in `allowed-domains.txt` are accessible
+- **Transparent HTTPS**: Optional SSL inspection for monitoring encrypted traffic
+- **Isolated network**: Container runs on a dedicated Docker network
 
-### Development Tools
-- .NET SDK 9.0
-- Node.js 20
-- Git & GitHub CLI
-- VS Code with Copilot extensions pre-installed
+### Filesystem Security
+- **Read-only root filesystem**: Prevents unauthorized modifications to the system
+- **Workspace isolation**: Only the workspace and explicitly mounted folders are accessible
+- **Selective mounting**: External folders can be mounted as read-only or read-write
+- **Temporary storage**: Writable temp directories with `noexec` flag
 
-### Supported Platforms
-- ✅ **VS Code** - Full support via Dev Containers extension
-- ✅ **CLI** - Direct Docker Compose / Podman Compose usage
-- ✅ **Visual Studio 2022** - Full support with Podman wrappers (see [`QUICKSTART_VS_PODMAN.md`](QUICKSTART_VS_PODMAN.md))
-- ✅ **Podman** - Alternative to Docker Desktop (no licensing fees)
+### Runtime Security
+- **Non-root user**: Container runs as `vscode` user (UID 1000)
+- **Dropped capabilities**: Minimal Linux capabilities with `CAP_DROP ALL`
+- **No new privileges**: Prevents privilege escalation
+- **Resource limits**: CPU and memory limits configured in docker-compose
 
-## Usage
+## 🚀 Quick Start
 
-### VS Code (Recommended)
+### Prerequisites
+- Podman Desktop (Windows/Mac) or Podman (Linux)
+- VS Code with Remote - Containers extension
+- Git
 
-1. Install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-2. Open the project folder
-3. Press `F1` → "Dev Containers: Reopen in Container"
-4. Wait for the container to build and start
+### First-Time Setup
 
-### CLI (Command Line)
+1. **Copy the environment file**:
+   ```bash
+   cp .devcontainer/.env.example .devcontainer/.env
+   ```
 
-```powershell
-# Navigate to project root
-cd c:\Projects\Personal\Chonkie.Net
+2. **Configure your API keys** in `.devcontainer/.env`:
+   ```env
+   OPENAI_API_KEY=sk-your-key-here
+   ANTHROPIC_API_KEY=sk-ant-your-key-here
+   GOOGLE_API_KEY=your-gemini-key-here
+   GITHUB_TOKEN=ghp_your-token-here
+   ```
 
-# Start the containers
-docker-compose -f .devcontainer/docker-compose.yml up -d
+3. **Configure external folder mounts** (optional):
+   Edit `.devcontainer/docker-compose.yml` and uncomment/modify the volume mounts:
+   ```yaml
+   volumes:
+     - ${EXTERNAL_DATA_PATH:-~/data}:/mnt/data:ro
+     - ${EXTERNAL_LIBS_PATH:-~/libs}:/mnt/libs:ro
+     - ${EXTERNAL_OUTPUT_PATH:-~/output}:/mnt/output:rw
+   ```
 
-# Attach to the development container
-docker exec -it chonkienet-dotnet-app-1 bash
+4. **Update allowed domains** (if needed):
+   Edit `.devcontainer/allowed-domains.txt` to add domains you need to access
 
-# Work in the container
-cd /workspace
+5. **Open in Dev Container**:
+   - Open VS Code in this workspace
+   - Press `F1` and select "Dev Containers: Reopen in Container"
+   - Wait for the container to build (first time takes ~5-10 minutes)
+   - Note: VS Code will use Podman automatically if configured
+
+## 📦 Installed Tools
+
+### .NET Development
+- .NET 8.0 SDK
+- dotnet-ef (Entity Framework tools)
+- dotnet-format (code formatter)
+- dotnet-outdated-tool
+
+### AI CLI Tools
+- OpenAI CLI
+- Anthropic Claude CLI
+- Google Gemini CLI
+- GitHub Copilot CLI (requires `gh auth login`)
+
+### Other Tools
+- Python 3.11 with pip
+- Node.js 20 with npm
+- Git and GitHub CLI
+- Various utilities (curl, wget, jq, tree, etc.)
+
+## 🎯 Usage
+
+### Using AI Tools
+
+The container provides a unified `ai-tools` wrapper:
+
+```bash
+# OpenAI
+ai-tools openai chat "Explain this code"
+ask-openai "What is this function doing?"
+
+# Claude
+ai-tools claude chat "Help me debug"
+ask-claude "Review this code"
+
+# Gemini
+ai-tools gemini generate "Optimize this algorithm"
+ask-gemini "Suggest improvements"
+
+# GitHub Copilot
+ai-tools copilot suggest "Write a unit test for..."
+ask-copilot "Explain this error"
+```
+
+### .NET Development
+
+```bash
+# Build the solution
 dotnet build
+
+# Run tests
+dotnet test
+
+# Run a project
+cd samples/Chonkie.Sample
+dotnet run
 ```
 
-### Visual Studio 2022 with Podman
+### Managing Network Access
 
-Visual Studio 2022 supports Docker Compose debugging. When using Podman, you need wrapper scripts.
-
-**Quick Setup (5 minutes):**
-
-```powershell
-# 1. Run setup script (as administrator)
-cd .devcontainer\scripts
-.\setup-podman-wrappers.ps1 -AddToPath
-
-# 2. Restart Visual Studio
-# 3. Open Chonkie.Net.sln
-# 4. Set docker-compose as startup project
-# 5. Press F5 to debug
-```
-
-**Full Documentation:**
-- [`QUICKSTART_VS_PODMAN.md`](QUICKSTART_VS_PODMAN.md) - 5-minute setup guide
-- [`VISUAL_STUDIO_PODMAN_SETUP.md`](VISUAL_STUDIO_PODMAN_SETUP.md) - Complete reference
-
-**Alternative: Use with Docker Desktop**
-
-If you have Docker Desktop installed, no additional setup needed:
-1. Open `Chonkie.Net.sln` in Visual Studio
-2. Set `docker-compose` as startup project
-3. Press F5
-
-**Hybrid Approach (Best of Both Worlds)**
-- Use **VS Code** for AI assistant interactions (Copilot, chat, code generation)
-- Use **Visual Studio** for heavy lifting (refactoring, debugging, profiling)
-- Both can work simultaneously with the same codebase via volume mounts
-
-## Network Configuration
-
-### Inbound Rules (Exposed Ports)
-- `3000` - Application services
-- `5000` - HTTP endpoints
-- `5001` - HTTPS endpoints
-- `3128` - Squid proxy (for debugging)
-
-### Outbound Rules (Proxy Allow-List)
-Allowed domains are configured in `squid.conf`:
-- GitHub & Copilot services
-- OpenAI API
-- Azure OpenAI
-- Google AI (Gemini, Vertex)
-- Anthropic (Claude)
-- Microsoft authentication
-- NuGet, NPM package repositories
-- VS Code marketplace
-
-**All other domains are blocked by default.**
-
-### Adding New Domains
-
-If you need to allow additional domains:
-
-1. Edit `.devcontainer/squid.conf`
-2. Add ACL entry: `acl ai_services_domains dstdomain .example.com`
-3. Rebuild: `docker-compose -f .devcontainer/docker-compose.yml up -d --build`
-4. Check logs: `docker-compose -f .devcontainer/docker-compose.yml logs proxy`
-
-### Viewing Blocked Requests
-
+**View current allowed domains**:
 ```bash
-# View proxy logs
-docker exec chonkienet-proxy-1 tail -f /var/log/squid/access.log
-
-# Or via compose
-docker-compose -f .devcontainer/docker-compose.yml logs -f proxy
+cat .devcontainer/allowed-domains.txt
 ```
 
-## Installing Additional AI Agents
+**Add a new domain**:
+1. Edit `.devcontainer/allowed-domains.txt`
+2. Add the domain (e.g., `.example.com`)
+3. Rebuild the container or restart the proxy
 
-### Gemini CLI
-
+**Test network connectivity**:
 ```bash
-# Inside the container
-npm config set proxy http://proxy:3128
-npm config set https-proxy http://proxy:3128
-npm install -g @google/gemini-cli
+# Check general connectivity
+check-network
+
+# Check proxy status
+proxy-status
+
+# Test specific domain
+curl -I https://api.openai.com
 ```
 
-### Other CLIs
-
-Add installation commands to `devcontainer.json` → `postCreateCommand`:
-
-```json
-"postCreateCommand": "npm install -g @some/ai-cli && echo 'Setup complete!'"
+**Disable network filtering** (for debugging):
+Edit `.devcontainer/docker-compose.yml` and comment out proxy environment variables:
+```yaml
+# environment:
+#   - http_proxy=http://proxy:3128
+#   - https_proxy=http://proxy:3128
 ```
+Then restart: `podman-compose restart devcontainer`
 
-## Troubleshooting
-
-### Container Won't Build
-```powershell
-# Clean and rebuild
-docker-compose -f .devcontainer/docker-compose.yml down -v
-docker-compose -f .devcontainer/docker-compose.yml build --no-cache
-docker-compose -f .devcontainer/docker-compose.yml up -d
-```
-
-### Network Access Issues
-```bash
-# Test proxy connectivity
-docker exec chonkienet-dotnet-app-1 curl -x http://proxy:3128 https://api.github.com
-
-# Check if domain is allowed
-docker exec chonkienet-proxy-1 grep "github.com" /etc/squid/squid.conf
-```
-
-### VS Code Extensions Not Working
-1. Check proxy settings in `devcontainer.json` → `customizations.vscode.settings`
-2. Ensure container has internet access through proxy
-3. Try reinstalling extensions: `F1` → "Developer: Reload Window"
-
-### Volumes Not Persisting
-```powershell
-# List volumes
-docker volume ls
-
-# Inspect volume
-docker volume inspect chonkienet_dotnet-packages
-```
-
-## File Structure
+## 📁 Filesystem Layout
 
 ```
-.devcontainer/
-├── docker-compose.yml      # Multi-container setup
-├── devcontainer.json       # VS Code configuration
-├── Dockerfile.dotnet       # .NET development image
-├── squid.conf              # Proxy allow-list
-└── README.md               # This file
+/workspace/              # Your project (read-write)
+/mnt/data/              # External data folder (configure mount)
+/mnt/libs/              # External libraries (configure mount)
+/mnt/output/            # External output folder (configure mount)
+/home/vscode/.nuget/    # NuGet packages cache (persistent)
+/home/vscode/.vscode-server/  # VS Code extensions (persistent)
+/tmp/                   # Writable temp (noexec, cleared on restart)
 ```
 
-## Security Considerations
+## 🔧 Configuration Files
 
-### What This Protects Against
-✅ Unauthorized network access by AI agents  
-✅ Data exfiltration to unknown domains  
-✅ Accidental exposure of sensitive data  
-✅ Malicious code execution attempting network access  
+### `.devcontainer/devcontainer.json`
+Main Dev Container configuration. Controls:
+- VS Code settings and extensions
+- Container user and environment
+- Port forwarding
+- Lifecycle scripts
 
-### What This Doesn't Protect Against
-❌ Local file system access (agents have full access)  
-❌ Execution of malicious code that doesn't require network  
-❌ Social engineering attacks  
-❌ Compromised allowed domains  
+### `.devcontainer/docker-compose.yml`
+Podman Compose services configuration. Controls:
+- Volume mounts (workspace and external folders)
+- Network settings
+- Resource limits
+- Security options
 
-### Best Practices
-1. **Review AI suggestions** before accepting
-2. **Monitor proxy logs** regularly
-3. **Keep allow-list minimal** - only add trusted domains
-4. **Use version control** - track all AI-generated changes
-5. **Never commit secrets** - use environment variables
+### `.devcontainer/Dockerfile`
+Container image definition. Controls:
+- Base image and installed packages
+- User setup
+- Pre-installed tools
 
-## Performance Tips
+### `.devcontainer/squid.conf`
+Proxy configuration. Controls:
+- Network filtering rules
+- Caching behavior
+- Logging
 
-### Speed Up Rebuilds
-Volumes persist data between rebuilds:
-- `dotnet-packages` - NuGet packages
-- `vscode-extensions` - VS Code extensions
-- `squid-cache` - Proxy cache
+### `.devcontainer/allowed-domains.txt`
+Whitelist of allowed domains for network access.
 
-### Reduce Build Time
-Comment out unused tools in `Dockerfile.dotnet`
+## 🛡️ Advanced Security Configuration
 
-### Optimize Proxy
-Squid caches responses. Increase cache size in `squid.conf`:
-```conf
-cache_dir ufs /var/spool/squid 500 16 256  # 500 MB cache
+### Stricter Network Isolation
+
+For complete network isolation (container can't access internet at all):
+
+Edit `.devcontainer/docker-compose.yml`:
+```yaml
+networks:
+  devcontainer-network:
+    driver: bridge
+    internal: true  # Change from false to true
 ```
 
-## Additional Resources
+### Read-Only External Mounts
+
+Mount external folders as read-only:
+```yaml
+volumes:
+  - /path/to/sensitive/data:/mnt/data:ro  # :ro = read-only
+```
+
+### Custom UID/GID
+
+Match your host user for better file permissions:
+```env
+# In .env file
+USER_UID=1001
+USER_GID=1001
+```
+
+### Enable HTTPS Inspection
+
+To inspect HTTPS traffic (for monitoring):
+
+1. Generate SSL certificates:
+   ```bash
+   openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
+     -keyout .devcontainer/ssl/key.pem \
+     -out .devcontainer/ssl/cert.pem
+   ```
+
+2. Uncomment SSL bump configuration in `.devcontainer/squid.conf`
+
+3. Rebuild the container
+
+## 🐛 Troubleshooting
+
+### Container won't start
+- Check Podman Desktop is running
+- Verify docker-compose.yml syntax
+- Check logs: `podman-compose logs devcontainer`
+
+### Network not working
+- Verify proxy is running: `podman-compose ps`
+- Check allowed-domains.txt contains the domain you need
+- Test proxy directly: `curl -x http://proxy:3128 https://google.com`
+- Check proxy logs: `podman-compose logs proxy`
+
+### Permission denied errors
+- Verify UID/GID matches your host user
+- Check volume mount permissions
+- Ensure directories are owned by vscode user
+
+### AI tools not working
+- Verify API keys are set in `.env`
+- Check network access to AI service domains
+- Test with curl: `curl https://api.openai.com`
+
+### Read-only filesystem errors
+- Ensure you're writing to allowed directories (/tmp, /workspace, /home/vscode)
+- Check tmpfs mounts are configured correctly
+- Use /tmp for temporary files
+
+## 📚 Additional Resources
 
 - [VS Code Dev Containers Documentation](https://code.visualstudio.com/docs/devcontainers/containers)
+- [Podman Desktop Documentation](https://podman-desktop.io/docs)
+- [Podman Compose Documentation](https://github.com/containers/podman-compose)
+- [Docker Security Best Practices](https://docs.docker.com/engine/security/)
 - [Squid Proxy Documentation](http://www.squid-cache.org/Doc/)
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [GitHub Copilot Documentation](https://docs.github.com/copilot)
 
-## Support
+## 🔄 Updating the Container
 
-For issues or questions:
-1. Check the troubleshooting section above
-2. Review container logs: `docker-compose -f .devcontainer/docker-compose.yml logs`
-3. Verify network configuration in `squid.conf`
-4. Test connectivity manually using `curl` inside the container
+When you make changes to the container configuration:
+
+1. **Rebuild the container**:
+   - Press `F1` → "Dev Containers: Rebuild Container"
+   - Or: `podman-compose build --no-cache`
+
+2. **Update running container**:
+   - Press `F1` → "Dev Containers: Rebuild and Reopen in Container"
+
+## 📝 Notes
+
+- First build takes 5-10 minutes (subsequent builds are faster with caching)
+- API keys are passed as environment variables (never committed to Git)
+- Container state persists across restarts (NuGet cache, extensions, etc.)
+- Network filtering may cause some legitimate requests to fail - add domains as needed
+- Read-only filesystem prevents some tools from working - use /tmp or /workspace
+- VS Code Dev Containers extension works with both Docker and Podman
+- Podman provides rootless containers for enhanced security
+
+## 🤝 Contributing
+
+When adding new AI tools or domains:
+
+1. Add the tool installation to `scripts/post-create.sh`
+2. Add required domains to `allowed-domains.txt`
+3. Update this README with usage instructions
+4. Test in a clean container build
+
+## ⚠️ Security Considerations
+
+- **API Keys**: Never commit `.env` file to version control
+- **Sensitive Data**: Don't mount sensitive folders as read-write
+- **Network Access**: Regularly review and audit `allowed-domains.txt`
+- **Updates**: Keep base images updated for security patches
+- **Logs**: Proxy logs may contain sensitive URLs - secure appropriately

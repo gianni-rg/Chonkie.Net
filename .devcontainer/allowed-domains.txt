@@ -1,0 +1,68 @@
+# Allowed Domains for Dev Container Network Access
+# Add domains that AI tools and development need to access
+
+# OpenAI
+.openai.com
+api.openai.com
+
+# Anthropic (Claude)
+.anthropic.com
+api.anthropic.com
+
+# Google (Gemini)
+.google.com
+.googleapis.com
+generativelanguage.googleapis.com
+
+# GitHub
+.github.com
+.githubusercontent.com
+api.github.com
+copilot-proxy.githubusercontent.com
+
+# Microsoft
+.microsoft.com
+.visualstudio.com
+.vscode-cdn.net
+
+# NuGet
+.nuget.org
+api.nuget.org
+
+# Cohere
+.cohere.ai
+api.cohere.ai
+
+# Voyage AI
+.voyageai.com
+api.voyageai.com
+
+# Jina AI
+.jina.ai
+api.jina.ai
+
+# Azure
+.azure.com
+.windows.net
+.azurewebsites.net
+
+# Docker Hub (for pulling images)
+.docker.com
+.docker.io
+registry-1.docker.io
+
+# Common CDNs and package managers
+.npmjs.org
+.npmjs.com
+registry.npmjs.org
+.pypi.org
+.python.org
+files.pythonhosted.org
+
+# Common development tools
+.stackoverflow.com
+.stackexchange.com
+
+# Additional domains (add as needed)
+# .example.com
+# api.example.com

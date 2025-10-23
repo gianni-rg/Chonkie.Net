@@ -1,83 +1,104 @@
 {
-  "name": ".NET Secure Sandbox",
+	"name": "Chonkie.Net Dev Container (Sandboxed)",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspace",
+	
+	// Features to install
+	"features": {
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "8.0",
+			"installUsingApt": false
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "20"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.11"
+		}
+	},
 
-  // 1. Point to the devcontainer-specific compose file
-  "dockerComposeFile": "./docker-compose.yml",
+	// VS Code settings
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"dotnet.defaultSolution": "Chonkie.Net.sln",
+				"omnisharp.useModernNet": true,
+				// Security: Disable telemetry
+				"telemetry.telemetryLevel": "off"
+			},
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"ms-dotnettools.csdevkit",
+				"ms-dotnettools.vscode-dotnet-runtime",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"ms-vscode.makefile-tools",
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig"
+			]
+		}
+	},
 
-  // 2. Tell VS Code to attach to the 'dotnet-app' service
-  "service": "dotnet-app",
-  "workspaceFolder": "/workspace",
+	// Lifecycle scripts
+	"onCreateCommand": "sudo chown -R vscode:vscode /vscode || true",
+	"postCreateCommand": "bash /workspace/.devcontainer/scripts/post-create.sh",
+	"postStartCommand": "bash /workspace/.devcontainer/scripts/post-start.sh",
 
-  // 3. Shutdown entire compose stack when closing
-  "shutdownAction": "stopCompose",
+	// Container user (non-root for security)
+	"remoteUser": "vscode",
+	"containerUser": "vscode",
 
-  // 4. Run commands after container is created
-  "postCreateCommand": "dotnet --version && echo 'DevContainer Ready!'",
+	// Environment variables
+	"remoteEnv": {
+		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+		"DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
+		"ASPNETCORE_ENVIRONMENT": "Development",
+		// Proxy settings for network filtering
+		"http_proxy": "http://localhost:3128",
+		"https_proxy": "http://localhost:3128",
+		"no_proxy": "localhost,127.0.0.1"
+	},
 
-  // 5. Auto-install extensions *inside* the container for VS Code
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        // AI Coding Assistants
-        "github.copilot",
-        "github.copilot-chat",
-        // .NET Development
-        "ms-dotnettools.csdevkit",
-        "ms-dotnettools.csharp",
-        "ms-dotnettools.vscode-dotnet-runtime",
-        // Additional helpful extensions
-        "editorconfig.editorconfig",
-        "davidanson.vscode-markdownlint"
-      ],
-      "settings": {
-        // Container-specific settings
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "dotnet.server.useOmnisharp": false,
-        "omnisharp.useModernNet": true,
+	// Port forwarding
+	"forwardPorts": [5000, 5001],
+	"portsAttributes": {
+		"5000": {
+			"label": "HTTP",
+			"onAutoForward": "notify"
+		},
+		"5001": {
+			"label": "HTTPS",
+			"onAutoForward": "notify"
+		}
+	},
 
-        // Proxy settings for extensions
-        "http.proxy": "http://proxy:3128",
-        "http.proxyStrictSSL": false
-      }
-    }
-  },
+	// Mount configuration - see docker-compose.yml for details
+	"mounts": [
+		// SSH keys (read-only for security)
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+		// Git config (read-only)
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,readonly"
+	],
+	
+	// Override the default vscode volume mount to use /home/vscode/.vscode-server instead of /vscode
+	"overrideCommand": false,
 
-  // 6. Features to add (alternative to installing in Dockerfile)
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "version": "latest"
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20"
-    }
-  },
+	// Security: Limit capabilities
+	"capAdd": [],
+	"securityOpt": [
+		"no-new-privileges"
+	],
 
-  // 7. Port forwarding
-  "forwardPorts": [3000, 5000, 5001],
-  "portsAttributes": {
-    "3000": {
-      "label": "Application",
-      "onAutoForward": "notify"
-    },
-    "5000": {
-      "label": "HTTP",
-      "onAutoForward": "silent"
-    },
-    "5001": {
-      "label": "HTTPS",
-      "onAutoForward": "silent"
-    }
-  },
-
-  // 8. Mount host SSH keys and Git config for authentication
-  "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,readonly,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,readonly,type=bind,consistency=cached"
-  ],
-
-  // 9. Container user
-  "remoteUser": "root"
+	// Disable GPU and Wayland support (incompatible with Podman on Windows)
+	"hostRequirements": {
+		"gpu": false
+	}
 }
