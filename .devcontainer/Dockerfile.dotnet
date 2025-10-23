@@ -1,0 +1,60 @@
+# Start from a base .NET SDK image
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS base
+
+# Accept build arguments for proxy
+ARG http_proxy
+ARG https_proxy
+ARG no_proxy=localhost,127.0.0.1
+
+# Set environment variables for package managers during build
+ENV http_proxy=${http_proxy} \
+    https_proxy=${https_proxy} \
+    HTTP_PROXY=${http_proxy} \
+    HTTPS_PROXY=${https_proxy} \
+    NO_PROXY=${no_proxy}
+
+# Set the working directory
+WORKDIR /workspace
+
+# Install common tools and dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Basic utilities
+    curl \
+    wget \
+    git \
+    unzip \
+    ca-certificates \
+    gnupg \
+    # Build tools
+    build-essential \
+    # Debugging tools
+    procps \
+    # Text editors
+    nano \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Note: Node.js and other features are now installed via devcontainer.json features
+# This keeps the base image smaller and more maintainable
+
+# --- Install AI Agent CLIs ---
+# These require network access and will use the proxy
+
+# Install Gemini CLI (requires Node.js - added via features)
+# RUN npm config set proxy ${http_proxy} && \
+#     npm config set https-proxy ${https_proxy} && \
+#     npm install -g @google/gemini-cli
+
+# Note: OpenCode and other CLIs should be installed in postCreateCommand
+# or manually to avoid build failures on unverified scripts
+
+# Configure Git to work with proxy
+RUN git config --global http.proxy ${http_proxy} && \
+    git config --global https.proxy ${https_proxy}
+
+# Create directories for NuGet packages and VS Code extensions
+RUN mkdir -p /root/.nuget/packages && \
+    mkdir -p /root/.vscode-server/extensions
+
+# Keep the container running
+CMD ["sleep", "infinity"]

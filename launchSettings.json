@@ -1,0 +1,25 @@
+{
+  "profiles": {
+    "Docker Compose (Podman)": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "executablePath": "C:\\bin\\docker-compose.exe",
+      "composeBuild": true,
+      "serviceActions": {
+        "dotnet-app": "StartDebugging"
+      },
+      "composeProfile": {
+        "commandLineArgs": "-f .devcontainer/docker-compose.yml"
+      }
+    },
+    "DevContainer (Direct)": {
+      "commandName": "Executable",
+      "executablePath": "podman",
+      "commandLineArgs": "compose -f .devcontainer/docker-compose.yml up --build",
+      "workingDirectory": "$(ProjectDir)",
+      "environmentVariables": {
+        "COMPOSE_PROJECT_NAME": "chonkie-net-dev"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+services:
+  dotnet-app:
+    image: ${DOCKER_REGISTRY-}chonkiesample
+    build:
+      context: .
+      dockerfile: samples/Chonkie.Sample/Dockerfile

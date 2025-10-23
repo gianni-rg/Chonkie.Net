@@ -1,0 +1,74 @@
+services:
+  # -----------------------------------------------------------------
+  # 1. YOUR .NET APPLICATION SERVICE
+  # -----------------------------------------------------------------
+  dotnet-app: # <-- This is your .NET app
+    build:
+      context: .. # Points to the root of your project
+      dockerfile: .devcontainer/Dockerfile.dotnet
+      args:
+        # Pass proxy to build stage for package installations
+        http_proxy: http://proxy:3128
+        https_proxy: http://proxy:3128
+
+    volumes:
+      - ..:/workspace:cached
+      # Persist packages and extensions between rebuilds
+      - dotnet-packages:/root/.nuget/packages
+      - vscode-extensions:/root/.vscode-server/extensions
+      - vscode-extensions-insiders:/root/.vscode-server-insiders/extensions
+
+    # --- SECURITY SANDBOX ---
+    # Force this service to use the proxy
+    environment:
+      - http_proxy=http://proxy:3128
+      - https_proxy=http://proxy:3128
+      - HTTP_PROXY=http://proxy:3128
+      - HTTPS_PROXY=http://proxy:3128
+      - NO_PROXY=localhost,127.0.0.1,proxy,dotnet-app
+      # .NET SDK telemetry and NuGet
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+      - NUGET_PACKAGES=/root/.nuget/packages
+
+    # Connect to the proxied network
+    networks:
+      - proxied-net
+
+    # Expose ports for debugging and web apps
+    ports:
+      - "5000:5000"   # HTTP
+      - "5001:5001"   # HTTPS
+      - "3000:3000"   # Additional port for services
+
+    # Keep it running for VS Code/CLI to attach to
+    command: sleep infinity
+
+    # Ensure proxy starts first
+    depends_on:
+      - proxy
+
+  # -----------------------------------------------------------------
+  # 2. THE SQUID PROXY SERVICE
+  # -----------------------------------------------------------------
+  proxy:
+    image: sameersbn/squid:latest
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+      - squid-cache:/var/spool/squid
+      - squid-logs:/var/log/squid
+    networks:
+      - proxied-net
+    # Make logs accessible
+    ports:
+      - "3128:3128"  # Optional: expose proxy for debugging
+
+networks:
+  proxied-net:
+    driver: bridge
+
+volumes:
+  dotnet-packages:
+  vscode-extensions:
+  vscode-extensions-insiders:
+  squid-cache:
+  squid-logs:

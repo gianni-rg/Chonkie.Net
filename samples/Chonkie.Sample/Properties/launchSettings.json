@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Chonkie.Sample": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

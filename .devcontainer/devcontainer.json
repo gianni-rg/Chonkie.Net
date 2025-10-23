@@ -1,0 +1,83 @@
+{
+  "name": ".NET Secure Sandbox",
+
+  // 1. Point to the devcontainer-specific compose file
+  "dockerComposeFile": "./docker-compose.yml",
+
+  // 2. Tell VS Code to attach to the 'dotnet-app' service
+  "service": "dotnet-app",
+  "workspaceFolder": "/workspace",
+
+  // 3. Shutdown entire compose stack when closing
+  "shutdownAction": "stopCompose",
+
+  // 4. Run commands after container is created
+  "postCreateCommand": "dotnet --version && echo 'DevContainer Ready!'",
+
+  // 5. Auto-install extensions *inside* the container for VS Code
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // AI Coding Assistants
+        "github.copilot",
+        "github.copilot-chat",
+        // .NET Development
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        // Additional helpful extensions
+        "editorconfig.editorconfig",
+        "davidanson.vscode-markdownlint"
+      ],
+      "settings": {
+        // Container-specific settings
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "dotnet.server.useOmnisharp": false,
+        "omnisharp.useModernNet": true,
+
+        // Proxy settings for extensions
+        "http.proxy": "http://proxy:3128",
+        "http.proxyStrictSSL": false
+      }
+    }
+  },
+
+  // 6. Features to add (alternative to installing in Dockerfile)
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+
+  // 7. Port forwarding
+  "forwardPorts": [3000, 5000, 5001],
+  "portsAttributes": {
+    "3000": {
+      "label": "Application",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "HTTP",
+      "onAutoForward": "silent"
+    },
+    "5001": {
+      "label": "HTTPS",
+      "onAutoForward": "silent"
+    }
+  },
+
+  // 8. Mount host SSH keys and Git config for authentication
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,readonly,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,readonly,type=bind,consistency=cached"
+  ],
+
+  // 9. Container user
+  "remoteUser": "root"
+}

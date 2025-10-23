@@ -22,4 +22,19 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
+
+  <!-- Docker/Podman Configuration for Visual Studio -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <!-- Use wrapper scripts that redirect to Podman -->
+    <DockerComposeExePath>C:\bin\docker-compose.exe</DockerComposeExePath>
+    <DockerExePath>C:\bin\docker.exe</DockerExePath>
+    
+    <!-- Docker Compose project configuration -->
+    <DockerComposeProjectName>chonkie-net</DockerComposeProjectName>
+    <EnableDockerCompose>true</EnableDockerCompose>
+    
+    <!-- Build configuration -->
+    <DockerBuildContext>.</DockerBuildContext>
+    <DockerfilePath>.devcontainer\Dockerfile.dotnet</DockerfilePath>
+  </PropertyGroup>
 </Project>
