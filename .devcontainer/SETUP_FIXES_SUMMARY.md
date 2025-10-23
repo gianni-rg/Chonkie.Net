@@ -154,8 +154,7 @@ vscode.dev
 ```json
 {
   "PIP_DEFAULT_TIMEOUT": "100",
-  "PIP_TRUSTED_HOST": "pypi.org pypi.python.org files.pythonhosted.org",
-  "CHONKIE_CONTAINER": "1"
+  "PIP_TRUSTED_HOST": "pypi.org pypi.python.org files.pythonhosted.org"
 }
 ```
 
@@ -176,19 +175,8 @@ vscode.dev
 
 **Necessary Compromises:**
 - Container starts as root to fix permissions, then switches to vscode via gosu
-- One-time full workspace ownership fix on first start (can be slow on large repos)
-
-### Build Output Redirection
-
-**When CHONKIE_CONTAINER=1:**
-- .NET build outputs go to `/home/vscode/.dotnet-build/`
-- Avoids host filesystem permission/timestamp issues
-- Faster builds (native Linux filesystem)
-- obj/bin in repo are ignored
-
-**To revert to workspace bin/obj:**
-- Remove `CHONKIE_CONTAINER=1` from devcontainer.json
-- Rebuild container
+- One-time full workspace ownership and permission fix on first start (can be slow on large repos)
+- All workspace files have full write permissions for vscode user
 
 ---
 
@@ -236,10 +224,10 @@ Or in VS Code: `Dev Containers: Rebuild Container`
 ```bash
 # Inside container
 ls -la /workspace
-# Should show: drwxr-xr-x vscode vscode
+# Should show: drwxrwxr-x vscode vscode (writable by user)
 
-ls -la /home/vscode/.dotnet-build
-# Should show: drwxr-xr-x vscode vscode
+# Check that marker file exists
+ls -la /workspace/.permissions_fixed
 ```
 
 ### 3. Test .NET Build
@@ -247,11 +235,11 @@ ls -la /home/vscode/.dotnet-build
 # Clean old outputs
 dotnet clean Chonkie.Net.sln
 
-# Build (outputs to /home/vscode/.dotnet-build)
+# Build (outputs to workspace bin/obj)
 dotnet build Chonkie.Net.sln
 
-# Verify outputs
-ls -la /home/vscode/.dotnet-build/bin/Debug/net10.0/
+# Verify outputs are writable
+ls -la src/Chonkie.Core/bin/Debug/net10.0/
 ```
 
 ### 4. Test Pip
@@ -308,14 +296,13 @@ ls -la /workspace/.permissions_fixed
 
 | File | Changes |
 |------|---------|
-| `.devcontainer/Dockerfile` | Removed USER vscode, copy configs to /tmp, added .dotnet-build dir |
+| `.devcontainer/Dockerfile` | Removed USER vscode, copy configs to /tmp |
 | `.devcontainer/devcontainer.json` | Added env vars, commented GitHub CLI feature |
 | `.devcontainer/docker-compose.yml` | Added pip env vars |
-| `.devcontainer/scripts/entrypoint.sh` | Permission fixing logic, one-time workspace chown |
+| `.devcontainer/scripts/entrypoint.sh` | Permission fixing logic, one-time workspace chown + chmod |
 | `.devcontainer/scripts/post-create.sh` | Apply configs, install packages, removed sudo |
 | `.devcontainer/pip.conf` | Added index-url and timeout |
 | `.devcontainer/allowed-domains.txt` | Added GitHub Copilot domains |
-| `Directory.Build.props` | Conditional output path redirection |
 
 ---
 
@@ -354,16 +341,14 @@ pip3 config list
 pip3 install --proxy http://proxy:3128 <package>
 ```
 
-### Issue: .NET build outputs to wrong location
+### Issue: .NET build still has permission errors
 **Solution:**
 ```bash
-# Verify CHONKIE_CONTAINER is set
-echo $CHONKIE_CONTAINER
-# Should output: 1
+# Remove permission marker to force re-fix on next restart
+rm /workspace/.permissions_fixed
 
-# Check if output redirection is active
-dotnet build --getProperty:BaseOutputPath
-# Should output: /home/vscode/.dotnet-build/bin/
+# Restart container (VS Code: Dev Containers: Rebuild Container)
+# Or from host: podman compose restart devcontainer
 ```
 
 ---

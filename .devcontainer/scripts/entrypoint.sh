@@ -13,22 +13,31 @@ if [ "$(id -u)" = "0" ]; then
         fi
     done
     
-    # Fix workspace permissions for .NET build outputs
+    # Fix workspace permissions - give full write access to vscode user
     if [ -d "/workspace" ]; then
-        echo "Fixing workspace build output permissions..."
-        # One-time full ownership fix on first start (can be heavy on large repos)
+        echo "Fixing workspace permissions for full write access..."
+        # One-time full ownership and permission fix on first start
         if [ ! -f "/workspace/.permissions_fixed" ]; then
-            echo "Performing one-time ownership fix for /workspace (this may take a while)..."
-            chown -R vscode:vscode /workspace 2>/dev/null || echo "Warning: Could not recursively change ownership of /workspace"
+            echo "Performing one-time ownership and permission fix for /workspace (this may take a while)..."
+            # Try to change ownership to vscode user (requires CAP_CHOWN)
+            if chown -R vscode:vscode /workspace 2>/dev/null; then
+                # Also ensure user has write on everything
+                chmod -R u+rwX /workspace 2>/dev/null || echo "Warning: Could not recursively change permissions of /workspace"
+            else
+                echo "Ownership change not permitted on /workspace. Falling back to world-writable permissions."
+                # If chown isn't allowed on the mount, make all files/dirs writable by everyone
+                chmod -R a+rwX /workspace 2>/dev/null || echo "Warning: Could not set world-writable permissions on /workspace"
+            fi
             # Mark as done to avoid repeating on next starts
-            su -s /bin/bash -c 'touch /workspace/.permissions_fixed' vscode 2>/dev/null || true
+            touch /workspace/.permissions_fixed 2>/dev/null || true
         fi
 
-        # Always ensure obj/bin are writable and owned by vscode
-        find /workspace -type d \( -name "obj" -o -name "bin" \) -print0 2>/dev/null | xargs -0 -r chown -R vscode:vscode 2>/dev/null || true
-        find /workspace -type d \( -name "obj" -o -name "bin" \) -print0 2>/dev/null | xargs -0 -r chmod -R u+rwX 2>/dev/null || true
-        # Ensure workspace root is writable by vscode
-        chown vscode:vscode /workspace 2>/dev/null || echo "Warning: Could not change ownership of /workspace"
+        # Always ensure workspace root is accessible
+        chown vscode:vscode /workspace 2>/dev/null || true
+        chmod a+rwx /workspace 2>/dev/null || true
+        
+        # Quick permission fix for common build directories on every start
+        find /workspace -maxdepth 3 -type d \( -name "obj" -o -name "bin" \) -print0 2>/dev/null | xargs -0 -r chmod -R a+rwX 2>/dev/null || true
     fi
     
     echo "Switching to vscode user..."

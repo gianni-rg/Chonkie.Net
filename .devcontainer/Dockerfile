@@ -95,7 +95,6 @@ RUN mkdir -p \
     /home/vscode/.cache \
     /home/vscode/.config \
     /home/vscode/bin \
-    /home/vscode/.dotnet-build \
     /workspace \
     && chown -R vscode:vscode /home/vscode /workspace
 

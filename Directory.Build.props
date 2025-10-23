@@ -37,10 +37,4 @@
     <DockerBuildContext>.</DockerBuildContext>
     <DockerfilePath>.devcontainer\Dockerfile.dotnet</DockerfilePath>
   </PropertyGroup>
-
-  <!-- Redirect bin/obj to container-local path to avoid host FS perms/timestamps issues -->
-  <PropertyGroup Condition="'$(CHONKIE_CONTAINER)' != ''">
-    <BaseIntermediateOutputPath>/home/vscode/.dotnet-build/obj/</BaseIntermediateOutputPath>
-    <BaseOutputPath>/home/vscode/.dotnet-build/bin/</BaseOutputPath>
-  </PropertyGroup>
 </Project>

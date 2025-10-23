@@ -67,7 +67,6 @@
 		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
 		"DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
 		"ASPNETCORE_ENVIRONMENT": "Development",
-		"CHONKIE_CONTAINER": "1",
 		// Pip configuration
 		"PIP_DEFAULT_TIMEOUT": "100",
 		"PIP_TRUSTED_HOST": "pypi.org pypi.python.org files.pythonhosted.org",
