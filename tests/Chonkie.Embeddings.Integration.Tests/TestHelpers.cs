@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Chonkie.Embeddings.Integration.Tests;
 
@@ -13,10 +14,13 @@ public static class TestHelpers
     public static string GetEnvironmentVariableOrSkip(string variableName)
     {
         var value = Environment.GetEnvironmentVariable(variableName);
-        if (string.IsNullOrEmpty(value))
+
+        // Treat missing or obviously placeholder/invalid values as "not set" to avoid false failures
+        if (string.IsNullOrWhiteSpace(value) || IsObviouslyPlaceholder(value!, variableName))
         {
-            throw new Xunit.SkipException($"Environment variable {variableName} not set. Skipping integration test.");
+            throw new Xunit.SkipException($"Environment variable {variableName} not set or invalid. Skipping integration test.");
         }
+
         return value!;
     }
 
@@ -64,5 +68,50 @@ public static class TestHelpers
         }
 
         return dotProduct / (MathF.Sqrt(normA) * MathF.Sqrt(normB));
+    }
+
+    /// <summary>
+    /// Heuristic check for obviously placeholder/invalid environment variable values.
+    /// This helps ensure integration tests are skipped when keys are present but not real.
+    /// </summary>
+    private static bool IsObviouslyPlaceholder(string value, string variableName)
+    {
+        var v = value.Trim();
+        if (v.Length == 0)
+            return true;
+
+        // Common placeholder words
+        var lower = v.ToLowerInvariant();
+        if (lower.Contains("your-") || lower.Contains("<your") || lower.Contains("{your") || lower.Contains("replace") ||
+            lower.Contains("changeme") || lower.Contains("dummy") || lower.Contains("placeholder") ||
+            lower.Contains("sample") || lower.Contains("example") || lower.Contains("fake"))
+        {
+            return true;
+        }
+
+        // If it's an API key, very short strings are almost certainly invalid
+        var isApiKey = variableName.EndsWith("API_KEY", StringComparison.OrdinalIgnoreCase) ||
+                       variableName.Contains("APIKEY", StringComparison.OrdinalIgnoreCase);
+        if (isApiKey && v.Length < 16)
+        {
+            return true;
+        }
+
+        // Simple provider-specific hints
+        if (variableName.Equals("OPENAI_API_KEY", StringComparison.OrdinalIgnoreCase))
+        {
+            // Most OpenAI keys start with "sk-" and have substantial length.
+            if (!lower.StartsWith("sk-") || v.Length < 20)
+                return true;
+        }
+
+        // For endpoints, skip obvious placeholders
+        if (variableName.EndsWith("ENDPOINT", StringComparison.OrdinalIgnoreCase))
+        {
+            if (lower.Contains("your-endpoint") || lower.Contains("localhost:0000"))
+                return true;
+        }
+
+        return false;
     }
 }
