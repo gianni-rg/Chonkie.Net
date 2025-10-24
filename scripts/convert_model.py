@@ -88,24 +88,73 @@ def convert_model(model_name: str, output_dir: str = None):
 
     # Verify files
     print("\nVerifying output files...")
-    required_files = ["model.onnx", "config.json", "vocab.txt", "tokenizer_config.json"]
-    all_present = True
 
-    for file in required_files:
+    # Essential files that must be present
+    essential_files = ["model.onnx", "config.json", "tokenizer_config.json"]
+
+    # Tokenizer vocabulary files (different tokenizer types use different files)
+    # BERT-style: vocab.txt
+    # RoBERTa/GPT-2 style: vocab.json + merges.txt
+    # SentencePiece: sentencepiece.bpe.model or tokenizer.model
+    vocab_files = [
+        "vocab.txt",           # BERT, DistilBERT
+        "vocab.json",          # RoBERTa, GPT-2
+        "sentencepiece.bpe.model",  # XLM-RoBERTa
+        "tokenizer.model",     # T5, mT5
+    ]
+
+    all_essential_present = True
+    vocab_file_present = False
+
+    # Check essential files
+    for file in essential_files:
         file_path = output_path / file
         if file_path.exists():
             size = file_path.stat().st_size / (1024 * 1024)  # Size in MB
             print(f"  ✓ {file} ({size:.2f} MB)")
         else:
             print(f"  ✗ {file} (missing)")
-            all_present = False
+            all_essential_present = False
 
-    if all_present:
-        print("\n✓ Model conversion completed successfully!")
+    # Check for at least one vocabulary file
+    found_vocab_files = []
+    for vocab_file in vocab_files:
+        file_path = output_path / vocab_file
+        if file_path.exists():
+            size = file_path.stat().st_size / (1024 * 1024)  # Size in MB
+            print(f"  ✓ {vocab_file} ({size:.2f} MB)")
+            found_vocab_files.append(vocab_file)
+            vocab_file_present = True
+
+    # Check for additional tokenizer files
+    additional_files = ["merges.txt", "tokenizer.json", "special_tokens_map.json", "added_tokens.json"]
+    for file in additional_files:
+        file_path = output_path / file
+        if file_path.exists():
+            size = file_path.stat().st_size / (1024 * 1024)  # Size in MB
+            print(f"  ✓ {file} ({size:.2f} MB)")
+
+    # Determine tokenizer type for user information
+    if "vocab.txt" in found_vocab_files:
+        tokenizer_type = "BERT-style"
+    elif "vocab.json" in found_vocab_files:
+        tokenizer_type = "RoBERTa/GPT-2-style"
+    elif "sentencepiece.bpe.model" in found_vocab_files or "tokenizer.model" in found_vocab_files:
+        tokenizer_type = "SentencePiece"
+    else:
+        tokenizer_type = "Unknown"
+
+    print()
+    if all_essential_present and vocab_file_present:
+        print(f"✓ Model conversion completed successfully!")
+        print(f"  Tokenizer type: {tokenizer_type}")
         print(f"\nYou can now use this model in Chonkie.Net:")
         print(f'  var embeddings = new SentenceTransformerEmbeddings("{output_path.absolute()}");')
     else:
-        print("\n✗ Some files are missing. The model may not work correctly.")
+        if not all_essential_present:
+            print("✗ Essential files are missing. The model will not work.")
+        if not vocab_file_present:
+            print("✗ No vocabulary file found. The tokenizer will not work.")
         sys.exit(1)
 
 
