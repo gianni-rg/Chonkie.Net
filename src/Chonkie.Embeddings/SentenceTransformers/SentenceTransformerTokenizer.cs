@@ -382,10 +382,13 @@ namespace Chonkie.Embeddings.SentenceTransformers
             // Try encoding the token
             try
             {
-                var ids = _tokenizer.EncodeToIds(token);
-                if (ids.Count > 0)
+                if (_tokenizer != null)
                 {
-                    return ids[0];
+                    var ids = _tokenizer.EncodeToIds(token);
+                    if (ids != null && ids.Count > 0)
+                    {
+                        return ids[0];
+                    }
                 }
             }
             catch
