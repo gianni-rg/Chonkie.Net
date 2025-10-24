@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <EnvironmentVariables>
+      <!-- Azure OpenAI Integration Test Settings -->
+      <!-- <AZURE_OPENAI_ENDPOINT>your-openai-endpoint-here</AZURE_OPENAI_ENDPOINT> -->
+      <!-- <AZURE_OPENAI_API_KEY>your-openai-api-key-here</AZURE_OPENAI_API_KEY> -->
+      <!-- <AZURE_OPENAI_DEPLOYMENT>your-azure-openai-deployment-here</AZURE_OPENAI_DEPLOYMENT> -->
+
+      <!-- Sentence Transformer Model Path (change to test different models) -->
+      <!-- <SENTENCE_TRANSFORMER_MODEL_PATH>your-sentence-transformer-model-path-here</SENTENCE_TRANSFORMER_MODEL_PATH> -->
+
+      <!-- OpenAI Integration Test Settings (uncomment and set your key) -->
+      <!-- <OPENAI_API_KEY>your-openai-api-key-here</OPENAI_API_KEY> -->
+
+      <!-- Cohere Integration Test Settings (uncomment and set your key) -->
+      <!-- <COHERE_API_KEY>your-cohere-api-key-here</COHERE_API_KEY> -->
+
+      <!-- Jina Integration Test Settings (uncomment and set your key) -->
+      <!-- <JINA_API_KEY>your-jina-api-key-here</JINA_API_KEY> -->
+
+      <!-- Voyage AI Integration Test Settings (uncomment and set your key) -->
+      <!-- <VOYAGE_API_KEY>your-voyage-api-key-here</VOYAGE_API_KEY> -->
+
+      <!-- Gemini Integration Test Settings (uncomment and set your key) -->
+      <!-- <GEMINI_API_KEY>your-gemini-api-key-here</GEMINI_API_KEY> -->
+    </EnvironmentVariables>
+  </RunConfiguration>
+</RunSettings>

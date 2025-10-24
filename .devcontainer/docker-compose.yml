@@ -7,52 +7,55 @@ services:
         # Build-time security settings
         USER_UID: 1000
         USER_GID: 1000
-    
-    # Security: Container starts as root to fix volume permissions, 
+
+    # Security: Container starts as root to fix volume permissions,
     # then switches to vscode user via entrypoint.sh
-    
+
     # Network configuration with filtering
     networks:
       - devcontainer-network
-    
+
     # DNS configuration
     dns:
       - 8.8.8.8
       - 1.1.1.1
-    
+
     # Volume mounts - configure your workspace and external folders here
     volumes:
       # Main workspace (read-write)
       - ../:/workspace:cached
-      
+
+      # External Python Chonkie repository (read-only reference)
+      - C:\Projects\AIS\GitHub\chonkie:/mnt/projects/chonkie:ro
+
       # Example: Additional external folders (configure as needed)
       # Uncomment and modify these lines to mount external folders
       # - ${EXTERNAL_DATA_PATH:-~/data}:/mnt/data:ro  # Read-only data folder
       # - ${EXTERNAL_LIBS_PATH:-~/libs}:/mnt/libs:ro  # Read-only libraries
       # - ${EXTERNAL_OUTPUT_PATH:-~/output}:/mnt/output:rw  # Read-write output folder
-      
+
       # Docker socket for Docker-in-Docker (if needed, commented for security)
       # - /var/run/docker.sock:/var/run/docker.sock
-      
+
       # Persistent volumes for container data
       - devcontainer-nuget:/home/vscode/.nuget
       - devcontainer-vscode-extensions:/home/vscode/.vscode-server/extensions
       - devcontainer-vscode-server-data:/home/vscode/.vscode-server
       - devcontainer-bash-history:/home/vscode/commandhistory
-      
+
       # Writable temp directories (mounted as tmpfs in devcontainer.json)
       # These provide writable space even with read-only root filesystem
-    
+
     # Environment variables
     environment:
       - DOTNET_CLI_TELEMETRY_OPTOUT=1
       - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
       - ASPNETCORE_ENVIRONMENT=Development
-      
+
       # Pip configuration
       - PIP_DEFAULT_TIMEOUT=100
       - PIP_TRUSTED_HOST=pypi.org pypi.python.org files.pythonhosted.org
-      
+
       # AI Tool API Keys (set these in .env file or host environment)
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
@@ -60,14 +63,14 @@ services:
       - GITHUB_TOKEN=${GITHUB_TOKEN:-}
       - COHERE_API_KEY=${COHERE_API_KEY:-}
       - VOYAGE_API_KEY=${VOYAGE_API_KEY:-}
-      
+
       # Network proxy for filtering (squid proxy)
       - http_proxy=http://proxy:3128
       - https_proxy=http://proxy:3128
       - HTTP_PROXY=http://proxy:3128
       - HTTPS_PROXY=http://proxy:3128
       - no_proxy=localhost,127.0.0.1,devcontainer
-    
+
     # Security options
     cap_drop:
       - ALL
@@ -77,11 +80,11 @@ services:
       - SETGID            # Required for gosu to set group
       - CHOWN             # Required to chown files in /workspace
       - FOWNER            # Required to chmod files not owned by root
-    
+
     security_opt:
       - no-new-privileges:true
       - seccomp:unconfined  # May need to adjust based on your security requirements
-    
+
     # Resource limits (adjust as needed)
     deploy:
       resources:
@@ -91,7 +94,7 @@ services:
         reservations:
           cpus: '2'
           memory: 4G
-    
+
     # Security: Filesystem is writable for VS Code Dev Containers compatibility
     # Primary security relies on: non-root user, dropped capabilities, network filtering
     read_only: false
@@ -99,10 +102,10 @@ services:
       - /tmp:rw,noexec,nosuid,size=1g
       - /var/tmp:rw,noexec,nosuid,size=512m
       - /run:rw,noexec,nosuid,size=256m
-    
+
     # Keep container running
     command: sleep infinity
-    
+
     depends_on:
       proxy:
         condition: service_healthy

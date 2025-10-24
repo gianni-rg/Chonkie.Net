@@ -43,14 +43,37 @@ var embedding = await embeddings.EmbedAsync("Hello, world!");
 
 ### Using Sentence Transformers (ONNX)
 
+First, convert a model to ONNX format (see [ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md)):
+
+```bash
+# Install conversion tools
+pip install optimum[onnxruntime] transformers
+
+# Convert a model
+python scripts/convert_model.py sentence-transformers/all-MiniLM-L6-v2
+```
+
+Then use it in your .NET application:
+
 ```csharp
 using Chonkie.Embeddings.SentenceTransformers;
 
+// Load the converted model
 var embeddings = new SentenceTransformerEmbeddings(
-    modelPath: "path/to/model.onnx",
-    dimension: 384
+    modelPath: "./models/all-MiniLM-L6-v2"
 );
+
+// Embed text
 var embedding = await embeddings.EmbedAsync("Hello, world!");
+Console.WriteLine($"Embedding dimension: {embedding.Length}");
+
+// Advanced configuration
+var customEmbeddings = new SentenceTransformerEmbeddings(
+    modelPath: "./models/all-MiniLM-L6-v2",
+    poolingMode: PoolingMode.Mean,  // Mean, Cls, Max, LastToken
+    normalize: true,                 // L2 normalization (recommended)
+    maxLength: 512                   // Max sequence length
+);
 ```
 
 ### Using AutoEmbeddings Factory
@@ -99,9 +122,26 @@ foreach (var embedding in embeddings)
 
 ### Local Models
 
-| Provider | Class | Requirements | Notes |
-|----------|-------|-------------|-------|
-| Sentence Transformers | `SentenceTransformerEmbeddings` | ONNX model file | Requires `Microsoft.ML.OnnxRuntime` |
+| Provider | Class | Requirements | Features |
+|----------|-------|-------------|----------|
+| Sentence Transformers | `SentenceTransformerEmbeddings` | ONNX model file | Proper tokenization, pooling strategies, batch processing, offline inference |
+
+#### Sentence Transformers Features
+
+- ✅ Proper BERT-style tokenization with special tokens
+- ✅ Multiple pooling strategies (Mean, CLS, Max, LastToken)
+- ✅ L2 normalization for cosine similarity
+- ✅ True batch processing with dynamic padding
+- ✅ Model validation and metadata extraction
+- ✅ Efficient tensor operations with ONNX Runtime
+- ✅ Compatible with HuggingFace Sentence Transformers
+
+**Recommended Models:**
+- `sentence-transformers/all-MiniLM-L6-v2` (384 dim, fast)
+- `sentence-transformers/all-mpnet-base-v2` (768 dim, high quality)
+- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (384 dim, multilingual)
+
+See the [ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md) for detailed instructions.
 
 ## Custom Providers
 
@@ -122,7 +162,7 @@ public class MyCustomEmbeddings : IEmbeddings
     }
 
     public async Task<IReadOnlyList<float[]>> EmbedBatchAsync(
-        IEnumerable<string> texts, 
+        IEnumerable<string> texts,
         CancellationToken cancellationToken = default)
     {
         // Your custom batch embedding logic
@@ -166,7 +206,7 @@ using Chonkie.Embeddings.Interfaces;
 using Chonkie.Embeddings.OpenAI;
 
 var services = new ServiceCollection();
-services.AddSingleton<IEmbeddings>(sp => 
+services.AddSingleton<IEmbeddings>(sp =>
     new OpenAIEmbeddings(apiKey: "your-api-key"));
 
 var serviceProvider = services.BuildServiceProvider();

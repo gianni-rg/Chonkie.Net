@@ -419,3 +419,6 @@ FodyWeavers.xsd
 
 # Generated files (DevContainer)
 .permissions_fixed
+
+# ONNX Models
+models/

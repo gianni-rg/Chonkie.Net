@@ -46,6 +46,9 @@
 .python.org
 .pythonhosted.org
 
+# HuggingFace
+.huggingface.co
+
 # Cohere
 .cohere.ai
 
