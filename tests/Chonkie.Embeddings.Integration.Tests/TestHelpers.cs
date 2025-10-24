@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 namespace Chonkie.Embeddings.Integration.Tests;
 
