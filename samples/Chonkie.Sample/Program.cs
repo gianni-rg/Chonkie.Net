@@ -108,9 +108,16 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         Console.WriteLine("   Groups semantically similar sentences together.");
 
         var tokenizer = new WordTokenizer();
+        var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
+        var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY");
+        if (string.IsNullOrWhiteSpace(endpoint) || string.IsNullOrWhiteSpace(apiKey))
+        {
+            Console.WriteLine("ERROR: Please set the AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY environment variables.");
+            return Task.CompletedTask;
+        }
         var embeddings = new AzureOpenAIEmbeddings(
-            endpoint: "https://your-end-point.openai.azure.com/",
-            apiKey: "your-api-key",
+            endpoint: endpoint,
+            apiKey: apiKey,
             deploymentName: "text-embedding-3-large",
             dimension: 3072);
         var chunker = new SemanticChunker(
