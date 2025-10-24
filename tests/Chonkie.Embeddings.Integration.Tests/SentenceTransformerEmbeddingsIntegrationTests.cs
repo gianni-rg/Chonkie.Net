@@ -174,5 +174,398 @@ public class SentenceTransformerEmbeddingsIntegrationTests
             Assert.All(embedding, value => Assert.True(float.IsFinite(value), "All values should be finite"));
         });
     }
+
+    /// <summary>
+    /// Tests Dimension property returns positive value.
+    /// </summary>
+    [SkippableFact]
+    public void Dimension_ReturnsPositiveValue()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+
+        // Act & Assert
+        Assert.True(embeddings.Dimension > 0, "Dimension should be positive");
+        // all-MiniLM-L6-v2 should have 384 dimensions
+        Assert.Equal(384, embeddings.Dimension);
+    }
+
+    /// <summary>
+    /// Tests MaxSequenceLength property returns positive value.
+    /// </summary>
+    [SkippableFact]
+    public void MaxSequenceLength_ReturnsPositiveValue()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+
+        // Act & Assert
+        Assert.True(embeddings.MaxSequenceLength > 0, "MaxSequenceLength should be positive");
+    }
+
+    /// <summary>
+    /// Tests CountTokens returns expected token count.
+    /// </summary>
+    [SkippableFact]
+    public void CountTokens_ReturnsExpectedCount()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var text = "This is a test sentence.";
+
+        // Act
+        var tokenCount = embeddings.CountTokens(text);
+
+        // Assert
+        Assert.True(tokenCount > 0, "Token count should be positive");
+        Assert.InRange(tokenCount, 1, 100); // Reasonable range for a short sentence
+    }
+
+    /// <summary>
+    /// Tests CountTokens with empty string returns zero or minimal count.
+    /// </summary>
+    [SkippableFact]
+    public void CountTokens_EmptyString_ReturnsMinimalCount()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+
+        // Act
+        var tokenCount = embeddings.CountTokens(string.Empty);
+
+        // Assert
+        Assert.True(tokenCount >= 0, "Token count should be non-negative");
+    }
+
+    /// <summary>
+    /// Tests CountTokensBatch returns expected token counts for multiple texts.
+    /// </summary>
+    [SkippableFact]
+    public void CountTokensBatch_ReturnsExpectedCounts()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var texts = new[] { "Short text.", "This is a longer sentence with more words.", "Medium length." };
+
+        // Act
+        var tokenCounts = embeddings.CountTokensBatch(texts);
+
+        // Assert
+        Assert.NotNull(tokenCounts);
+        Assert.Equal(3, tokenCounts.Count);
+        Assert.All(tokenCounts, count => Assert.True(count > 0, "All token counts should be positive"));
+
+        // Verify that longer text has more tokens
+        Assert.True(tokenCounts[1] > tokenCounts[0], "Longer text should have more tokens");
+        Assert.True(tokenCounts[1] > tokenCounts[2], "Longer text should have more tokens");
+    }
+
+    /// <summary>
+    /// Tests CountTokensBatch with empty list returns empty list.
+    /// </summary>
+    [SkippableFact]
+    public void CountTokensBatch_EmptyList_ReturnsEmptyList()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var texts = Array.Empty<string>();
+
+        // Act
+        var tokenCounts = embeddings.CountTokensBatch(texts);
+
+        // Assert
+        Assert.NotNull(tokenCounts);
+        Assert.Empty(tokenCounts);
+    }
+
+    /// <summary>
+    /// Tests ToString returns formatted string.
+    /// </summary>
+    [SkippableFact]
+    public void ToString_ReturnsFormattedString()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+
+        // Act
+        var result = embeddings.ToString();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("SentenceTransformerEmbeddings", result);
+        Assert.Contains("sentence-transformers", result);
+        Assert.Contains("dimension=", result);
+    }
+
+    /// <summary>
+    /// Tests Name property returns expected value.
+    /// </summary>
+    [SkippableFact]
+    public void Name_ReturnsExpectedValue()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+
+        // Act & Assert
+        Assert.Equal("sentence-transformers", embeddings.Name);
+    }
+
+    /// <summary>
+    /// Tests embedding normalization when enabled.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedAsync_WithNormalization_ProducesUnitVectors()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath, normalize: true);
+        var text = "Test sentence for normalization.";
+
+        // Act
+        var embedding = await embeddings.EmbedAsync(text);
+
+        // Assert
+        var magnitude = MathF.Sqrt(embedding.Sum(x => x * x));
+        Assert.Equal(1.0f, magnitude, precision: 5);
+    }
+
+    /// <summary>
+    /// Tests batch embedding produces consistent results with single embeddings.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedBatchAsync_ProducesConsistentResults()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var text1 = "First test sentence.";
+        var text2 = "Second test sentence.";
+
+        // Act
+        var singleEmbedding1 = await embeddings.EmbedAsync(text1);
+        var singleEmbedding2 = await embeddings.EmbedAsync(text2);
+        var batchEmbeddings = await embeddings.EmbedBatchAsync(new[] { text1, text2 });
+
+        // Assert
+        Assert.Equal(2, batchEmbeddings.Count);
+
+        // Compare first embedding
+        var similarity1 = embeddings.Similarity(singleEmbedding1, batchEmbeddings[0]);
+        Assert.True(similarity1 > 0.99f, $"Batch and single embeddings should be nearly identical. Similarity: {similarity1}");
+
+        // Compare second embedding
+        var similarity2 = embeddings.Similarity(singleEmbedding2, batchEmbeddings[1]);
+        Assert.True(similarity2 > 0.99f, $"Batch and single embeddings should be nearly identical. Similarity: {similarity2}");
+    }
+
+    /// <summary>
+    /// Tests that embeddings have the correct dimension.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedAsync_ReturnedEmbeddingHasCorrectDimension()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var text = "Test sentence.";
+
+        // Act
+        var embedding = await embeddings.EmbedAsync(text);
+
+        // Assert
+        Assert.Equal(embeddings.Dimension, embedding.Length);
+    }
+
+    /// <summary>
+    /// Tests batch embeddings all have the correct dimension.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedBatchAsync_AllEmbeddingsHaveCorrectDimension()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var texts = new[] { "First.", "Second.", "Third." };
+
+        // Act
+        var batchEmbeddings = await embeddings.EmbedBatchAsync(texts);
+
+        // Assert
+        Assert.All(batchEmbeddings, embedding =>
+            Assert.Equal(embeddings.Dimension, embedding.Length));
+    }
+
+    /// <summary>
+    /// Tests that identical texts produce identical embeddings.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedAsync_IdenticalTexts_ProduceIdenticalEmbeddings()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var text = "The cat sits on the mat.";
+
+        // Act
+        var embedding1 = await embeddings.EmbedAsync(text);
+        var embedding2 = await embeddings.EmbedAsync(text);
+
+        // Assert
+        var similarity = embeddings.Similarity(embedding1, embedding2);
+        Assert.Equal(1.0f, similarity, precision: 5);
+    }
+
+    /// <summary>
+    /// Tests similarity method produces values in valid range.
+    /// </summary>
+    [SkippableFact]
+    public async Task Similarity_ProducesValidRange()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var text1 = "The weather is nice.";
+        var text2 = "It's raining heavily today.";
+
+        // Act
+        var embedding1 = await embeddings.EmbedAsync(text1);
+        var embedding2 = await embeddings.EmbedAsync(text2);
+        var similarity = embeddings.Similarity(embedding1, embedding2);
+
+        // Assert
+        Assert.InRange(similarity, 0, 1);
+    }
+
+    /// <summary>
+    /// Tests that long text is handled correctly.
+    /// </summary>
+    [SkippableFact]
+    public async Task EmbedAsync_LongText_HandlesCorrectly()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        // Create a long text that exceeds typical sequence lengths
+        var longText = string.Join(" ", Enumerable.Repeat("This is a test sentence.", 100));
+
+        // Act
+        var embedding = await embeddings.EmbedAsync(longText);
+
+        // Assert
+        Assert.NotNull(embedding);
+        Assert.Equal(embeddings.Dimension, embedding.Length);
+        Assert.All(embedding, value => Assert.True(float.IsFinite(value)));
+    }
+
+    /// <summary>
+    /// Tests CountTokens with various text lengths.
+    /// </summary>
+    [SkippableFact]
+    public void CountTokens_VariousLengths_ReturnsAppropriateCount()
+    {
+        // Arrange
+        var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
+        if (!Directory.Exists(modelPath))
+        {
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
+        }
+
+        using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
+        var shortText = "Hi";
+        var mediumText = "This is a medium length sentence.";
+        var longText = "This is a much longer sentence with many more words that should produce a higher token count.";
+
+        // Act
+        var shortCount = embeddings.CountTokens(shortText);
+        var mediumCount = embeddings.CountTokens(mediumText);
+        var longCount = embeddings.CountTokens(longText);
+
+        // Assert
+        Assert.True(shortCount < mediumCount, "Short text should have fewer tokens than medium");
+        Assert.True(mediumCount < longCount, "Medium text should have fewer tokens than long");
+    }
 }
 

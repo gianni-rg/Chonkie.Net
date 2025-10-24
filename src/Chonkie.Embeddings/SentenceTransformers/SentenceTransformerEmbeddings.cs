@@ -295,9 +295,29 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <summary>
         /// Counts the number of tokens in the text.
         /// </summary>
+        /// <param name="text">The text to tokenize.</param>
+        /// <returns>The number of tokens.</returns>
         public int CountTokens(string text)
         {
             return _tokenizer.CountTokens(text);
+        }
+
+        /// <summary>
+        /// Counts the number of tokens in multiple texts.
+        /// </summary>
+        /// <param name="texts">The texts to tokenize.</param>
+        /// <returns>A list of token counts for each text.</returns>
+        public IReadOnlyList<int> CountTokensBatch(IEnumerable<string> texts)
+        {
+            var textList = texts.ToList();
+            var counts = new List<int>(textList.Count);
+
+            foreach (var text in textList)
+            {
+                counts.Add(_tokenizer.CountTokens(text));
+            }
+
+            return counts;
         }
 
         /// <summary>
