@@ -132,67 +132,28 @@ namespace Chonkie.Embeddings.SentenceTransformers
                     inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
                 }
 
-                // Run inference
-                using var results = _session.Run(inputs);
-
-                // Get token embeddings from output
-                var outputTensor = results.First().AsEnumerable<float>().ToArray();
-
-                // Extract dimensions from output
-                var outputMetadata = results.First();
-                var shape = outputMetadata.AsTensor<float>().Dimensions.ToArray();
-
-                int batchSize = shape[0];
-                int seqLength = shape[1];
-                int hiddenDim = shape[2];
-
-                // Apply pooling
-                var pooledEmbeddings = PoolingUtilities.ApplyPooling(
-                    outputTensor,
-                    encoding.AttentionMask,
-                    batchSize,
-                    seqLength,
-                    hiddenDim,
-                    _poolingMode,
-                    _normalize
-                );
-
-                return pooledEmbeddings[0];
-            }, cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public override Task<IReadOnlyList<float[]>> EmbedBatchAsync(
-            IEnumerable<string> texts,
-            CancellationToken cancellationToken = default)
-        {
-            return Task.Run(() =>
-            {
-                var textList = texts.ToList();
-                if (textList.Count == 0)
-                {
-                    return (IReadOnlyList<float[]>)Array.Empty<float[]>();
-                }
-
-                // Tokenize all texts with proper padding
-                var batchEncoding = _tokenizer.EncodeBatch(textList, addSpecialTokens: true);
-
-                // Create input tensors
-                var inputIds = CreateInputIdsTensor(batchEncoding.InputIds);
-                var attentionMask = CreateAttentionMaskTensor(batchEncoding.AttentionMask);
-
-                // Prepare inputs for ONNX
+                // Create inputs (add token_type_ids if the model expects it)
                 var inputs = new List<NamedOnnxValue>
                 {
                     NamedOnnxValue.CreateFromTensor("input_ids", inputIds),
                     NamedOnnxValue.CreateFromTensor("attention_mask", attentionMask)
                 };
 
-                // Add token_type_ids if the model expects it
-                if (_session.InputMetadata.ContainsKey("token_type_ids"))
+                // Some ONNX-exported transformer models require token_type_ids
+                // Provide a zero tensor if the input exists in the model
+                try
                 {
-                    var tokenTypeIds = CreateTokenTypeIdsTensor(batchEncoding.TokenTypeIds);
-                    inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
+                    var inputNames = _session.InputMetadata.Keys;
+                    if (inputNames.Contains("token_type_ids"))
+                    {
+                        var tokenTypeIds = new DenseTensor<long>(new[] { 1, tokens.Length });
+                        // initialized to zeros by default
+                        inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
+                    }
+                }
+                catch
+                {
+                    // If metadata not available, proceed without token_type_ids
                 }
 
                 // Run inference

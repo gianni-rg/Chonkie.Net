@@ -92,7 +92,7 @@ public class PipelineFetcherTests
         try
         {
             var pipeline = new Pipeline()
-                .FetchFrom("file", new { dir = _tempDirectory, ext = new[] { ".txt" } })
+                .FetchFrom("file", new { dir = _tempDirectory, filter = "*.txt" })
                 .ProcessWith("text")
                 .ChunkWith("recursive", new { chunk_size = 512 });
 

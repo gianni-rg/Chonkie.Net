@@ -266,8 +266,22 @@ public sealed class Pipeline
         // Validate pipeline
         ValidatePipeline(orderedSteps, texts != null);
 
-        // Execute pipeline steps
+        // If we have direct text input but no chef, convert text to Document(s) before processing
         object? data = texts;
+        var hasChef = orderedSteps.Any(s => s.Type == "process");
+        if (texts != null && !hasChef)
+        {
+            if (texts is string singleText)
+            {
+                data = new Document { Content = singleText };
+            }
+            else if (texts is IEnumerable<string> multipleTexts)
+            {
+                data = multipleTexts.Select(t => new Document { Content = t }).ToList();
+            }
+        }
+
+        // Execute pipeline steps
         for (int i = 0; i < orderedSteps.Count; i++)
         {
             var step = orderedSteps[i];
@@ -367,21 +381,6 @@ public sealed class Pipeline
         // Group steps by type
         var stepsByType = _steps.GroupBy(s => s.Type)
             .ToDictionary(g => g.Key, g => g.ToList());
-
-        // Add default TextChef if no chef is present
-        if (!stepsByType.ContainsKey("process"))
-        {
-            var textChef = ComponentRegistry.Instance.GetChef("text");
-            stepsByType["process"] = new List<PipelineStep>
-            {
-                new PipelineStep
-                {
-                    Type = "process",
-                    Component = textChef,
-                    Parameters = new { }
-                }
-            };
-        }
 
         // Build ordered list following CHOMP: Fetch → Process → Chunk → Refine → Export → Write
         var ordered = new List<PipelineStep>();

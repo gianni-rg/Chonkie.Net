@@ -121,7 +121,8 @@ public class PipelineChunkersTests
     public void Pipeline_WithDifferentChunkSizes_ProducesDifferentResults()
     {
         // Arrange
-        var longText = string.Concat(Enumerable.Repeat("Test sentence. ", 100));
+        // Create text with ~1000 tokens to ensure different chunk sizes produce different results
+        var longText = string.Concat(Enumerable.Repeat("Test sentence with more content to ensure proper chunking behavior. ", 200));
 
         var pipeline256 = new Pipeline().ChunkWith("recursive", new { chunk_size = 256 });
         var pipeline512 = new Pipeline().ChunkWith("recursive", new { chunk_size = 512 });
