@@ -2,11 +2,30 @@
 
 This Dev Container provides a secure, sandboxed environment for running AI-assisted tools and .NET development with controlled network access and filesystem isolation.
 
-## 🔐 Security Features
+## � Documentation Structure
+
+The devcontainer documentation is organized in the `docs/` folder:
+
+- **[Quick Start Guide](docs/00-QUICK_START.md)** - Common commands and quick reference
+- **[Setup Checklist](docs/01-SETUP_CHECKLIST.md)** - Step-by-step setup verification
+- **[Architecture](docs/02-ARCHITECTURE.md)** - System design and diagrams
+- **[Setup Guides](docs/setup/)** - Installation and configuration guides
+  - [Podman Setup](docs/setup/PODMAN_SETUP.md)
+  - [Setup Summary](docs/setup/SETUP_SUMMARY.md)
+- **[Troubleshooting](docs/troubleshooting/)** - Problem-solving guides
+  - [Proxy Issues](docs/troubleshooting/PROXY_ISSUES.md) - Complete proxy configuration & troubleshooting
+  - [Migration to Podman](docs/troubleshooting/MIGRATION_TO_PODMAN.md)
+  - [PIP Proxy Fixes](docs/troubleshooting/PIP_PROXY_FIX.md)
+
+Configuration files are organized in the `configs/` folder:
+- **[Proxy Configuration](configs/proxy/)** - Network filtering settings
+- **[Tool Configuration](configs/tools/)** - Development tool proxy settings
+
+## �🔐 Security Features
 
 ### Network Security
 - **Controlled Internet Access**: All network traffic routes through a Squid proxy
-- **Whitelist-based filtering**: Only approved domains in `allowed-domains.txt` are accessible
+- **Whitelist-based filtering**: Only approved domains in `configs/proxy/allowed-domains.txt` are accessible
 - **Transparent HTTPS**: Optional SSL inspection for monitoring encrypted traffic
 - **Isolated network**: Container runs on a dedicated Docker network
 
@@ -54,7 +73,7 @@ This Dev Container provides a secure, sandboxed environment for running AI-assis
    ```
 
 4. **Update allowed domains** (if needed):
-   Edit `.devcontainer/allowed-domains.txt` to add domains you need to access
+   Edit `.devcontainer/configs/proxy/allowed-domains.txt` to add domains you need to access
 
 5. **Open in Dev Container**:
    - Open VS Code in this workspace
@@ -65,7 +84,7 @@ This Dev Container provides a secure, sandboxed environment for running AI-assis
 ## 📦 Installed Tools
 
 ### .NET Development
-- .NET 8.0 SDK
+- .NET 10.0 SDK
 - dotnet-ef (Entity Framework tools)
 - dotnet-format (code formatter)
 - dotnet-outdated-tool
@@ -124,11 +143,11 @@ dotnet run
 
 **View current allowed domains**:
 ```bash
-cat .devcontainer/allowed-domains.txt
+cat .devcontainer/configs/proxy/allowed-domains.txt
 ```
 
 **Add a new domain**:
-1. Edit `.devcontainer/allowed-domains.txt`
+1. Edit `.devcontainer/configs/proxy/allowed-domains.txt`
 2. Add the domain (e.g., `.example.com`)
 3. Rebuild the container or restart the proxy
 
@@ -187,13 +206,13 @@ Container image definition. Controls:
 - User setup
 - Pre-installed tools
 
-### `.devcontainer/squid.conf`
+### `.devcontainer/configs/proxy/squid.conf`
 Proxy configuration. Controls:
 - Network filtering rules
 - Caching behavior
 - Logging
 
-### `.devcontainer/allowed-domains.txt`
+### `.devcontainer/configs/proxy/allowed-domains.txt`
 Whitelist of allowed domains for network access.
 
 ## 🛡️ Advanced Security Configuration
@@ -238,7 +257,7 @@ To inspect HTTPS traffic (for monitoring):
      -out .devcontainer/ssl/cert.pem
    ```
 
-2. Uncomment SSL bump configuration in `.devcontainer/squid.conf`
+2. Uncomment SSL bump configuration in `.devcontainer/configs/proxy/squid.conf`
 
 3. Rebuild the container
 
@@ -251,7 +270,7 @@ To inspect HTTPS traffic (for monitoring):
 
 ### Network not working
 - Verify proxy is running: `podman-compose ps`
-- Check allowed-domains.txt contains the domain you need
+- Check allowed-domains.txt contains the domain you need: `cat .devcontainer/configs/proxy/allowed-domains.txt`
 - Test proxy directly: `curl -x http://proxy:3128 https://google.com`
 - Check proxy logs: `podman-compose logs proxy`
 

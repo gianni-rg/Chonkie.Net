@@ -58,31 +58,31 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # Copy pip configuration for proxy support (will be applied in post-create)
 # NOTE: Do NOT apply during build as proxy container doesn't exist yet
 # The Python feature installation will fail if it tries to use proxy during build
-COPY pip.conf /tmp/pip.conf
+COPY configs/tools/pip.conf /tmp/pip.conf
 
 # Copy npm configuration for proxy support
-COPY npmrc /home/vscode/.npmrc
+COPY configs/tools/npmrc /home/vscode/.npmrc
 RUN chown vscode:vscode /home/vscode/.npmrc
 
 # Copy wget configuration for proxy support
-COPY wgetrc /etc/wgetrc
+COPY configs/tools/wgetrc /etc/wgetrc
 
 # Copy curl configuration for proxy support  
-COPY curlrc /home/vscode/.curlrc
+COPY configs/tools/curlrc /home/vscode/.curlrc
 RUN chown vscode:vscode /home/vscode/.curlrc
 
 # Copy git proxy configuration (will be applied in post-create)
-COPY gitconfig-proxy /tmp/gitconfig-proxy
+COPY configs/tools/gitconfig-proxy /tmp/gitconfig-proxy
 
 # Copy NuGet proxy configuration (will be applied in post-create)
-COPY nuget.config /tmp/nuget.config
+COPY configs/tools/nuget.config /tmp/nuget.config
 
 # Copy APT proxy configuration (will be applied in post-create)
 # NOTE: Do NOT apply during build as proxy container doesn't exist yet
-COPY apt-proxy.conf /tmp/apt-proxy.conf
+COPY configs/tools/apt-proxy.conf /tmp/apt-proxy.conf
 
 # Copy Docker CLI proxy configuration (for docker-in-docker scenarios)
-COPY docker-config.json /home/vscode/.docker/config.json
+COPY configs/tools/docker-config.json /home/vscode/.docker/config.json
 RUN mkdir -p /home/vscode/.docker && chown -R vscode:vscode /home/vscode/.docker
 
 # Create directories for writable areas
