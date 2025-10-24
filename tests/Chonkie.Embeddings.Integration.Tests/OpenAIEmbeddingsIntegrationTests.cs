@@ -100,7 +100,7 @@ public class OpenAIEmbeddingsIntegrationTests
         var similarity13 = embeddings.Similarity(embedding1, embedding3);
 
         // Assert
-        Assert.True(similarity12 > similarity13, 
+        Assert.True(similarity12 > similarity13,
             $"Similar texts should have higher similarity. Got {similarity12} vs {similarity13}");
         Assert.InRange(similarity12, 0.8f, 1.0f);
     }

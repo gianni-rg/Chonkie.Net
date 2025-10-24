@@ -1,4 +1,5 @@
 using Chonkie.Chunkers;
+using Chonkie.Embeddings.Azure;
 using Chonkie.Tokenizers;
 
 namespace Chonkie.Sample;
@@ -51,11 +52,11 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         Console.WriteLine($"   Created {chunks.Count} chunks:");
         for (int i = 0; i < chunks.Count; i++)
         {
-            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text.Substring(0, Math.Min(60, chunks[i].Text.Length))}...");
+            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text[..Math.Min(60, chunks[i].Text.Length)]}...");
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -72,11 +73,11 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         Console.WriteLine($"   Created {chunks.Count} chunks:");
         for (int i = 0; i < chunks.Count; i++)
         {
-            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text.Substring(0, Math.Min(60, chunks[i].Text.Length))}...");
+            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text[..Math.Min(60, chunks[i].Text.Length)]}...");
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -93,11 +94,11 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         Console.WriteLine($"   Created {chunks.Count} chunks:");
         for (int i = 0; i < chunks.Count; i++)
         {
-            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text.Substring(0, Math.Min(60, chunks[i].Text.Length))}...");
+            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text[..Math.Min(60, chunks[i].Text.Length)]}...");
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -105,17 +106,25 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
     {
         Console.WriteLine("4. Semantic Chunker Example");
         Console.WriteLine("   Groups semantically similar sentences together.");
-        Console.WriteLine("   Note: Requires embeddings model. Skipping for basic sample.\n");
 
-        // Uncomment and configure with your API key to test semantic chunking:
-        /*
         var tokenizer = new WordTokenizer();
-        var embeddings = new OpenAIEmbeddings(apiKey: "your-api-key-here");
+        var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
+        var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY");
+        if (string.IsNullOrWhiteSpace(endpoint) || string.IsNullOrWhiteSpace(apiKey))
+        {
+            Console.WriteLine("ERROR: Please set the AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY environment variables.");
+            return Task.CompletedTask;
+        }
+        var embeddings = new AzureOpenAIEmbeddings(
+            endpoint: endpoint,
+            apiKey: apiKey,
+            deploymentName: "text-embedding-3-large",
+            dimension: 3072);
         var chunker = new SemanticChunker(
             tokenizer: tokenizer,
-            embeddings: embeddings,
+            embeddingModel: embeddings,
             chunkSize: 50,
-            similarityThreshold: 0.5f
+            threshold: 0.5f
         );
 
         var chunks = chunker.Chunk(text);
@@ -123,14 +132,12 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         Console.WriteLine($"   Created {chunks.Count} chunks:");
         for (int i = 0; i < chunks.Count; i++)
         {
-            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text.Substring(0, Math.Min(60, chunks[i].Text.Length))}...");
+            Console.WriteLine($"   Chunk {i + 1}: {chunks[i].Text[..Math.Min(60, chunks[i].Text.Length)]}...");
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
-        */
 
-        Console.WriteLine("   [Semantic chunker demo skipped - requires embeddings configuration]");
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 }

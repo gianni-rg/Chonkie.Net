@@ -88,7 +88,7 @@ public class SemanticChunkerTests
         var embeddings = new TestEmbeddings();
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => 
+        var ex = Assert.Throws<ArgumentException>(() =>
             new SemanticChunker(tokenizer, embeddings, threshold: threshold));
         Assert.Contains("Threshold", ex.Message);
     }
@@ -103,7 +103,7 @@ public class SemanticChunkerTests
         var embeddings = new TestEmbeddings();
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => 
+        var ex = Assert.Throws<ArgumentException>(() =>
             new SemanticChunker(tokenizer, embeddings, chunkSize: chunkSize));
         Assert.Contains("ChunkSize", ex.Message);
     }
@@ -182,7 +182,7 @@ public class SemanticChunkerTests
         var embeddings = new TestEmbeddings();
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => 
+        var ex = Assert.Throws<ArgumentException>(() =>
             new SemanticChunker(tokenizer, embeddings, similarityWindow: window));
         Assert.Contains("similarityWindow", ex.Message);
     }
@@ -197,7 +197,7 @@ public class SemanticChunkerTests
         var embeddings = new TestEmbeddings();
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => 
+        var ex = Assert.Throws<ArgumentException>(() =>
             new SemanticChunker(tokenizer, embeddings, minSentencesPerChunk: minSentences));
         Assert.Contains("minSentencesPerChunk", ex.Message);
     }
@@ -210,7 +210,7 @@ public class SemanticChunkerTests
         var embeddings = new TestEmbeddings();
 
         // Act & Assert
-        var ex = Assert.Throws<ArgumentException>(() => 
+        var ex = Assert.Throws<ArgumentException>(() =>
             new SemanticChunker(tokenizer, embeddings, skipWindow: -1));
         Assert.Contains("skipWindow", ex.Message);
     }
@@ -236,7 +236,7 @@ public class SemanticChunkerTests
             Assert.True(chunk.TokenCount > 0, "Token count must be positive");
             Assert.True(chunk.TokenCount <= 50, "Token count must respect chunk size");
         });
-        
+
         // Verify reconstruction works
         var reconstructed = string.Join("", chunks.Select(c => c.Text));
         Assert.Equal(text, reconstructed);
@@ -313,8 +313,8 @@ public class SemanticChunkerTests
         var tokenizer = new WordTokenizer();
         var embeddings = new TestEmbeddings();
         var chunker = new SemanticChunker(
-            tokenizer, 
-            embeddings, 
+            tokenizer,
+            embeddings,
             similarityWindow: window,
             chunkSize: 100);
         var text = "Sentence one. Sentence two. Sentence three. " +
@@ -335,8 +335,8 @@ public class SemanticChunkerTests
         var tokenizer = new WordTokenizer();
         var embeddings = new TestEmbeddings();
         var chunker = new SemanticChunker(
-            tokenizer, 
-            embeddings, 
+            tokenizer,
+            embeddings,
             chunkSize: 10,
             minSentencesPerChunk: 1);
         var text = "Short. Also short. Another short one. Final short sentence.";

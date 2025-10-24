@@ -17,10 +17,10 @@ namespace Chonkie.Embeddings.Cohere
         private readonly string _apiKey;
         private readonly string _model;
         private readonly HttpClient _httpClient;
-        
+
         /// <inheritdoc />
         public override string Name => "cohere";
-        
+
         /// <inheritdoc />
         public override int Dimension { get; }
 

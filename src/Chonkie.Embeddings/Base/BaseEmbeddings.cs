@@ -14,7 +14,7 @@ namespace Chonkie.Embeddings.Base
         /// Gets the name of the embedding provider.
         /// </summary>
         public abstract string Name { get; }
-        
+
         /// <summary>
         /// Gets the dimension of the embedding vectors.
         /// </summary>
@@ -55,7 +55,7 @@ namespace Chonkie.Embeddings.Base
         {
             if (u == null || v == null)
                 throw new ArgumentNullException(u == null ? nameof(u) : nameof(v));
-            
+
             if (u.Length != v.Length)
                 throw new ArgumentException("Embedding vectors must have the same length.");
 

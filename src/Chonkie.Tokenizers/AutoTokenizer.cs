@@ -21,7 +21,7 @@ public static class AutoTokenizer
             string identifier => CreateFromIdentifier(identifier),
             _ => throw new ArgumentException(
                 $"Unsupported tokenizer type: {tokenizerOrIdentifier.GetType().Name}. " +
-                "Expected ITokenizer instance or string identifier.", 
+                "Expected ITokenizer instance or string identifier.",
                 nameof(tokenizerOrIdentifier))
         };
     }

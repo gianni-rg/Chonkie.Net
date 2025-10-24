@@ -128,7 +128,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
             endpoint: config[EndpointEnvVar],
             apiKey: config[ApiKeyEnvVar],
             deploymentName: config[DeploymentEnvVar]);
-        
+
         // Create a batch to test batch processing
         var texts = Enumerable.Range(0, 50)
             .Select(i => $"Test sentence number {i}.")

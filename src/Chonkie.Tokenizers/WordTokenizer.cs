@@ -48,7 +48,7 @@ public class WordTokenizer : BaseTokenizer
             {
                 throw new ArgumentException($"Token ID {tokenId} not found in vocabulary.", nameof(tokens));
             }
-            
+
             words[i] = Vocab[tokenId];
         }
 

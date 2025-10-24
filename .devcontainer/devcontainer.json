@@ -1,0 +1,116 @@
+{
+	"name": "Chonkie.Net Dev Container (Sandboxed)",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspace",
+
+	// Features to install
+	"features": {
+		"ghcr.io/devcontainers/features/dotnet:2": {
+			"version": "10.0",
+			"installUsingApt": false
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest"
+		},
+		// GitHub CLI removed - install manually in post-create if needed
+		// The feature downloads from GitHub which may fail with proxy
+		// "ghcr.io/devcontainers/features/github-cli:1": {
+		// 	"version": "latest"
+		// },
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "22"
+		},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.11"
+		}
+	},
+
+	// VS Code settings
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"dotnet.defaultSolution": "Chonkie.Net.sln",
+				"omnisharp.useModernNet": true,
+				// Security: Disable telemetry
+				"telemetry.telemetryLevel": "off",
+				// Proxy settings for VS Code and extensions
+				"http.proxy": "http://proxy:3128",
+				"http.proxyStrictSSL": false,
+				"http.proxySupport": "on"
+			},
+			"extensions": [
+				"ms-dotnettools.csharp",
+				"ms-dotnettools.csdevkit",
+				"ms-dotnettools.vscode-dotnet-runtime",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"ms-vscode.makefile-tools",
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig"
+			]
+		}
+	},
+
+	// Lifecycle scripts
+	"onCreateCommand": "sudo chown -R vscode:vscode /vscode || true",
+	"postCreateCommand": "bash /workspace/.devcontainer/scripts/post-create.sh",
+	"postStartCommand": "bash /workspace/.devcontainer/scripts/post-start.sh",
+
+	// Container user (non-root for security)
+	"remoteUser": "vscode",
+	"containerUser": "vscode",
+
+	// Environment variables
+	"remoteEnv": {
+		"DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+		"DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "1",
+		"ASPNETCORE_ENVIRONMENT": "Development",
+		// Pip configuration
+		"PIP_DEFAULT_TIMEOUT": "100",
+		"PIP_TRUSTED_HOST": "pypi.org pypi.python.org files.pythonhosted.org",
+		// Proxy settings for network filtering
+		"http_proxy": "http://proxy:3128",
+		"https_proxy": "http://proxy:3128",
+		"HTTP_PROXY": "http://proxy:3128",
+		"HTTPS_PROXY": "http://proxy:3128",
+		"no_proxy": "localhost,127.0.0.1,devcontainer",
+		"NO_PROXY": "localhost,127.0.0.1,devcontainer"
+	},
+
+	// Port forwarding
+	"forwardPorts": [5000, 5001],
+	"portsAttributes": {
+		"5000": {
+			"label": "HTTP",
+			"onAutoForward": "notify"
+		},
+		"5001": {
+			"label": "HTTPS",
+			"onAutoForward": "notify"
+		}
+	},
+
+	// Mount configuration - see docker-compose.yml for details
+	"mounts": [
+		// SSH keys (read-only for security)
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+		// Git config (read-only)
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,readonly"
+	],
+	
+	// Override the default vscode volume mount to use /home/vscode/.vscode-server instead of /vscode
+	"overrideCommand": false,
+
+	// Security: Limit capabilities
+	"capAdd": [],
+	"securityOpt": [
+		"no-new-privileges"
+	],
+
+	// Disable GPU and Wayland support (incompatible with Podman on Windows)
+	"hostRequirements": {
+		"gpu": false
+	}
+}

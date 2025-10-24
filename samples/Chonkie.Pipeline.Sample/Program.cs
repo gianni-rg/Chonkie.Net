@@ -74,7 +74,7 @@ class Program
 
         // Create sample file
         var sampleFile = "pipeline_sample.txt";
-        await File.WriteAllTextAsync(sampleFile, 
+        await File.WriteAllTextAsync(sampleFile,
             "Natural Language Processing (NLP) is a field of artificial intelligence. " +
             "It focuses on the interaction between computers and human language. " +
             "Modern NLP uses deep learning and transformer models. " +
@@ -91,7 +91,7 @@ class Program
 
             Console.WriteLine($"✓ Processed file: {sampleFile}");
             Console.WriteLine($"✓ Created {result.FinalChunks.Count} sentence-based chunks\n");
-            
+
             foreach (var chunk in result.FinalChunks)
             {
                 Console.WriteLine($"[{chunk.StartIndex}-{chunk.EndIndex}] {chunk.Text}");

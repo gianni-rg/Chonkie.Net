@@ -12,7 +12,7 @@ namespace Chonkie.Refineries
     public class OverlapRefinery : IRefinery
     {
         private readonly int _minOverlap;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OverlapRefinery"/> class.
         /// </summary>

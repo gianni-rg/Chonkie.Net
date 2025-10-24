@@ -21,7 +21,7 @@ public class WordTokenizerTests
         var tokens = tokenizer.Encode(text);
 
         // Assert
-    Assert.Equal(3, tokens.Count); // This is correct for multiple items, but if you want to check for a single item, use Assert.Single(tokens)
+        Assert.Equal(3, tokens.Count); // This is correct for multiple items, but if you want to check for a single item, use Assert.Single(tokens)
         Assert.All(tokens, token => Assert.IsType<int>(token));
     }
 
@@ -230,7 +230,7 @@ public class WordTokenizerTests
     {
         // Arrange
         var tokenizer = new WordTokenizer();
-        
+
         // Test tabs and newlines
         var textWithWhitespace = "hello\tworld\ntest";
         var tokens = tokenizer.Encode(textWithWhitespace);
@@ -294,7 +294,7 @@ public class WordTokenizerTests
     {
         // Arrange
         var tokenizer = new WordTokenizer();
-        
+
         var text1 = "Wall-E is truly a masterpiece that should be required viewing.";
         var text2 = "Ratatouille is truly a delightful film that every kid should watch.";
 

@@ -133,7 +133,7 @@ public class TokenChunkerTests
 
         // Assert
         Assert.Equal(3, chunks.Count);
-        
+
         // First chunk: chars 0-9 (indices 0-10)
         Assert.Equal("0123456789", chunks[0].Text);
         Assert.Equal(0, chunks[0].StartIndex);
@@ -284,7 +284,7 @@ public class TokenChunkerTests
         // Arrange
         var tokenizer = new CharacterTokenizer();
         var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 128);
-        var text = "The quick brown fox jumps over the lazy dog. " + 
+        var text = "The quick brown fox jumps over the lazy dog. " +
                    "This is a test sentence to verify chunk indices. " +
                    "Another sentence here for testing purposes.";
 
@@ -341,7 +341,7 @@ Another paragraph.";
 
         // Assert
         Assert.NotEmpty(chunks);
-        
+
         // Note: Due to whitespace trimming, we verify indices match correctly
         // rather than exact text reconstruction
         foreach (var chunk in chunks)
@@ -349,7 +349,7 @@ Another paragraph.";
             var extractedText = markdown.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
             Assert.Equal(chunk.Text, extractedText);
         }
-        
+
         // Verify chunks cover the entire text
         Assert.Equal(0, chunks[0].StartIndex);
         Assert.Equal(markdown.Length, chunks[chunks.Count - 1].EndIndex);
@@ -370,7 +370,7 @@ Another paragraph.";
         // Assert
         Assert.True(chunks.Count > 1);
         Assert.All(chunks, c => Assert.True(c.TokenCount <= 10));
-        
+
         // Verify overlap is working
         if (chunks.Count > 1)
         {
