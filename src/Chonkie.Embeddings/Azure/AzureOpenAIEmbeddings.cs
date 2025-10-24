@@ -40,6 +40,12 @@ namespace Chonkie.Embeddings.Azure
         /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
+            // Azure OpenAI API doesn't accept empty strings, return zero vector
+            if (string.IsNullOrEmpty(text))
+            {
+                return new float[Dimension];
+            }
+
             var embeddingClient = _client.GetEmbeddingClient(_deploymentName);
             var response = await embeddingClient.GenerateEmbeddingAsync(text, cancellationToken: cancellationToken);
             var embedding = response.Value.ToFloats();
@@ -49,14 +55,40 @@ namespace Chonkie.Embeddings.Azure
         /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
-            var embeddingClient = _client.GetEmbeddingClient(_deploymentName);
-            var response = await embeddingClient.GenerateEmbeddingsAsync(texts, cancellationToken: cancellationToken);
-            var results = new List<float[]>(response.Value.Count);
-            foreach (var item in response.Value)
+            var textList = texts.ToList();
+            var results = new List<float[]>(textList.Count);
+
+            // Separate empty and non-empty texts
+            var nonEmptyIndices = new List<int>();
+            var nonEmptyTexts = new List<string>();
+
+            for (int i = 0; i < textList.Count; i++)
             {
-                var floats = item.ToFloats().ToArray();
-                results.Add(floats);
+                if (string.IsNullOrEmpty(textList[i]))
+                {
+                    results.Add(new float[Dimension]);
+                }
+                else
+                {
+                    nonEmptyIndices.Add(i);
+                    nonEmptyTexts.Add(textList[i]);
+                    results.Add(null!); // Placeholder
+                }
             }
+
+            // Process non-empty texts if any
+            if (nonEmptyTexts.Count > 0)
+            {
+                var embeddingClient = _client.GetEmbeddingClient(_deploymentName);
+                var response = await embeddingClient.GenerateEmbeddingsAsync(nonEmptyTexts, cancellationToken: cancellationToken);
+
+                for (int i = 0; i < response.Value.Count; i++)
+                {
+                    var floats = response.Value[i].ToFloats().ToArray();
+                    results[nonEmptyIndices[i]] = floats;
+                }
+            }
+
             return results;
         }
     }
