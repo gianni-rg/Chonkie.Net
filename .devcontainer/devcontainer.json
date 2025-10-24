@@ -38,7 +38,11 @@
 				// Proxy settings for VS Code and extensions
 				"http.proxy": "http://proxy:3128",
 				"http.proxyStrictSSL": false,
-				"http.proxySupport": "on"
+				"http.proxySupport": "on",
+				// Auto-approve all Copilot terminal commands in dev container
+				"chat.tools.terminal.autoApprove": {
+					"*": true
+				}
 			},
 			"extensions": [
 				"ms-dotnettools.csharp",

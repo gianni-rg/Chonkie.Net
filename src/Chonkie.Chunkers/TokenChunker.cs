@@ -2,12 +2,14 @@ namespace Chonkie.Chunkers;
 
 using Chonkie.Core.Chunker;
 using Chonkie.Core.Interfaces;
+using Chonkie.Core.Pipeline;
 using Chonkie.Core.Types;
 using Microsoft.Extensions.Logging;
 
 /// <summary>
 /// Chunker that splits text into chunks of a specified token size with optional overlap.
 /// </summary>
+[PipelineComponent("token", ComponentType.Chunker)]
 public class TokenChunker : BaseChunker
 {
     /// <summary>

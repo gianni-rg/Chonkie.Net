@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Chonkie.Pipeline</RootNamespace>
+    <AssemblyName>Chonkie.Pipeline</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chonkie.Core\Chonkie.Core.csproj" />
+    <ProjectReference Include="..\Chonkie.Tokenizers\Chonkie.Tokenizers.csproj" />
+    <ProjectReference Include="..\Chonkie.Chunkers\Chonkie.Chunkers.csproj" />
+    <ProjectReference Include="..\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
+    <ProjectReference Include="..\Chonkie.Refineries\Chonkie.Refineries.csproj" />
+    <ProjectReference Include="..\Chonkie.Fetchers\Chonkie.Fetchers.csproj" />
+    <ProjectReference Include="..\Chonkie.Chefs\Chonkie.Chefs.csproj" />
+    <ProjectReference Include="..\Chonkie.Porters\Chonkie.Porters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
+  </ItemGroup>
+
+</Project>
