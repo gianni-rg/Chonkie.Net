@@ -23,26 +23,4 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
-  <!-- Docker/Podman Configuration for Visual Studio -->
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-    <!-- Use wrapper scripts that redirect to Podman -->
-    <DockerComposeExePath>C:\bin\docker-compose.exe</DockerComposeExePath>
-    <DockerExePath>C:\bin\docker.exe</DockerExePath>
-    
-    <!-- Docker Compose project configuration -->
-    <DockerComposeProjectName>chonkie-net</DockerComposeProjectName>
-    <EnableDockerCompose>true</EnableDockerCompose>
-    
-    <!-- Build configuration -->
-    <DockerBuildContext>.</DockerBuildContext>
-    <DockerfilePath>.devcontainer\Dockerfile.dotnet</DockerfilePath>
-  </PropertyGroup>
-
-  <!-- Redirect outputs for Docker Compose MSBuild projects so bin/obj don't clutter the repo root -->
-  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.dcproj'">
-    <!-- Put compose outputs under artifacts/docker-compose/{obj|bin} -->
-    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts/docker-compose/obj/</BaseIntermediateOutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <OutputPath>$(MSBuildThisFileDirectory)artifacts/docker-compose/bin/</OutputPath>
-  </PropertyGroup>
 </Project>
