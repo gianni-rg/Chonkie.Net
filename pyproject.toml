@@ -1,0 +1,42 @@
+[project]
+name = "chonkie-net-tools"
+version = "0.1.0"
+description = "Python tools for Chonkie.Net, including ONNX model conversion"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "optimum[onnxruntime]>=1.21.0",
+    "transformers>=4.45.0",
+    "sentencepiece>=0.2.0",
+    "protobuf>=5.28.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "black>=24.10.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"

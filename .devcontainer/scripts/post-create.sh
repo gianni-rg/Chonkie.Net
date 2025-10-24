@@ -107,6 +107,16 @@ pip3 install --user --break-system-packages \
     tiktoken \
     pyyaml
 
+# Install UV - fast Python package manager
+echo "📦 Installing UV package manager..."
+pip3 install --user --break-system-packages uv || echo "⚠️  UV installation failed"
+# Add UV to PATH if installed
+if [ -d "/home/vscode/.local/bin" ]; then
+    if ! grep -q "/home/vscode/.local/bin" /home/vscode/.bashrc; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> /home/vscode/.bashrc
+    fi
+fi
+
 # Install Node.js based AI tools
 echo "📦 Installing Node.js AI tools..."
 npm install -g @anthropic-ai/sdk || echo "⚠️  Could not install Anthropic SDK"

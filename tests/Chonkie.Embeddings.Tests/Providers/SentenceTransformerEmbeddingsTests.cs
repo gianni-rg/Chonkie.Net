@@ -25,18 +25,22 @@ namespace Chonkie.Embeddings.Tests.Providers
         public void Constructor_InitializesProperties()
         {
             // Arrange
-            var modelPath = "test-model.onnx";
+            var modelPath = "test-model-directory";
 
             // Act & Assert - May throw if file doesn't exist, but we're just testing property initialization
             try
             {
-                var embeddings = new SentenceTransformerEmbeddings(modelPath, 384);
+                var embeddings = new SentenceTransformerEmbeddings(
+                    modelPath: modelPath,
+                    poolingMode: null,
+                    normalize: true,
+                    maxLength: null
+                );
                 Assert.Equal("sentence-transformers", embeddings.Name);
-                Assert.Equal(384, embeddings.Dimension);
             }
             catch (Exception)
             {
-                // Expected when model file doesn't exist
+                // Expected when model directory doesn't exist
             }
         }
 
