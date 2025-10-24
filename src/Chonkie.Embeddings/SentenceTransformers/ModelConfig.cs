@@ -19,6 +19,13 @@ namespace Chonkie.Embeddings.SentenceTransformers
         [JsonPropertyName("hidden_size")]
         public int HiddenSize { get; set; }
 
+        /// <summary>Gets or sets the dimension (used by DistilBERT and some other models).</summary>
+        [JsonPropertyName("dim")]
+        public int Dim { get; set; }
+
+        /// <summary>Gets the effective hidden size (prefers hidden_size, falls back to dim).</summary>
+        public int EffectiveHiddenSize => HiddenSize > 0 ? HiddenSize : Dim;
+
         /// <summary>Gets or sets the maximum number of position embeddings.</summary>
         [JsonPropertyName("max_position_embeddings")]
         public int MaxPositionEmbeddings { get; set; }
@@ -156,9 +163,10 @@ namespace Chonkie.Embeddings.SentenceTransformers
             if (!File.Exists(configPath))
             {
                 // Return default configuration if file doesn't exist
+                // Note: WordEmbeddingDimension is left at 0 so that the actual model's hidden_size will be used
                 return new PoolingConfig
                 {
-                    WordEmbeddingDimension = 384,
+                    WordEmbeddingDimension = 0,
                     PoolingModeMeanTokens = true
                 };
             }

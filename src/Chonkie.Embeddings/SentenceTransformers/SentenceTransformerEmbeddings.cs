@@ -78,7 +78,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
             // Set dimension from pooling config
             Dimension = _poolingConfig.WordEmbeddingDimension > 0
                 ? _poolingConfig.WordEmbeddingDimension
-                : _modelConfig.HiddenSize;
+                : _modelConfig.EffectiveHiddenSize;
 
             // Determine pooling mode
             _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
