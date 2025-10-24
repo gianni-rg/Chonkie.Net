@@ -207,7 +207,7 @@ public class CharacterTokenizerTests
     {
         // Arrange
         var tokenizer = new CharacterTokenizer();
-        
+
         // Test multiple spaces
         var textWithSpaces = "hello    world";
         var tokensSpaces = tokenizer.Encode(textWithSpaces);
@@ -263,17 +263,17 @@ public class CharacterTokenizerTests
     {
         // Arrange
         var tokenizer = new CharacterTokenizer();
-        
+
         // Encode first text
         var text1 = "hello";
         tokenizer.Encode(text1);
         var vocabAfterFirst = tokenizer.GetVocabulary().Count;
-        
+
         // Encode same text again - vocab should not grow
         tokenizer.Encode(text1);
         var vocabAfterRepeat = tokenizer.GetVocabulary().Count;
         Assert.Equal(vocabAfterFirst, vocabAfterRepeat);
-        
+
         // Encode new text - vocab should grow
         var text2 = "xyz";
         tokenizer.Encode(text2);

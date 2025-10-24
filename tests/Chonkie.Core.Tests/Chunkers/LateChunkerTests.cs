@@ -314,14 +314,14 @@ public class LateChunkerTests
 
         // Assert - same number of chunks (LateChunker just adds embeddings)
         Assert.Equal(recursiveChunks.Count, lateChunks.Count);
-        
+
         // Assert - text content matches
         for (int i = 0; i < lateChunks.Count; i++)
         {
             Assert.Equal(recursiveChunks[i].Text, lateChunks[i].Text);
             Assert.Equal(recursiveChunks[i].TokenCount, lateChunks[i].TokenCount);
         }
-        
+
         // Assert - LateChunker has embeddings, RecursiveChunker doesn't
         Assert.All(lateChunks, chunk => Assert.NotNull(chunk.Embedding));
         Assert.All(recursiveChunks, chunk => Assert.Null(chunk.Embedding));
@@ -408,7 +408,7 @@ public class LateChunkerTests
         Assert.True(chunks.Count >= 2, "Should generate at least 2 chunks");
         // Verify all chunks have embeddings
         Assert.All(chunks, chunk => Assert.NotNull(chunk.Embedding));
-        
+
         // If we have multiple chunks, verify embeddings are different
         if (chunks.Count >= 2)
         {

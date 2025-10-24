@@ -8,7 +8,7 @@ namespace Chonkie.Visualizer.Sample;
 /// </summary>
 public static class ChunkVisualizer
 {
-    private static readonly ConsoleColor[] ChunkColors = 
+    private static readonly ConsoleColor[] ChunkColors =
     [
         ConsoleColor.Cyan,
         ConsoleColor.Green,
@@ -26,7 +26,7 @@ public static class ChunkVisualizer
     /// <param name="showMetadata">Whether to show detailed metadata.</param>
     /// <param name="showBoundaries">Whether to show chunk boundaries.</param>
     public static void Print(
-        IReadOnlyList<Chunk> chunks, 
+        IReadOnlyList<Chunk> chunks,
         bool showOverlap = false,
         bool showMetadata = false,
         bool showBoundaries = false)
@@ -39,24 +39,24 @@ public static class ChunkVisualizer
             // Print chunk header
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write($"[Chunk {i + 1}");
-            
+
             if (showMetadata)
             {
                 Console.Write($" | Tokens: {chunk.TokenCount} | Range: {chunk.StartIndex}-{chunk.EndIndex}");
             }
-            
+
             Console.WriteLine("]");
 
             // Print chunk text with color
             Console.ForegroundColor = color;
-            
+
             if (showBoundaries)
             {
                 Console.Write("┌─ ");
             }
-            
+
             Console.WriteLine(chunk.Text.Trim());
-            
+
             if (showBoundaries)
             {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -103,15 +103,15 @@ public static class ChunkVisualizer
         Console.WriteLine("┌─ Chunker Comparison ─────────────────────────────────┐");
         Console.WriteLine("│ Strategy          │ Chunks │ Total Tokens │ Avg/Chunk │");
         Console.WriteLine("├───────────────────┼────────┼──────────────┼───────────┤");
-        
+
         foreach (var (name, chunks) in strategies)
         {
             var totalTokens = chunks.Sum(c => c.TokenCount);
             var avgTokens = chunks.Average(c => c.TokenCount);
-            
+
             Console.WriteLine($"│ {name,-17} │ {chunks.Count,6} │ {totalTokens,12} │ {avgTokens,9:F1} │");
         }
-        
+
         Console.WriteLine("└───────────────────┴────────┴──────────────┴───────────┘");
     }
 
@@ -121,26 +121,26 @@ public static class ChunkVisualizer
     public static void PrintBarChart(IReadOnlyList<Chunk> chunks, int maxWidth = 50)
     {
         var maxTokens = chunks.Max(c => c.TokenCount);
-        
+
         Console.WriteLine("Chunk Size Distribution:");
         Console.WriteLine();
-        
+
         for (int i = 0; i < chunks.Count; i++)
         {
             var chunk = chunks[i];
             var barWidth = (int)((double)chunk.TokenCount / maxTokens * maxWidth);
             var color = ChunkColors[i % ChunkColors.Length];
-            
+
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write($"  Chunk {i + 1,2}: ");
-            
+
             Console.ForegroundColor = color;
             Console.Write(new string('█', barWidth));
-            
+
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine($" {chunk.TokenCount} tokens");
         }
-        
+
         Console.ResetColor();
         Console.WriteLine();
     }
@@ -151,39 +151,39 @@ public static class ChunkVisualizer
     public static void PrintHighlighted(IReadOnlyList<Chunk> chunks, string fullText)
     {
         Console.WriteLine("Full Text with Chunk Boundaries:\n");
-        
+
         int lastPos = 0;
         for (int i = 0; i < chunks.Count; i++)
         {
             var chunk = chunks[i];
             var color = ChunkColors[i % ChunkColors.Length];
-            
+
             // Print any gap before this chunk
             if (chunk.StartIndex > lastPos)
             {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.Write(fullText.Substring(lastPos, chunk.StartIndex - lastPos));
             }
-            
+
             // Print chunk number marker
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write($"[{i + 1}]");
-            
+
             // Print chunk text
             Console.ForegroundColor = color;
-            Console.Write(fullText.Substring(chunk.StartIndex, 
+            Console.Write(fullText.Substring(chunk.StartIndex,
                 Math.Min(chunk.EndIndex - chunk.StartIndex, fullText.Length - chunk.StartIndex)));
-            
+
             lastPos = chunk.EndIndex;
         }
-        
+
         // Print any remaining text
         if (lastPos < fullText.Length)
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.Write(fullText.Substring(lastPos));
         }
-        
+
         Console.ResetColor();
         Console.WriteLine("\n");
     }

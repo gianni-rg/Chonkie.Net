@@ -15,10 +15,10 @@ namespace Chonkie.Embeddings.Azure
     {
         private readonly AzureOpenAIClient _client;
         private readonly string _deploymentName;
-        
+
         /// <inheritdoc />
         public override string Name => "azure-openai";
-        
+
         /// <inheritdoc />
         public override int Dimension { get; }
 

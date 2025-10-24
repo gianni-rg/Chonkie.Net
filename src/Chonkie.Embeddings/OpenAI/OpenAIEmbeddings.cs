@@ -17,10 +17,10 @@ namespace Chonkie.Embeddings.OpenAI
         private readonly string _apiKey;
         private readonly string _model;
         private readonly HttpClient _httpClient;
-        
+
         /// <inheritdoc />
         public override string Name => "openai";
-        
+
         /// <inheritdoc />
         public override int Dimension { get; }
 

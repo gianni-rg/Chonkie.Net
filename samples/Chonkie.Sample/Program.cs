@@ -56,7 +56,7 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -77,7 +77,7 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -98,7 +98,7 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
             Console.WriteLine($"   Token Count: {chunks[i].TokenCount}\n");
         }
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 
@@ -137,7 +137,7 @@ speech synthesis, and game playing. The field continues to evolve rapidly with n
         }
 
         Console.WriteLine(new string('-', 80) + "\n");
-        
+
         return Task.CompletedTask;
     }
 }

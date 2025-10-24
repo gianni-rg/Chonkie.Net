@@ -107,12 +107,12 @@ namespace Chonkie.Chunkers
                 {
                     var combinedText = string.Concat(sentences.Select(s => s.Text));
                     var tokenCount = sentences.Sum(s => s.TokenCount);
-                    return new[] { new Chunk 
-                    { 
-                        Text = combinedText, 
-                        StartIndex = 0, 
-                        EndIndex = combinedText.Length, 
-                        TokenCount = tokenCount 
+                    return new[] { new Chunk
+                    {
+                        Text = combinedText,
+                        StartIndex = 0,
+                        EndIndex = combinedText.Length,
+                        TokenCount = tokenCount
                     }};
                 }
                 return Array.Empty<Chunk>();
@@ -139,7 +139,7 @@ namespace Chonkie.Chunkers
             // Create chunks from final groups
             var chunks = CreateChunks(finalGroups);
 
-            Logger.LogInformation("Created {Count} semantic chunks from {SentenceCount} sentences", 
+            Logger.LogInformation("Created {Count} semantic chunks from {SentenceCount} sentences",
                 chunks.Count, sentences.Count);
 
             return chunks;
@@ -419,12 +419,12 @@ namespace Chonkie.Chunkers
             {
                 var text = string.Concat(group.Select(s => s.Text));
                 var tokenCount = group.Sum(s => s.TokenCount);
-                chunks.Add(new Chunk 
-                { 
-                    Text = text, 
-                    StartIndex = currentIndex, 
-                    EndIndex = currentIndex + text.Length, 
-                    TokenCount = tokenCount 
+                chunks.Add(new Chunk
+                {
+                    Text = text,
+                    StartIndex = currentIndex,
+                    EndIndex = currentIndex + text.Length,
+                    TokenCount = tokenCount
                 });
                 currentIndex += text.Length;
             }

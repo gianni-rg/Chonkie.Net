@@ -185,22 +185,22 @@ public class RecursiveChunkerTests
 
         // Assert
         Assert.NotEmpty(chunks);
-        
+
         // First chunk should start at 0
         Assert.Equal(0, chunks[0].StartIndex);
-        
+
         // Verify each chunk's indices
         foreach (var chunk in chunks)
         {
             Assert.Equal(chunk.StartIndex + chunk.Text.Length, chunk.EndIndex);
-            
+
             // Verify chunk text matches original text at those indices
             if (chunk.EndIndex <= text.Length)
             {
                 Assert.Equal(chunk.Text, text.Substring(chunk.StartIndex, chunk.Text.Length));
             }
         }
-        
+
         // Last chunk should end at text length
         Assert.Equal(text.Length, chunks[chunks.Count - 1].EndIndex);
     }
@@ -337,7 +337,7 @@ Fixed-size chunking represents the most straightforward approach to document seg
 
         // Assert
         Assert.NotEmpty(chunks);
-        
+
         // Verify chunks are continuous (no gaps)
         Assert.Equal(0, chunks[0].StartIndex);
         for (int i = 1; i < chunks.Count; i++)
@@ -417,7 +417,7 @@ Fixed-size chunking represents the most straightforward approach to document seg
             chunkSize: 2048,
             rules: paragraphRules,
             minCharactersPerChunk: 12);
-        
+
         var text = "First paragraph.\n\nSecond paragraph.\n\nThird paragraph.";
 
         // Act
@@ -443,7 +443,7 @@ Fixed-size chunking represents the most straightforward approach to document seg
             chunkSize: 512,
             rules: sentenceRules,
             minCharactersPerChunk: 12);
-        
+
         var text = "First sentence. Second sentence. Third sentence.";
 
         // Act
@@ -469,7 +469,7 @@ Fixed-size chunking represents the most straightforward approach to document seg
             chunkSize: 512,
             rules: wordRules,
             minCharactersPerChunk: 12);
-        
+
         var text = "one two three four five six seven eight nine ten";
 
         // Act
@@ -495,7 +495,7 @@ Fixed-size chunking represents the most straightforward approach to document seg
             chunkSize: 512,
             rules: tokenRules,
             minCharactersPerChunk: 12);
-        
+
         var text = "This is a test text for token-based recursive chunking.";
 
         // Act
