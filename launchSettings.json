@@ -3,7 +3,7 @@
     "Docker Compose (Podman)": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
-      "executablePath": "C:\\bin\\docker-compose.exe",
+      "executablePath": "docker-compose",
       "composeBuild": true,
       "serviceActions": {
         "dotnet-app": "StartDebugging"
