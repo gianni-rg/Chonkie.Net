@@ -21,7 +21,7 @@ namespace Chonkie.Examples
                 Console.WriteLine("\nExample:");
                 Console.WriteLine("  dotnet run ./models/all-MiniLM-L6-v2");
                 Console.WriteLine("\nTo convert a model:");
-                Console.WriteLine("  pip install optimum[onnxruntime] transformers");
+                Console.WriteLine("  use the provided script (run in the uv env)");
                 Console.WriteLine("  python scripts/convert_model.py sentence-transformers/all-MiniLM-L6-v2");
                 return;
             }
