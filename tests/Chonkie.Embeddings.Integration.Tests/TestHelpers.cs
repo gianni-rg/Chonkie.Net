@@ -50,23 +50,7 @@ public static class TestHelpers
     /// </summary>
     public static float CosineSimilarity(float[] a, float[] b)
     {
-        if (a.Length != b.Length)
-        {
-            throw new ArgumentException("Vectors must have the same length");
-        }
-
-        float dotProduct = 0;
-        float normA = 0;
-        float normB = 0;
-
-        for (int i = 0; i < a.Length; i++)
-        {
-            dotProduct += a[i] * b[i];
-            normA += a[i] * a[i];
-            normB += b[i] * b[i];
-        }
-
-        return dotProduct / (MathF.Sqrt(normA) * MathF.Sqrt(normB));
+        return Chonkie.Embeddings.VectorMath.CosineSimilarity(a, b);
     }
 
     /// <summary>

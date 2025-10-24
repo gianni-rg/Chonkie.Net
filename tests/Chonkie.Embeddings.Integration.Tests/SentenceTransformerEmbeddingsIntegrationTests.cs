@@ -23,9 +23,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
@@ -48,9 +48,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
@@ -77,9 +77,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
@@ -108,9 +108,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
@@ -131,9 +131,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);
@@ -151,9 +151,9 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     {
         // Arrange
         var modelPath = TestHelpers.GetEnvironmentVariableOrSkip(ModelPathEnvVar);
-        if (!File.Exists(modelPath))
+        if (!Directory.Exists(modelPath))
         {
-            throw new Xunit.SkipException($"Model file not found at {modelPath}. Skipping integration test.");
+            throw new Xunit.SkipException($"Model directory not found at {modelPath}. Skipping integration test.");
         }
 
         using var embeddings = new SentenceTransformerEmbeddings(modelPath: modelPath);

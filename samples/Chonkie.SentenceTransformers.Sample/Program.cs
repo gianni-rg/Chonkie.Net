@@ -149,23 +149,7 @@ namespace Chonkie.Examples
         /// </summary>
         static float CosineSimilarity(float[] a, float[] b)
         {
-            if (a.Length != b.Length)
-            {
-                throw new ArgumentException("Vectors must have the same length");
-            }
-
-            float dot = 0f;
-            float magA = 0f;
-            float magB = 0f;
-
-            for (int i = 0; i < a.Length; i++)
-            {
-                dot += a[i] * b[i];
-                magA += a[i] * a[i];
-                magB += b[i] * b[i];
-            }
-
-            return dot / (MathF.Sqrt(magA) * MathF.Sqrt(magB));
+            return Chonkie.Embeddings.VectorMath.CosineSimilarity(a, b);
         }
     }
 }

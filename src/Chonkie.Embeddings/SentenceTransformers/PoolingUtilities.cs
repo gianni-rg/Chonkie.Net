@@ -8,6 +8,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
     /// </summary>
     public static class PoolingUtilities
     {
+        // ...existing code...
         /// <summary>
         /// Applies mean pooling over token embeddings with attention mask.
         /// </summary>
