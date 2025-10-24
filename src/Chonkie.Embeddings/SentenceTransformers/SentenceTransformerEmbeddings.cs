@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Chonkie.Embeddings.Base;
+using Microsoft.ML.Tokenizers;
 
 namespace Chonkie.Embeddings.SentenceTransformers
 {
@@ -24,6 +26,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
         private readonly PoolingMode _poolingMode;
         private readonly bool _normalize;
         private bool _disposed;
+        private Microsoft.ML.Tokenizers.BertTokenizer? _bertTokenizer;
 
         /// <inheritdoc />
         public override string Name => "sentence-transformers";
@@ -98,7 +101,23 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
             };
 
-            _session = new InferenceSession(onnxModelPath, sessionOptions);
+            _session = new InferenceSession(modelPath, sessionOptions);
+
+            // Try to load a suitable tokenizer via Microsoft.ML.Tokenizers
+            try
+            {
+                var modelDir = Path.GetDirectoryName(modelPath) ?? "";
+                var vocabTxt = Path.Combine(modelDir, "vocab.txt");
+                if (File.Exists(vocabTxt))
+                {
+                    // Create a BERT-style WordPiece tokenizer
+                    _bertTokenizer = Microsoft.ML.Tokenizers.BertTokenizer.Create(vocabTxt, new Microsoft.ML.Tokenizers.BertOptions());
+                }
+            }
+            catch
+            {
+                // If tokenizer cannot be loaded, we'll fallback to SimpleTokenize
+            }
         }
 
         /// <inheritdoc />
@@ -270,15 +289,23 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <returns>A list of token counts for each text.</returns>
         public IReadOnlyList<int> CountTokensBatch(IEnumerable<string> texts)
         {
-            var textList = texts.ToList();
-            var counts = new List<int>(textList.Count);
-
-            foreach (var text in textList)
+            // Prefer proper HuggingFace-compatible tokenization when available
+            try
             {
-                counts.Add(_tokenizer.CountTokens(text));
+                if (_bertTokenizer is not null)
+                {
+                    var ids = _bertTokenizer.EncodeToIds(text, addSpecialTokens: true, considerPreTokenization: true, considerNormalization: true);
+                    return ids.Select(id => (long)id).ToArray();
+                }
+            }
+            catch
+            {
+                // fall back below
             }
 
-            return counts;
+            // Fallback simplified tokenization
+            var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return words.Select(w => (long)(Math.Abs(w.GetHashCode()) % 30000)).ToArray();
         }
 
         /// <summary>

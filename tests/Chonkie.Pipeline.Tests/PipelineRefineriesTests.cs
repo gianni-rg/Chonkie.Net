@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineRefineriesTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithOverlapRefinery_AddsContext()
     {
@@ -33,6 +34,7 @@ public class PipelineRefineriesTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithMultipleRefineries_ChainsCorrectly()
     {
@@ -50,6 +52,7 @@ public class PipelineRefineriesTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithEmbeddingsRefinery_AddsEmbeddings()
     {
@@ -75,6 +78,7 @@ public class PipelineRefineriesTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithInvalidRefinery_ThrowsException()
     {
@@ -85,6 +89,7 @@ public class PipelineRefineriesTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_RefineryRunsAfterChunker()
     {

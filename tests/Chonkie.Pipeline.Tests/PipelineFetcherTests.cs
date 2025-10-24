@@ -10,12 +10,14 @@ public class PipelineFetcherTests
 {
     private readonly string _tempDirectory;
 
+    /// <inheritdoc/>
     public PipelineFetcherTests()
     {
         _tempDirectory = Path.Combine(Path.GetTempPath(), $"chonkie_test_{Guid.NewGuid():N}");
         Directory.CreateDirectory(_tempDirectory);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithSingleFile_LoadsAndChunks()
     {
@@ -45,6 +47,7 @@ public class PipelineFetcherTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithDirectory_LoadsAllFiles()
     {
@@ -81,6 +84,7 @@ public class PipelineFetcherTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithDirectoryAndExtensionFilter_LoadsOnlyMatchingFiles()
     {
@@ -112,6 +116,7 @@ public class PipelineFetcherTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithNonexistentFile_ThrowsException()
     {
@@ -125,6 +130,7 @@ public class PipelineFetcherTests
         Assert.Throws<InvalidOperationException>(() => pipeline.Run());
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithInvalidFetcher_ThrowsException()
     {
@@ -135,6 +141,8 @@ public class PipelineFetcherTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
+    /// <inheritdoc/>
+    [Fact]
     public void Dispose()
     {
         if (Directory.Exists(_tempDirectory))

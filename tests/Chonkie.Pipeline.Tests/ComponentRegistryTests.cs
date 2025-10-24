@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class ComponentRegistryTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_Instance_IsNotNull()
     {
@@ -18,6 +19,7 @@ public class ComponentRegistryTests
         Assert.NotNull(registry);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetChunker_ReturnsValidComponent()
     {
@@ -33,6 +35,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Chunker, component.ComponentType);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetChef_ReturnsValidComponent()
     {
@@ -48,6 +51,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Chef, component.ComponentType);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetFetcher_ReturnsValidComponent()
     {
@@ -63,6 +67,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Fetcher, component.ComponentType);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetRefinery_ReturnsValidComponent()
     {
@@ -78,6 +83,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Refinery, component.ComponentType);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetPorter_ReturnsValidComponent()
     {
@@ -93,6 +99,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Porter, component.ComponentType);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetComponent_WithInvalidAlias_ThrowsException()
     {
@@ -105,6 +112,7 @@ public class ComponentRegistryTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_ListComponents_ReturnsAllComponents()
     {
@@ -119,6 +127,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(components);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_ListComponents_FilteredByType_ReturnsOnlyThatType()
     {
@@ -134,6 +143,7 @@ public class ComponentRegistryTests
         Assert.All(chunkers, c => Assert.Equal(ComponentType.Chunker, c.ComponentType));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetAliases_ReturnsAllAliases()
     {
@@ -148,6 +158,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(aliases);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetAliases_FilteredByType_ReturnsOnlyThatType()
     {
@@ -165,6 +176,7 @@ public class ComponentRegistryTests
         Assert.Contains("sentence", chunkerAliases, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_IsRegistered_ReturnsTrueForRegisteredComponents()
     {
@@ -177,6 +189,7 @@ public class ComponentRegistryTests
         Assert.True(ComponentRegistry.Instance.IsRegistered("text"));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_IsRegistered_ReturnsFalseForUnregisteredComponents()
     {
@@ -187,6 +200,7 @@ public class ComponentRegistryTests
         Assert.False(ComponentRegistry.Instance.IsRegistered("nonexistent_component"));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_CaseInsensitive_FindsComponents()
     {
@@ -203,6 +217,7 @@ public class ComponentRegistryTests
         Assert.Equal(component1.Name, component3.Name);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistrar_RegisterAllComponents_IsIdempotent()
     {
@@ -215,6 +230,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(components);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void ComponentRegistry_GetComponent_WithWrongType_ThrowsException()
     {

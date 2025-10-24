@@ -490,8 +490,8 @@ public sealed class Pipeline
                     "TokenChunker" => new Chonkie.Chunkers.TokenChunker(tokenizer, chunkSize),
                     "SentenceChunker" => new Chonkie.Chunkers.SentenceChunker(tokenizer, chunkSize),
                     "RecursiveChunker" => new Chonkie.Chunkers.RecursiveChunker(tokenizer, chunkSize),
-                    "SemanticChunker" => CreateSemanticChunker(tokenizer, chunkSize),
-                    "LateChunker" => CreateLateChunker(tokenizer, chunkSize),
+                    "SemanticChunker" => CreateSemanticChunker(tokenizer, chunkSize, parameters),
+                    "LateChunker" => CreateLateChunker(tokenizer, chunkSize, parameters),
                     _ => throw new InvalidOperationException($"Unknown chunker: {step.Component.Name}")
                 };
             }
@@ -545,21 +545,44 @@ public sealed class Pipeline
         }
     }
 
-    private object CreateSemanticChunker(Chonkie.Core.Interfaces.ITokenizer tokenizer, int chunkSize)
+    private object CreateSemanticChunker(Chonkie.Core.Interfaces.ITokenizer tokenizer, int chunkSize, Dictionary<string, object?> parameters)
     {
         // SemanticChunker needs an embedding model
-        // Look for models directory in common locations
-        var modelPath = FindModelPath("all-MiniLM-L6-v2");
+        var modelName = parameters.TryGetValue("embedding_model", out var m) && m is not null
+            ? NormalizeModelName(m.ToString()!)
+            : "all-MiniLM-L6-v2";
+        var modelPath = FindModelPath(modelName);
         var embeddings = new Chonkie.Embeddings.SentenceTransformers.SentenceTransformerEmbeddings(modelPath);
         return new Chonkie.Chunkers.SemanticChunker(tokenizer, embeddings, null, 0.8f, chunkSize);
     }
 
-    private object CreateLateChunker(Chonkie.Core.Interfaces.ITokenizer tokenizer, int chunkSize)
+    private object CreateLateChunker(Chonkie.Core.Interfaces.ITokenizer tokenizer, int chunkSize, Dictionary<string, object?> parameters)
     {
         // LateChunker needs an embedding model
-        var modelPath = FindModelPath("all-MiniLM-L6-v2");
+        var modelName = parameters.TryGetValue("embedding_model", out var m) && m is not null
+            ? NormalizeModelName(m.ToString()!)
+            : "all-MiniLM-L6-v2";
+        var modelPath = FindModelPath(modelName);
         var embeddings = new Chonkie.Embeddings.SentenceTransformers.SentenceTransformerEmbeddings(modelPath);
         return new Chonkie.Chunkers.LateChunker(tokenizer, embeddings, chunkSize);
+    }
+
+    private static string NormalizeModelName(string modelName)
+    {
+        if (string.IsNullOrWhiteSpace(modelName))
+            return "all-MiniLM-L6-v2";
+
+        var name = modelName.Trim();
+
+        // If given as a HuggingFace-style path (e.g., "sentence-transformers/all-MiniLM-L6-v2"),
+        // prefer the final segment which should match our local folder name.
+        if (name.Contains('/'))
+        {
+            var parts = name.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            name = parts.Length > 0 ? parts[^1] : name;
+        }
+
+        return name;
     }
 
     private static string FindModelPath(string modelName)
@@ -633,7 +656,10 @@ public sealed class Pipeline
     private object CreateEmbeddingsRefinery(Dictionary<string, object?> parameters)
     {
         // EmbeddingsRefinery needs an embedding model
-        var modelPath = FindModelPath("all-MiniLM-L6-v2");
+        var modelName = parameters.TryGetValue("embedding_model", out var m) && m is not null
+            ? NormalizeModelName(m.ToString()!)
+            : "all-MiniLM-L6-v2";
+        var modelPath = FindModelPath(modelName);
         var embeddings = new Chonkie.Embeddings.SentenceTransformers.SentenceTransformerEmbeddings(modelPath);
         return new Chonkie.Refineries.EmbeddingsRefinery(embeddings);
     }

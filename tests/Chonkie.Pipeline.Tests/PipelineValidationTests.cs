@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineValidationTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_ReordersSteps_AccordingToCHOMP()
     {
@@ -24,6 +25,7 @@ public class PipelineValidationTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_RefineryRunsAfterChunker_EvenIfDefinedFirst()
     {
@@ -41,6 +43,7 @@ public class PipelineValidationTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Validation_RequiresChunker()
     {
@@ -53,6 +56,7 @@ public class PipelineValidationTests
         Assert.Contains("must include a chunker", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Validation_RejectsMultipleChefs()
     {
@@ -68,6 +72,7 @@ public class PipelineValidationTests
         Assert.Contains("Multiple process steps", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Validation_RequiresFetcherOrTextInput()
     {
@@ -80,6 +85,7 @@ public class PipelineValidationTests
         Assert.Contains("must include a fetcher", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithFetcherAndTextInput_UsesTextInput()
     {
@@ -107,6 +113,7 @@ public class PipelineValidationTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Describe_ShowsCHOMPOrder()
     {

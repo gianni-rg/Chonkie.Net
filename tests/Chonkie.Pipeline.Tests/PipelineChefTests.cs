@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineChefTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithTextChef_ProcessesText()
     {
@@ -24,6 +25,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithMultipleChefs_ThrowsException()
     {
@@ -39,6 +41,7 @@ public class PipelineChefTests
         Assert.Contains("Multiple process steps", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithoutChef_AddsDefaultTextChef()
     {
@@ -55,6 +58,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithMarkdownChef_ProcessesMarkdown()
     {
@@ -72,6 +76,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithInvalidChef_ThrowsException()
     {

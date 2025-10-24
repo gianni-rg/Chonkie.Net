@@ -16,6 +16,7 @@ It has multiple paragraphs to ensure proper chunking behavior.
 
 Each paragraph contains some meaningful content that can be split.";
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_CompleteWithTextInput_ProcessesSuccessfully()
     {
@@ -42,6 +43,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_PreservesDocumentStructure()
     {
@@ -60,6 +62,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.Equal(SampleText.Trim(), doc.Content);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_BatchTextProcessing_ReturnsMultipleDocuments()
     {
@@ -88,6 +91,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_ComponentCaching_ReusesInstances()
     {
@@ -106,6 +110,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotNull(doc2);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_DifferentParameters_CreateDifferentResults()
     {
@@ -129,6 +134,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotEqual(doc1.Chunks.Count, doc2.Chunks.Count);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_ToConfig_ExportsConfiguration()
     {
@@ -149,6 +155,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.Contains(config, c => c.Type == "refine");
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_SaveAndLoadConfig_RoundTrip()
     {
@@ -180,6 +187,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public async Task Pipeline_RunAsync_WorksCorrectly()
     {
@@ -195,6 +203,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_FluentAPI_ReturnsPipelineForChaining()
     {
@@ -207,6 +216,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.IsType<Pipeline>(pipeline.RefineWith("overlap", new { context_size = 50 }));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_ComplexChaining_WorksCorrectly()
     {

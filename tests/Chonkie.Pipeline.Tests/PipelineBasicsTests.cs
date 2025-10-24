@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineBasicsTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_CanBeInstantiated()
     {
@@ -18,6 +19,7 @@ public class PipelineBasicsTests
         Assert.NotNull(pipeline);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithDirectTextInput_ReturnsDocument()
     {
@@ -35,6 +37,7 @@ public class PipelineBasicsTests
         Assert.Equal("This is a test document for chunking.", doc.Content);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithMultipleTexts_ReturnsListOfDocuments()
     {
@@ -64,6 +67,7 @@ public class PipelineBasicsTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_RequiresChunker_ThrowsException()
     {
@@ -77,6 +81,7 @@ public class PipelineBasicsTests
         Assert.Contains("must include a chunker", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_RequiresInput_ThrowsException()
     {
@@ -90,6 +95,7 @@ public class PipelineBasicsTests
         Assert.Contains("must include a fetcher", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithNoSteps_ThrowsException()
     {
@@ -102,6 +108,7 @@ public class PipelineBasicsTests
         Assert.Contains("no steps", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Describe_ReturnsReadableString()
     {
@@ -119,6 +126,7 @@ public class PipelineBasicsTests
         Assert.Contains("chunk", description.ToLower());
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_Reset_ClearsAllSteps()
     {

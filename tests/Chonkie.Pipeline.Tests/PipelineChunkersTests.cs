@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineChunkersTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithTokenChunker_CreatesCorrectChunks()
     {
@@ -29,6 +30,7 @@ public class PipelineChunkersTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithRecursiveChunker_CreatesChunks()
     {
@@ -45,6 +47,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithSentenceChunker_CreatesChunks()
     {
@@ -61,6 +64,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithSemanticChunker_CreatesChunks()
     {
@@ -81,6 +85,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithLateChunker_CreatesChunks()
     {
@@ -107,6 +112,7 @@ public class PipelineChunkersTests
         }
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithInvalidChunker_ThrowsException()
     {
@@ -117,6 +123,7 @@ public class PipelineChunkersTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WithDifferentChunkSizes_ProducesDifferentResults()
     {
@@ -137,5 +144,40 @@ public class PipelineChunkersTests
 
         Assert.NotEqual(doc256.Chunks.Count, doc512.Chunks.Count);
         Assert.True(doc256.Chunks.Count > doc512.Chunks.Count);
+    }
+
+    /// <inheritdoc/>
+    [Fact]
+    public void Pipeline_WithSemanticChunker_CustomModelName_Works()
+    {
+        // Arrange
+        var text = "AI systems can learn. ML is part of AI. Cooking is different.";
+        var pipeline = new Pipeline()
+            .ChunkWith("semantic", new { chunk_size = 256, embedding_model = "sentence-transformers/all-MiniLM-L6-v2" });
+
+        // Act
+        var result = pipeline.Run(texts: text);
+
+        // Assert
+        var doc = Assert.IsType<Document>(result);
+        Assert.NotEmpty(doc.Chunks);
+    }
+
+    /// <inheritdoc/>
+    [Fact]
+    public void Pipeline_WithLateChunker_CustomModelName_Works()
+    {
+        // Arrange
+        var text = "This text will be embedded before late chunking.";
+        var pipeline = new Pipeline()
+            .ChunkWith("late", new { chunk_size = 256, embedding_model = "sentence-transformers/all-MiniLM-L6-v2" });
+
+        // Act
+        var result = pipeline.Run(texts: text);
+
+        // Assert
+        var doc = Assert.IsType<Document>(result);
+        Assert.NotEmpty(doc.Chunks);
+        Assert.All(doc.Chunks, c => Assert.NotNull(c.Embedding));
     }
 }

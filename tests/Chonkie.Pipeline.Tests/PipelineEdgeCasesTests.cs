@@ -8,6 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineEdgeCasesTests
 {
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_EmptyTextInput_HandlesGracefully()
     {
@@ -24,6 +25,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count >= 0);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_VeryShortText_CreatesAtLeastOneChunk()
     {
@@ -39,6 +41,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count >= 1);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_VeryLongText_CreatesManyChunks()
     {
@@ -55,6 +58,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count > 10);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_WhitespaceOnlyText_HandlesGracefully()
     {
@@ -71,6 +75,7 @@ public class PipelineEdgeCasesTests
         Assert.NotNull(doc);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_NullText_ThrowsException()
     {
@@ -83,6 +88,7 @@ public class PipelineEdgeCasesTests
             pipeline.Run(texts: null));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_SingleText_ReturnsDocument()
     {
@@ -98,6 +104,7 @@ public class PipelineEdgeCasesTests
         Assert.IsNotType<List<Document>>(result);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_MultipleTexts_ReturnsList()
     {
@@ -114,6 +121,7 @@ public class PipelineEdgeCasesTests
         Assert.All(docs, doc => Assert.IsType<Document>(doc));
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_UnicodeText_HandlesCorrectly()
     {
@@ -131,6 +139,7 @@ public class PipelineEdgeCasesTests
         Assert.Contains("🦛", doc.Content);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_SpecialCharacters_HandlesCorrectly()
     {
@@ -147,6 +156,7 @@ public class PipelineEdgeCasesTests
         Assert.NotEmpty(doc.Chunks);
     }
 
+    /// <inheritdoc/>
     [Fact(Skip = "Pipeline ignores invalid parameters and uses defaults, which is more resilient behavior")]
     public void Pipeline_InvalidParameters_ThrowsClearError()
     {
@@ -162,6 +172,7 @@ public class PipelineEdgeCasesTests
         Assert.NotNull(ex);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_AfterReset_RequiresNewSteps()
     {
@@ -177,6 +188,7 @@ public class PipelineEdgeCasesTests
         Assert.Contains("no steps", ex.Message);
     }
 
+    /// <inheritdoc/>
     [Fact]
     public void Pipeline_CanBeReusedAfterReset()
     {
