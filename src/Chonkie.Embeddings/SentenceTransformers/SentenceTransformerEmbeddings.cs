@@ -20,7 +20,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
 
         /// <inheritdoc />
         public override string Name => "sentence-transformers";
-        
+
         /// <inheritdoc />
         public override int Dimension { get; }
 
@@ -49,11 +49,11 @@ namespace Chonkie.Embeddings.SentenceTransformers
             {
                 // Tokenize text (simplified - in production use proper tokenizer)
                 var tokens = SimpleTokenize(text);
-                
+
                 // Create input tensors
                 var inputIds = new DenseTensor<long>(new[] { 1, tokens.Length });
                 var attentionMask = new DenseTensor<long>(new[] { 1, tokens.Length });
-                
+
                 for (int i = 0; i < tokens.Length; i++)
                 {
                     inputIds[0, i] = tokens[i];
@@ -70,7 +70,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 // Run inference
                 using var results = _session.Run(inputs);
                 var output = results.First().AsEnumerable<float>().ToArray();
-                
+
                 // Take the first Dimension values (pooled output)
                 return output.Take(Dimension).ToArray();
             }, cancellationToken);

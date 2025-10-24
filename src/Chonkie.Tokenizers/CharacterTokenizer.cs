@@ -16,7 +16,7 @@ public class CharacterTokenizer : BaseTokenizer
     public override IReadOnlyList<int> Encode(string text)
     {
         var encoded = new List<int>(text.Length);
-        
+
         foreach (var character in text)
         {
             var token = character.ToString();
@@ -43,13 +43,13 @@ public class CharacterTokenizer : BaseTokenizer
             {
                 throw new ArgumentException($"Token ID {tokenId} not found in vocabulary.", nameof(tokens));
             }
-            
+
             var token = Vocab[tokenId];
             if (token.Length != 1)
             {
                 throw new InvalidOperationException($"Expected single character token, but got '{token}'.");
             }
-            
+
             chars[i] = token[0];
         }
 

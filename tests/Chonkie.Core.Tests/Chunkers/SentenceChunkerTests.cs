@@ -122,7 +122,8 @@ public class SentenceChunkerTests
         Assert.True(chunks.Count > 1);
         // Each chunk should end with a complete sentence
         var lastChunk = chunks[chunks.Count - 1];
-        Assert.All(chunks, c => {
+        Assert.All(chunks, c =>
+        {
             var trimmed = c.Text.TrimEnd();
             Assert.True(trimmed.EndsWith(".") || trimmed == lastChunk.Text.TrimEnd());
         });
@@ -139,7 +140,7 @@ public class SentenceChunkerTests
             chunkSize: 50,
             delimiters: delimiters,
             minCharactersPerSentence: 5);
-        
+
         var text = "Hello world! How are you? I am fine. Thanks for asking!";
 
         // Act
@@ -162,7 +163,7 @@ public class SentenceChunkerTests
             chunkSize: 100,
             minSentencesPerChunk: 2,
             minCharactersPerSentence: 5);
-        
+
         var text = "One. Two. Three. Four. Five. Six.";
 
         // Act
@@ -171,9 +172,9 @@ public class SentenceChunkerTests
         // Assert
         Assert.NotEmpty(chunks);
         // Most chunks should have at least 2 sentences (except possibly the last)
-        var sentenceCounts = chunks.Select(c => 
+        var sentenceCounts = chunks.Select(c =>
             c.Text.Split(new[] { ". " }, StringSplitOptions.RemoveEmptyEntries).Length).ToList();
-        
+
         for (int i = 0; i < chunks.Count - 1; i++)
         {
             Assert.True(sentenceCounts[i] >= 2);
@@ -189,7 +190,7 @@ public class SentenceChunkerTests
             tokenizer,
             chunkSize: 50,
             minCharactersPerSentence: 5);
-        
+
         var text = "First paragraph.\nSecond paragraph.\nThird paragraph.";
 
         // Act
@@ -212,7 +213,7 @@ public class SentenceChunkerTests
             tokenizer,
             chunkSize: 100,
             minCharactersPerSentence: 15);
-        
+
         var text = "Hi. This is a longer sentence that should be kept. Yes.";
 
         // Act
@@ -260,7 +261,7 @@ public class SentenceChunkerTests
             chunkSize: 100,
             includeDelimiter: "prev",
             minCharactersPerSentence: 5);
-        
+
         var text = "First. Second. Third.";
 
         // Act
@@ -314,7 +315,7 @@ public class SentenceChunkerTests
             chunkSize: 100,
             chunkOverlap: 20,
             minCharactersPerSentence: 5);
-        
+
         var text = "First sentence here. Second sentence here. Third sentence here. Fourth sentence here. Fifth sentence here.";
 
         // Act
@@ -322,11 +323,11 @@ public class SentenceChunkerTests
 
         // Assert
         Assert.NotEmpty(chunks);
-        
+
         // Note: SentenceChunker may not always create overlap if sentences are too large
         // We verify that if we have multiple chunks, they respect the chunk size constraint
         Assert.All(chunks, c => Assert.True(c.TokenCount <= 100));
-        
+
         // If we have multiple chunks, check for potential overlap or at least continuity
         if (chunks.Count > 1)
         {
@@ -368,7 +369,7 @@ public class SentenceChunkerTests
             tokenizer,
             chunkSize: 200,
             minCharactersPerSentence: 5);
-        
+
         var markdown = @"# Heading 1
 This is a paragraph with some **bold text** and _italic text_. 
 ## Heading 2
@@ -382,7 +383,7 @@ Finally, a paragraph at the end.";
 
         // Assert
         Assert.NotEmpty(chunks);
-        
+
         // Verify indices map correctly
         foreach (var chunk in chunks)
         {
@@ -403,7 +404,7 @@ Finally, a paragraph at the end.";
             tokenizer,
             chunkSize: 512,
             minCharactersPerSentence: 20);
-        
+
         var text = "Hi. This is a much longer sentence that should definitely be kept in the output. Yes.";
 
         // Act

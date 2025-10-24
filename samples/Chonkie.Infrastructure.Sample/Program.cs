@@ -46,7 +46,7 @@ class Program
         Console.WriteLine("Step 3: CHUNK - Splitting text into chunks...");
         var tokenizer = new WordTokenizer();
         var chunker = new TokenChunker(tokenizer, chunkSize: 50, chunkOverlap: 10);
-        
+
         var allChunks = new List<Chunk>();
         foreach (var text in processedTexts)
         {
@@ -106,12 +106,12 @@ class Program
 Machine learning is a subset of AI that enables systems to learn and improve from experience without being explicitly programmed. 
 Deep learning uses neural networks with multiple layers to progressively extract higher-level features from raw input. 
 Natural Language Processing allows computers to understand, interpret, and generate human language in a valuable way.",
-            
+
             ["ml_overview.txt"] = @"Supervised learning algorithms learn from labeled training data to make predictions on unseen data. 
 Unsupervised learning identifies patterns in data without pre-existing labels or categories. 
 Reinforcement learning trains agents to make sequential decisions by rewarding desired behaviors. 
 Feature engineering transforms raw data into features that better represent the underlying problem.",
-            
+
             ["future_tech.txt"] = @"Quantum computing promises exponential speedups for certain computational problems. 
 Edge AI brings artificial intelligence processing closer to data sources for faster response times. 
 Explainable AI aims to make machine learning models more transparent and interpretable. 

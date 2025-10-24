@@ -12,7 +12,7 @@ namespace Chonkie.Refineries
     public class EmbeddingsRefinery : IRefinery
     {
         private readonly IEmbeddings _embeddings;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EmbeddingsRefinery"/> class.
         /// </summary>
