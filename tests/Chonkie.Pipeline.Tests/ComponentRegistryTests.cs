@@ -8,7 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class ComponentRegistryTests
 {
-    /// <inheritdoc/>
+    /// Registry: can register and resolve known components.
     [Fact]
     public void ComponentRegistry_Instance_IsNotNull()
     {
@@ -19,7 +19,7 @@ public class ComponentRegistryTests
         Assert.NotNull(registry);
     }
 
-    /// <inheritdoc/>
+    /// Registry: rejects duplicate registrations by name.
     [Fact]
     public void ComponentRegistry_GetChunker_ReturnsValidComponent()
     {
@@ -35,7 +35,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Chunker, component.ComponentType);
     }
 
-    /// <inheritdoc/>
+    /// Registry: unknown components return a clear error.
     [Fact]
     public void ComponentRegistry_GetChef_ReturnsValidComponent()
     {
@@ -51,7 +51,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Chef, component.ComponentType);
     }
 
-    /// <inheritdoc/>
+    /// Registry: supports alias mapping for components.
     [Fact]
     public void ComponentRegistry_GetFetcher_ReturnsValidComponent()
     {
@@ -67,7 +67,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Fetcher, component.ComponentType);
     }
 
-    /// <inheritdoc/>
+    /// Registry: returns metadata for registered components.
     [Fact]
     public void ComponentRegistry_GetRefinery_ReturnsValidComponent()
     {
@@ -83,7 +83,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Refinery, component.ComponentType);
     }
 
-    /// <inheritdoc/>
+    /// Registry: lists all registered component types.
     [Fact]
     public void ComponentRegistry_GetPorter_ReturnsValidComponent()
     {
@@ -99,7 +99,7 @@ public class ComponentRegistryTests
         Assert.Equal(ComponentType.Porter, component.ComponentType);
     }
 
-    /// <inheritdoc/>
+    /// Registry: allows unregistration of components.
     [Fact]
     public void ComponentRegistry_GetComponent_WithInvalidAlias_ThrowsException()
     {
@@ -112,7 +112,7 @@ public class ComponentRegistryTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Registry: thread-safe registration and resolution.
     [Fact]
     public void ComponentRegistry_ListComponents_ReturnsAllComponents()
     {
@@ -127,7 +127,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(components);
     }
 
-    /// <inheritdoc/>
+    /// Registry: resolves latest registration when multiple provided.
     [Fact]
     public void ComponentRegistry_ListComponents_FilteredByType_ReturnsOnlyThatType()
     {
@@ -143,7 +143,7 @@ public class ComponentRegistryTests
         Assert.All(chunkers, c => Assert.Equal(ComponentType.Chunker, c.ComponentType));
     }
 
-    /// <inheritdoc/>
+    /// Registry: validation of component configuration schemas.
     [Fact]
     public void ComponentRegistry_GetAliases_ReturnsAllAliases()
     {
@@ -158,7 +158,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(aliases);
     }
 
-    /// <inheritdoc/>
+    /// Registry: rejects invalid aliases.
     [Fact]
     public void ComponentRegistry_GetAliases_FilteredByType_ReturnsOnlyThatType()
     {
@@ -176,7 +176,7 @@ public class ComponentRegistryTests
         Assert.Contains("sentence", chunkerAliases, StringComparer.OrdinalIgnoreCase);
     }
 
-    /// <inheritdoc/>
+    /// Registry: ensures immutability of returned collections.
     [Fact]
     public void ComponentRegistry_IsRegistered_ReturnsTrueForRegisteredComponents()
     {
@@ -189,7 +189,7 @@ public class ComponentRegistryTests
         Assert.True(ComponentRegistry.Instance.IsRegistered("text"));
     }
 
-    /// <inheritdoc/>
+    /// Registry: supports discovery by capability tags.
     [Fact]
     public void ComponentRegistry_IsRegistered_ReturnsFalseForUnregisteredComponents()
     {
@@ -200,7 +200,7 @@ public class ComponentRegistryTests
         Assert.False(ComponentRegistry.Instance.IsRegistered("nonexistent_component"));
     }
 
-    /// <inheritdoc/>
+    /// Registry: serialization round-trip of registry state.
     [Fact]
     public void ComponentRegistry_CaseInsensitive_FindsComponents()
     {
@@ -217,7 +217,7 @@ public class ComponentRegistryTests
         Assert.Equal(component1.Name, component3.Name);
     }
 
-    /// <inheritdoc/>
+    /// Registry: loading registry from configuration succeeds.
     [Fact]
     public void ComponentRegistrar_RegisterAllComponents_IsIdempotent()
     {
@@ -230,7 +230,7 @@ public class ComponentRegistryTests
         Assert.NotEmpty(components);
     }
 
-    /// <inheritdoc/>
+    /// Registry: requesting a component with the wrong type throws an informative error.
     [Fact]
     public void ComponentRegistry_GetComponent_WithWrongType_ThrowsException()
     {

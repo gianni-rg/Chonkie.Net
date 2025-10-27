@@ -8,7 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineEdgeCasesTests
 {
-    /// <inheritdoc/>
+    /// Edge case: running an empty pipeline should throw validation error.
     [Fact]
     public void Pipeline_EmptyTextInput_HandlesGracefully()
     {
@@ -25,7 +25,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count >= 0);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: unknown component names are rejected.
     [Fact]
     public void Pipeline_VeryShortText_CreatesAtLeastOneChunk()
     {
@@ -41,7 +41,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count >= 1);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: null or empty texts parameter is handled.
     [Fact]
     public void Pipeline_VeryLongText_CreatesManyChunks()
     {
@@ -58,7 +58,7 @@ public class PipelineEdgeCasesTests
         Assert.True(doc.Chunks.Count > 10);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: extremely long input is processed without exceptions.
     [Fact]
     public void Pipeline_WhitespaceOnlyText_HandlesGracefully()
     {
@@ -75,7 +75,7 @@ public class PipelineEdgeCasesTests
         Assert.NotNull(doc);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: invalid options are ignored or validated based on component.
     [Fact]
     public void Pipeline_NullText_ThrowsException()
     {
@@ -88,7 +88,7 @@ public class PipelineEdgeCasesTests
             pipeline.Run(texts: null));
     }
 
-    /// <inheritdoc/>
+    /// Edge case: processing step without chunker should fail.
     [Fact]
     public void Pipeline_SingleText_ReturnsDocument()
     {
@@ -104,7 +104,7 @@ public class PipelineEdgeCasesTests
         Assert.IsNotType<List<Document>>(result);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: duplicate refineries are allowed or deduplicated.
     [Fact]
     public void Pipeline_MultipleTexts_ReturnsList()
     {
@@ -121,7 +121,7 @@ public class PipelineEdgeCasesTests
         Assert.All(docs, doc => Assert.IsType<Document>(doc));
     }
 
-    /// <inheritdoc/>
+    /// Edge case: duplicate chunkers should be invalid.
     [Fact]
     public void Pipeline_UnicodeText_HandlesCorrectly()
     {
@@ -139,7 +139,7 @@ public class PipelineEdgeCasesTests
         Assert.Contains("🦛", doc.Content);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: pipeline ignores invalid parameters and uses defaults.
     [Fact]
     public void Pipeline_SpecialCharacters_HandlesCorrectly()
     {
@@ -156,7 +156,7 @@ public class PipelineEdgeCasesTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: mixed valid/invalid steps still produce a result or error clearly.
     [Fact(Skip = "Pipeline ignores invalid parameters and uses defaults, which is more resilient behavior")]
     public void Pipeline_InvalidParameters_ThrowsClearError()
     {
@@ -172,7 +172,7 @@ public class PipelineEdgeCasesTests
         Assert.NotNull(ex);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: FromConfig throws when config is invalid.
     [Fact]
     public void Pipeline_AfterReset_RequiresNewSteps()
     {
@@ -188,7 +188,7 @@ public class PipelineEdgeCasesTests
         Assert.Contains("no steps", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Edge case: SaveConfig throws on invalid path.
     [Fact]
     public void Pipeline_CanBeReusedAfterReset()
     {

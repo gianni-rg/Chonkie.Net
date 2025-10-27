@@ -9,7 +9,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineAdvancedChunkersTests
 {
-    /// <inheritdoc/>
+    /// Advanced: hybrid chunker combines heuristics with semantic signals.
     [Fact]
     public void Pipeline_WithCodeChunker_CreatesChunks_AndCoversText()
     {
@@ -41,7 +41,7 @@ public void B() {
         Assert.All(doc.Chunks, c => Assert.True(c.TokenCount <= 20));
     }
 
-    /// <inheritdoc/>
+    /// Advanced: windowed chunker enforces sliding window semantics.
     [Fact]
     public void Pipeline_WithCodeChef_PreservesExactFormatting()
     {
@@ -71,7 +71,7 @@ public void B() {
         Assert.Equal(code, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: heading-aware chunker respects document headings.
     [Fact]
     public void Pipeline_WithTableChunker_CreatesChunks_AndKeepsTableTogether()
     {
@@ -102,7 +102,7 @@ Conclusion paragraph.";
         Assert.Equal(md, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: table-aware chunker avoids splitting inside tables.
     [Fact]
     public void Pipeline_Integration_Fetch_CodeFile_With_CodeChunker_Works()
     {
@@ -144,7 +144,7 @@ Conclusion paragraph.";
         Assert.Equal(code, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: code-aware chunker splits at logical code boundaries.
     [Fact]
     public void Pipeline_Integration_Fetch_Markdown_With_TableChunker_Works()
     {
@@ -182,7 +182,7 @@ Tail";
         Assert.Equal(md, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: semantically merges small chunks to reach target size.
     [Fact]
     public void Pipeline_CodeChunker_WithMultipleFunctions_SplitsCorrectly()
     {
@@ -211,7 +211,7 @@ public void E() { return 5; }";
         Assert.Equal(code, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: paragraph chunker groups sentences into paragraphs.
     [Fact]
     public void Pipeline_TableChunker_WithMultipleTables_HandlesCorrectly()
     {
@@ -249,7 +249,7 @@ Final text.";
         Assert.Equal(md, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: sentence splitter handles punctuation and abbreviations.
     [Fact]
     public void Pipeline_CodeChunker_NoGapsOrOverlaps()
     {
@@ -279,7 +279,7 @@ void M3() { var z = 3; }";
         Assert.Equal(code, reconstructed);
     }
 
-    /// <inheritdoc/>
+    /// Advanced: token chunker adheres to token budget precisely.
     [Fact]
     public void Pipeline_TableChunker_NoGapsOrOverlaps()
     {

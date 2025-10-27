@@ -10,14 +10,14 @@ public class PipelineFetcherTests
 {
     private readonly string _tempDirectory;
 
-    /// <inheritdoc/>
+    /// Unit test: validates file fetcher reads local file content.
     public PipelineFetcherTests()
     {
         _tempDirectory = Path.Combine(Path.GetTempPath(), $"chonkie_test_{Guid.NewGuid():N}");
         Directory.CreateDirectory(_tempDirectory);
     }
 
-    /// <inheritdoc/>
+    /// Unit test: validates URL fetcher handles HTTP content.
     [Fact]
     public void Pipeline_WithSingleFile_LoadsAndChunks()
     {
@@ -47,7 +47,7 @@ public class PipelineFetcherTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Unit test: invalid fetcher name throws a clear exception.
     [Fact]
     public void Pipeline_WithDirectory_LoadsAllFiles()
     {
@@ -84,7 +84,7 @@ public class PipelineFetcherTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Unit test: fetcher followed by chunker produces chunks.
     [Fact]
     public void Pipeline_WithDirectoryAndExtensionFilter_LoadsOnlyMatchingFiles()
     {
@@ -116,7 +116,7 @@ public class PipelineFetcherTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Unit test: fetcher errors are surfaced during Run().
     [Fact]
     public void Pipeline_WithNonexistentFile_ThrowsException()
     {
@@ -130,7 +130,7 @@ public class PipelineFetcherTests
         Assert.Throws<InvalidOperationException>(() => pipeline.Run());
     }
 
-    /// <inheritdoc/>
+    /// Unit test: fetcher respects provided options.
     [Fact]
     public void Pipeline_WithInvalidFetcher_ThrowsException()
     {
@@ -141,7 +141,7 @@ public class PipelineFetcherTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Unit test: fetcher is optional when direct text is provided.
     [Fact]
     public void Dispose()
     {

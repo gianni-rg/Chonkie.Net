@@ -16,7 +16,7 @@ It has multiple paragraphs to ensure proper chunking behavior.
 
 Each paragraph contains some meaningful content that can be split.";
 
-    /// <inheritdoc/>
+    /// Integration: full pipeline with text input processes successfully.
     [Fact]
     public void Pipeline_CompleteWithTextInput_ProcessesSuccessfully()
     {
@@ -43,7 +43,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
-    /// <inheritdoc/>
+    /// Ensures document structure (content, chunks, metadata) is preserved.
     [Fact]
     public void Pipeline_PreservesDocumentStructure()
     {
@@ -62,7 +62,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.Equal(SampleText.Trim(), doc.Content);
     }
 
-    /// <inheritdoc/>
+    /// Batch text processing returns one document per input string.
     [Fact]
     public void Pipeline_BatchTextProcessing_ReturnsMultipleDocuments()
     {
@@ -91,7 +91,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
-    /// <inheritdoc/>
+    /// Running the same pipeline twice reuses component instances.
     [Fact]
     public void Pipeline_ComponentCaching_ReusesInstances()
     {
@@ -110,7 +110,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotNull(doc2);
     }
 
-    /// <inheritdoc/>
+    /// Different chunker parameters should produce different results.
     [Fact]
     public void Pipeline_DifferentParameters_CreateDifferentResults()
     {
@@ -134,7 +134,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotEqual(doc1.Chunks.Count, doc2.Chunks.Count);
     }
 
-    /// <inheritdoc/>
+    /// Exports pipeline configuration to a serializable structure.
     [Fact]
     public void Pipeline_ToConfig_ExportsConfiguration()
     {
@@ -155,7 +155,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.Contains(config, c => c.Type == "refine");
     }
 
-    /// <inheritdoc/>
+    /// Saves then loads pipeline config and validates round-trip.
     [Fact]
     public void Pipeline_SaveAndLoadConfig_RoundTrip()
     {
@@ -187,7 +187,7 @@ Each paragraph contains some meaningful content that can be split.";
         }
     }
 
-    /// <inheritdoc/>
+    /// Async pipeline execution returns a document with chunks.
     [Fact]
     public async Task Pipeline_RunAsync_WorksCorrectly()
     {
@@ -203,7 +203,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Fluent API methods return Pipeline to allow chaining calls.
     [Fact]
     public void Pipeline_FluentAPI_ReturnsPipelineForChaining()
     {
@@ -216,7 +216,7 @@ Each paragraph contains some meaningful content that can be split.";
         Assert.IsType<Pipeline>(pipeline.RefineWith("overlap", new { context_size = 50 }));
     }
 
-    /// <inheritdoc/>
+    /// Complex chained pipeline executes and produces chunks.
     [Fact]
     public void Pipeline_ComplexChaining_WorksCorrectly()
     {

@@ -8,7 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineBasicsTests
 {
-    /// <inheritdoc/>
+    /// Basics: constructing a pipeline with defaults succeeds.
     [Fact]
     public void Pipeline_CanBeInstantiated()
     {
@@ -19,7 +19,7 @@ public class PipelineBasicsTests
         Assert.NotNull(pipeline);
     }
 
-    /// <inheritdoc/>
+    /// Basics: ChunkWith registers a chunker and is chainable.
     [Fact]
     public void Pipeline_WithDirectTextInput_ReturnsDocument()
     {
@@ -37,7 +37,7 @@ public class PipelineBasicsTests
         Assert.Equal("This is a test document for chunking.", doc.Content);
     }
 
-    /// <inheritdoc/>
+    /// Basics: ProcessWith registers a chef and is chainable.
     [Fact]
     public void Pipeline_WithMultipleTexts_ReturnsListOfDocuments()
     {
@@ -67,7 +67,7 @@ public class PipelineBasicsTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Basics: RefineWith registers a refinery and is chainable.
     [Fact]
     public void Pipeline_RequiresChunker_ThrowsException()
     {
@@ -81,7 +81,7 @@ public class PipelineBasicsTests
         Assert.Contains("must include a chunker", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Basics: Describe returns a human-readable pipeline summary.
     [Fact]
     public void Pipeline_RequiresInput_ThrowsException()
     {
@@ -95,7 +95,7 @@ public class PipelineBasicsTests
         Assert.Contains("must include a fetcher", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Basics: ToConfig returns serializable configuration.
     [Fact]
     public void Pipeline_WithNoSteps_ThrowsException()
     {
@@ -108,7 +108,7 @@ public class PipelineBasicsTests
         Assert.Contains("no steps", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Basics: FromConfig reconstructs the pipeline from config.
     [Fact]
     public void Pipeline_Describe_ReturnsReadableString()
     {
@@ -126,7 +126,7 @@ public class PipelineBasicsTests
         Assert.Contains("chunk", description.ToLower());
     }
 
-    /// <inheritdoc/>
+    /// Basics: Unknown component registration throws.
     [Fact]
     public void Pipeline_Reset_ClearsAllSteps()
     {

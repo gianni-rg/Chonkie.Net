@@ -9,7 +9,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineRefineriesTests
 {
-    /// <inheritdoc/>
+    /// Overlap refinery adds neighboring context to each chunk.
     [Fact]
     public void Pipeline_WithOverlapRefinery_AddsContext()
     {
@@ -35,7 +35,7 @@ public class PipelineRefineriesTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Multiple refineries can be chained and execute in order.
     [Fact]
     public void Pipeline_WithMultipleRefineries_ChainsCorrectly()
     {
@@ -53,7 +53,7 @@ public class PipelineRefineriesTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Embeddings refinery appends embeddings to chunks using a local model.
     [SkippableFact]
     public void Pipeline_WithEmbeddingsRefinery_AddsEmbeddings()
     {
@@ -81,7 +81,7 @@ public class PipelineRefineriesTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Unknown refinery name should raise a clear exception.
     [Fact]
     public void Pipeline_WithInvalidRefinery_ThrowsException()
     {
@@ -92,7 +92,7 @@ public class PipelineRefineriesTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Refinery steps run after chunking even if defined before.
     [Fact]
     public void Pipeline_RefineryRunsAfterChunker()
     {

@@ -8,7 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineChefTests
 {
-    /// <inheritdoc/>
+    /// Chef: text processor normalizes input before chunking.
     [Fact]
     public void Pipeline_WithTextChef_ProcessesText()
     {
@@ -25,7 +25,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Chef: markdown processor extracts text content correctly.
     [Fact]
     public void Pipeline_WithMultipleChefs_ThrowsException()
     {
@@ -41,7 +41,7 @@ public class PipelineChefTests
         Assert.Contains("Multiple process steps", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Chef: unknown processor name throws a clear exception.
     [Fact]
     public void Pipeline_WithoutChef_AddsDefaultTextChef()
     {
@@ -58,7 +58,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Chef: multiple processors are not allowed in a single pipeline.
     [Fact]
     public void Pipeline_WithMarkdownChef_ProcessesMarkdown()
     {
@@ -76,7 +76,7 @@ public class PipelineChefTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Chef: processor options are honored during processing.
     [Fact]
     public void Pipeline_WithInvalidChef_ThrowsException()
     {

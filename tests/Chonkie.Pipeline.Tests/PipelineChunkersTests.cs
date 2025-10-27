@@ -9,7 +9,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineChunkersTests
 {
-    /// <inheritdoc/>
+    /// Token chunker creates chunks within specified size and overlap.
     [Fact]
     public void Pipeline_WithTokenChunker_CreatesCorrectChunks()
     {
@@ -31,7 +31,7 @@ public class PipelineChunkersTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Recursive chunker produces non-empty chunks from multi-paragraph text.
     [Fact]
     public void Pipeline_WithRecursiveChunker_CreatesChunks()
     {
@@ -48,7 +48,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Sentence chunker splits text into sentence-based chunks.
     [Fact]
     public void Pipeline_WithSentenceChunker_CreatesChunks()
     {
@@ -65,7 +65,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Semantic chunker uses embeddings to create coherent chunks.
     [SkippableFact]
     public void Pipeline_WithSemanticChunker_CreatesChunks()
     {
@@ -88,7 +88,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Late chunker embeds first then chunks; chunks should include embeddings.
     [SkippableFact]
     public void Pipeline_WithLateChunker_CreatesChunks()
     {
@@ -117,7 +117,7 @@ public class PipelineChunkersTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Unknown chunker name should raise a clear exception.
     [Fact]
     public void Pipeline_WithInvalidChunker_ThrowsException()
     {
@@ -128,7 +128,7 @@ public class PipelineChunkersTests
         Assert.Contains("Unknown component", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Different chunk sizes produce different chunk counts on the same text.
     [Fact]
     public void Pipeline_WithDifferentChunkSizes_ProducesDifferentResults()
     {
@@ -151,7 +151,7 @@ public class PipelineChunkersTests
         Assert.True(doc256.Chunks.Count > doc512.Chunks.Count);
     }
 
-    /// <inheritdoc/>
+    /// Semantic chunker accepts a custom embedding_model parameter.
     [SkippableFact]
     public void Pipeline_WithSemanticChunker_CustomModelName_Works()
     {
@@ -170,7 +170,7 @@ public class PipelineChunkersTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Late chunker accepts a custom embedding_model parameter.
     [SkippableFact]
     public void Pipeline_WithLateChunker_CustomModelName_Works()
     {

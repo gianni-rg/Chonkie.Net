@@ -8,7 +8,7 @@ namespace Chonkie.Pipeline.Tests;
 /// </summary>
 public class PipelineValidationTests
 {
-    /// <inheritdoc/>
+    /// Validates the pipeline reorders steps to CHOMP order automatically.
     [Fact]
     public void Pipeline_ReordersSteps_AccordingToCHOMP()
     {
@@ -25,7 +25,7 @@ public class PipelineValidationTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Ensures refinery runs after chunker even if defined first.
     [Fact]
     public void Pipeline_RefineryRunsAfterChunker_EvenIfDefinedFirst()
     {
@@ -43,7 +43,7 @@ public class PipelineValidationTests
         Assert.NotEmpty(doc.Chunks);
     }
 
-    /// <inheritdoc/>
+    /// Validates that a chunker step is required to run the pipeline.
     [Fact]
     public void Pipeline_Validation_RequiresChunker()
     {
@@ -56,7 +56,7 @@ public class PipelineValidationTests
         Assert.Contains("must include a chunker", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Validates that adding multiple process (chef) steps is rejected.
     [Fact]
     public void Pipeline_Validation_RejectsMultipleChefs()
     {
@@ -72,7 +72,7 @@ public class PipelineValidationTests
         Assert.Contains("Multiple process steps", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Validates that either a fetcher or direct text input is required.
     [Fact]
     public void Pipeline_Validation_RequiresFetcherOrTextInput()
     {
@@ -85,7 +85,7 @@ public class PipelineValidationTests
         Assert.Contains("must include a fetcher", ex.Message);
     }
 
-    /// <inheritdoc/>
+    /// Verifies that when both fetcher and text are provided, text input is used.
     [Fact]
     public void Pipeline_WithFetcherAndTextInput_UsesTextInput()
     {
@@ -113,7 +113,7 @@ public class PipelineValidationTests
         }
     }
 
-    /// <inheritdoc/>
+    /// Verifies Describe() shows CHOMP order: process -> chunk -> refine.
     [Fact]
     public void Pipeline_Describe_ShowsCHOMPOrder()
     {
