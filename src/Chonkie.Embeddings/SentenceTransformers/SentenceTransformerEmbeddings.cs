@@ -84,25 +84,25 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 : _modelConfig.EffectiveHiddenSize;
 
 
-        // Determine pooling mode
-        _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
+            // Determine pooling mode
+            _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
 
-        // Initialize tokenizer
-        _tokenizer = new SentenceTransformerTokenizer(modelPath, maxLength);
+            // Initialize tokenizer
+            _tokenizer = new SentenceTransformerTokenizer(modelPath, maxLength);
 
-        // Initialize ONNX session
-        var onnxModelPath = Path.Combine(modelPath, "model.onnx");
-        if (!File.Exists(onnxModelPath))
-        {
-            throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
-        }
+            // Initialize ONNX session
+            var onnxModelPath = Path.Combine(modelPath, "model.onnx");
+            if (!File.Exists(onnxModelPath))
+            {
+                throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
+            }
 
-        var sessionOptions = new SessionOptions
-        {
-            GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
-        };
+            var sessionOptions = new SessionOptions
+            {
+                GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
+            };
 
-        _session = new InferenceSession(onnxModelPath, sessionOptions);
+            _session = new InferenceSession(onnxModelPath, sessionOptions);
             // Try to load a suitable tokenizer via Microsoft.ML.Tokenizers
             try
             {
