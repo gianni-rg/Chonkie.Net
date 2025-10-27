@@ -1,5 +1,6 @@
 using Chonkie.Core.Types;
 using Chonkie.Pipeline;
+using Xunit;
 
 namespace Chonkie.Pipeline.Tests;
 
@@ -53,10 +54,12 @@ public class PipelineRefineriesTests
     }
 
     /// <inheritdoc/>
-    [Fact]
+    [SkippableFact]
     public void Pipeline_WithEmbeddingsRefinery_AddsEmbeddings()
     {
         // Arrange
+        TestHelpers.SkipIfModelNotAvailable();
+
         var text = "This is a test document for embeddings refinery. " +
                    "It should add embeddings to each chunk.";
 

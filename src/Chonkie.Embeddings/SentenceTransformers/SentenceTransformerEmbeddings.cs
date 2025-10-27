@@ -83,26 +83,26 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 ? _poolingConfig.WordEmbeddingDimension
                 : _modelConfig.EffectiveHiddenSize;
 
-            // Determine pooling mode
-            _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
 
-            // Initialize tokenizer
-            _tokenizer = new SentenceTransformerTokenizer(modelPath, maxLength);
+        // Determine pooling mode
+        _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
 
-            // Initialize ONNX session
-            var onnxModelPath = Path.Combine(modelPath, "model.onnx");
-            if (!File.Exists(onnxModelPath))
-            {
-                throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
-            }
+        // Initialize tokenizer
+        _tokenizer = new SentenceTransformerTokenizer(modelPath, maxLength);
 
-            var sessionOptions = new SessionOptions
-            {
-                GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
-            };
+        // Initialize ONNX session
+        var onnxModelPath = Path.Combine(modelPath, "model.onnx");
+        if (!File.Exists(onnxModelPath))
+        {
+            throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
+        }
 
-            _session = new InferenceSession(modelPath, sessionOptions);
+        var sessionOptions = new SessionOptions
+        {
+            GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
+        };
 
+        _session = new InferenceSession(onnxModelPath, sessionOptions);
             // Try to load a suitable tokenizer via Microsoft.ML.Tokenizers
             try
             {
@@ -137,20 +137,6 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 var inputIds = CreateInputIdsTensor(new[] { encoding.InputIds });
                 var attentionMask = CreateAttentionMaskTensor(new[] { encoding.AttentionMask });
 
-                // Prepare inputs for ONNX
-                var inputs = new List<NamedOnnxValue>
-                {
-                    NamedOnnxValue.CreateFromTensor("input_ids", inputIds),
-                    NamedOnnxValue.CreateFromTensor("attention_mask", attentionMask)
-                };
-
-                // Add token_type_ids if the model expects it
-                if (_session.InputMetadata.ContainsKey("token_type_ids"))
-                {
-                    var tokenTypeIds = CreateTokenTypeIdsTensor(new[] { encoding.TokenTypeIds });
-                    inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
-                }
-
                 // Create inputs (add token_type_ids if the model expects it)
                 var inputs = new List<NamedOnnxValue>
                 {
@@ -165,7 +151,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
                     var inputNames = _session.InputMetadata.Keys;
                     if (inputNames.Contains("token_type_ids"))
                     {
-                        var tokenTypeIds = new DenseTensor<long>(new[] { 1, tokens.Length });
+                        var tokenTypeIds = new DenseTensor<long>(new[] { 1, (int)inputIds.Dimensions[1] });
                         // initialized to zeros by default
                         inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
                     }
@@ -190,9 +176,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 int hiddenDim = shape[2];
 
                 // Flatten attention mask for pooling
-                var flatAttentionMask = batchEncoding.AttentionMask
-                    .SelectMany(m => m)
-                    .ToArray();
+                var flatAttentionMask = attentionMask.AsEnumerable<long>().Select(x => (int)x).ToArray();
 
                 // Apply pooling
                 var pooledEmbeddings = PoolingUtilities.ApplyPooling(
@@ -205,7 +189,8 @@ namespace Chonkie.Embeddings.SentenceTransformers
                     _normalize
                 );
 
-                return (IReadOnlyList<float[]>)pooledEmbeddings;
+                // Return the first (and only) embedding
+                return pooledEmbeddings[0];
             }, cancellationToken);
         }
 
@@ -289,23 +274,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <returns>A list of token counts for each text.</returns>
         public IReadOnlyList<int> CountTokensBatch(IEnumerable<string> texts)
         {
-            // Prefer proper HuggingFace-compatible tokenization when available
-            try
-            {
-                if (_bertTokenizer is not null)
-                {
-                    var ids = _bertTokenizer.EncodeToIds(text, addSpecialTokens: true, considerPreTokenization: true, considerNormalization: true);
-                    return ids.Select(id => (long)id).ToArray();
-                }
-            }
-            catch
-            {
-                // fall back below
-            }
-
-            // Fallback simplified tokenization
-            var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return words.Select(w => (long)(Math.Abs(w.GetHashCode()) % 30000)).ToArray();
+            return texts.Select(t => CountTokens(t)).ToList();
         }
 
         /// <summary>

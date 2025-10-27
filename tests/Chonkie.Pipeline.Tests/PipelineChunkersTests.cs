@@ -1,5 +1,6 @@
 using Chonkie.Core.Types;
 using Chonkie.Pipeline;
+using Xunit;
 
 namespace Chonkie.Pipeline.Tests;
 
@@ -65,13 +66,15 @@ public class PipelineChunkersTests
     }
 
     /// <inheritdoc/>
-    [Fact]
+    [SkippableFact]
     public void Pipeline_WithSemanticChunker_CreatesChunks()
     {
         // Arrange
-        var text = "This is about artificial intelligence. " +
+        TestHelpers.SkipIfModelNotAvailable();
+
+        var text = "AI systems are complex. " +
                    "Machine learning is a subset of AI. " +
-                   "Now let's talk about cooking. " +
+                   "Deep learning uses neural networks. " +
                    "Baking requires precision and patience.";
 
         var pipeline = new Pipeline()
@@ -86,10 +89,12 @@ public class PipelineChunkersTests
     }
 
     /// <inheritdoc/>
-    [Fact]
+    [SkippableFact]
     public void Pipeline_WithLateChunker_CreatesChunks()
     {
         // Arrange
+        TestHelpers.SkipIfModelNotAvailable();
+
         var text = "This is a test document for late chunking. " +
                    "Late chunking embeds then chunks the text. " +
                    "This creates better chunk boundaries.";
@@ -147,10 +152,12 @@ public class PipelineChunkersTests
     }
 
     /// <inheritdoc/>
-    [Fact]
+    [SkippableFact]
     public void Pipeline_WithSemanticChunker_CustomModelName_Works()
     {
         // Arrange
+        TestHelpers.SkipIfModelNotAvailable();
+
         var text = "AI systems can learn. ML is part of AI. Cooking is different.";
         var pipeline = new Pipeline()
             .ChunkWith("semantic", new { chunk_size = 256, embedding_model = "sentence-transformers/all-MiniLM-L6-v2" });
@@ -164,10 +171,12 @@ public class PipelineChunkersTests
     }
 
     /// <inheritdoc/>
-    [Fact]
+    [SkippableFact]
     public void Pipeline_WithLateChunker_CustomModelName_Works()
     {
         // Arrange
+        TestHelpers.SkipIfModelNotAvailable();
+
         var text = "This text will be embedded before late chunking.";
         var pipeline = new Pipeline()
             .ChunkWith("late", new { chunk_size = 256, embedding_model = "sentence-transformers/all-MiniLM-L6-v2" });
@@ -178,6 +187,11 @@ public class PipelineChunkersTests
         // Assert
         var doc = Assert.IsType<Document>(result);
         Assert.NotEmpty(doc.Chunks);
-        Assert.All(doc.Chunks, c => Assert.NotNull(c.Embedding));
+
+        // Late chunker should add embeddings to chunks
+        foreach (var chunk in doc.Chunks)
+        {
+            Assert.NotNull(chunk.Embedding);
+        }
     }
 }

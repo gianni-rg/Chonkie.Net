@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\Chonkie.Tokenizers\Chonkie.Tokenizers.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Chunkers\Chonkie.Chunkers.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Pipeline\Chonkie.Pipeline.csproj" />
   </ItemGroup>
 
 </Project>

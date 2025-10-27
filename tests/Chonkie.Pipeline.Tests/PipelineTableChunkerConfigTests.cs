@@ -4,8 +4,14 @@ using Chonkie.Core.Types;
 using Chonkie.Pipeline;
 using Xunit;
 
+/// <summary>
+/// Tests for Pipeline table chunker configuration options.
+/// </summary>
 public class PipelineTableChunkerConfigTests
 {
+    /// <summary>
+    /// Tests that Pipeline with repeat_headers=false does not repeat headers in subsequent chunks.
+    /// </summary>
     [Fact]
     public void Pipeline_TableChunker_WithRepeatHeadersFalse()
     {
@@ -36,6 +42,9 @@ public class PipelineTableChunkerConfigTests
         }
     }
 
+    /// <summary>
+    /// Tests that Pipeline with repeat_headers=true repeats headers in all chunks.
+    /// </summary>
     [Fact]
     public void Pipeline_TableChunker_WithRepeatHeadersTrue()
     {
@@ -64,6 +73,9 @@ public class PipelineTableChunkerConfigTests
         }
     }
 
+    /// <summary>
+    /// Tests that Pipeline table chunker defaults to repeat_headers=false when not specified.
+    /// </summary>
     [Fact]
     public void Pipeline_TableChunker_DefaultRepeatHeaders()
     {
@@ -92,6 +104,9 @@ public class PipelineTableChunkerConfigTests
         }
     }
 
+    /// <summary>
+    /// Tests that Pipeline table chunker with repeat_headers=true works correctly with large tables that require multiple chunks.
+    /// </summary>
     [Fact]
     public void Pipeline_TableChunker_RepeatHeadersWithLargeTable()
     {
@@ -122,6 +137,9 @@ public class PipelineTableChunkerConfigTests
         }
     }
 
+    /// <summary>
+    /// Tests that Pipeline table chunker with repeat_headers=true preserves all table data across chunks.
+    /// </summary>
     [Fact]
     public void Pipeline_TableChunker_RepeatHeadersPreservesAllData()
     {

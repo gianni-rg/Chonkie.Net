@@ -230,5 +230,9 @@ public class CodeChunker : BaseChunker
         return (finalTexts, finalCounts);
     }
 
+    /// <summary>
+    /// Returns a string representation of the CodeChunker.
+    /// </summary>
+    /// <returns>A string describing the chunker configuration.</returns>
     public override string ToString() => $"CodeChunker(chunk_size={ChunkSize}, min_chars={MinCharactersPerChunk})";
 }

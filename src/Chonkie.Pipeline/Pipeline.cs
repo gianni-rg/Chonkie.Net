@@ -622,11 +622,11 @@ public sealed class Pipeline
             var relativePath = string.Join(Path.DirectorySeparatorChar, Enumerable.Repeat("..", levels));
             if (string.IsNullOrEmpty(relativePath))
             {
-                possiblePaths.Add(Path.Combine(basePath, "models", modelName, "model.onnx"));
+                possiblePaths.Add(Path.Combine(basePath, "models", modelName));
             }
             else
             {
-                possiblePaths.Add(Path.Combine(basePath, relativePath, "models", modelName, "model.onnx"));
+                possiblePaths.Add(Path.Combine(basePath, relativePath, "models", modelName));
             }
         }
 
@@ -636,11 +636,11 @@ public sealed class Pipeline
             var relativePath = string.Join(Path.DirectorySeparatorChar, Enumerable.Repeat("..", levels));
             if (string.IsNullOrEmpty(relativePath))
             {
-                possiblePaths.Add(Path.Combine("models", modelName, "model.onnx"));
+                possiblePaths.Add(Path.Combine("models", modelName));
             }
             else
             {
-                possiblePaths.Add(Path.Combine(relativePath, "models", modelName, "model.onnx"));
+                possiblePaths.Add(Path.Combine(relativePath, "models", modelName));
             }
         }
 
@@ -649,7 +649,8 @@ public sealed class Pipeline
             try
             {
                 var fullPath = Path.GetFullPath(path);
-                if (File.Exists(fullPath))
+                // Check if the model directory exists and contains model.onnx
+                if (Directory.Exists(fullPath) && File.Exists(Path.Combine(fullPath, "model.onnx")))
                 {
                     return fullPath;
                 }
@@ -660,8 +661,8 @@ public sealed class Pipeline
             }
         }
 
-        // Fall back to models/modelName/model.onnx and let it fail with a clear error
-        return Path.Combine("models", modelName, "model.onnx");
+        // Fall back to models/modelName and let it fail with a clear error
+        return Path.Combine("models", modelName);
     }
 
     private static int ConvertToInt32(object? value)

@@ -18,6 +18,12 @@ public class SlumberChunker : BaseChunker
     /// </summary>
     public int ChunkSize { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SlumberChunker"/> class.
+    /// </summary>
+    /// <param name="tokenizer">The tokenizer to use for tokenization.</param>
+    /// <param name="chunkSize">Maximum number of tokens per chunk.</param>
+    /// <param name="logger">Optional logger for diagnostic messages.</param>
     public SlumberChunker(
         ITokenizer tokenizer,
         int chunkSize = 2048,
@@ -29,11 +35,20 @@ public class SlumberChunker : BaseChunker
         _fallback = new RecursiveChunker(tokenizer, chunkSize);
     }
 
+    /// <summary>
+    /// Chunks the input text using the fallback RecursiveChunker.
+    /// </summary>
+    /// <param name="text">The text to chunk.</param>
+    /// <returns>A list of chunks.</returns>
     public override IReadOnlyList<Chunk> Chunk(string text)
     {
         Logger.LogInformation("SlumberChunker fallback engaged — using RecursiveChunker until Genie integration is available.");
         return _fallback.Chunk(text);
     }
 
+    /// <summary>
+    /// Returns a string representation of the SlumberChunker.
+    /// </summary>
+    /// <returns>A string describing the chunker configuration.</returns>
     public override string ToString() => $"SlumberChunker(chunk_size={ChunkSize}, mode=fallback)";
 }
