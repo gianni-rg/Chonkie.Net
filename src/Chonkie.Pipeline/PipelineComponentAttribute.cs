@@ -64,6 +64,20 @@ public static class ComponentRegistrar
         );
 
         ComponentRegistry.Instance.Register(
+            name: nameof(CodeChunker),
+            alias: "code",
+            componentClass: typeof(CodeChunker),
+            componentType: ComponentType.Chunker
+        );
+
+        ComponentRegistry.Instance.Register(
+            name: nameof(TableChunker),
+            alias: "table",
+            componentClass: typeof(TableChunker),
+            componentType: ComponentType.Chunker
+        );
+
+        ComponentRegistry.Instance.Register(
             name: nameof(SemanticChunker),
             alias: "semantic",
             componentClass: typeof(SemanticChunker),
@@ -74,6 +88,20 @@ public static class ComponentRegistrar
             name: nameof(LateChunker),
             alias: "late",
             componentClass: typeof(LateChunker),
+            componentType: ComponentType.Chunker
+        );
+
+        ComponentRegistry.Instance.Register(
+            name: nameof(NeuralChunker),
+            alias: "neural",
+            componentClass: typeof(NeuralChunker),
+            componentType: ComponentType.Chunker
+        );
+
+        ComponentRegistry.Instance.Register(
+            name: nameof(SlumberChunker),
+            alias: "slumber",
+            componentClass: typeof(SlumberChunker),
             componentType: ComponentType.Chunker
         );
     }
@@ -91,6 +119,13 @@ public static class ComponentRegistrar
             name: nameof(MarkdownChef),
             alias: "markdown",
             componentClass: typeof(MarkdownChef),
+            componentType: ComponentType.Chef
+        );
+
+        ComponentRegistry.Instance.Register(
+            name: nameof(CodeChef),
+            alias: "code",
+            componentClass: typeof(CodeChef),
             componentType: ComponentType.Chef
         );
     }

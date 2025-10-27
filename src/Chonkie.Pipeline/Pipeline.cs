@@ -490,6 +490,8 @@ public sealed class Pipeline
                     "TokenChunker" => new Chonkie.Chunkers.TokenChunker(tokenizer, chunkSize),
                     "SentenceChunker" => new Chonkie.Chunkers.SentenceChunker(tokenizer, chunkSize),
                     "RecursiveChunker" => new Chonkie.Chunkers.RecursiveChunker(tokenizer, chunkSize),
+                    "CodeChunker" => new Chonkie.Chunkers.CodeChunker(tokenizer, chunkSize),
+                    "TableChunker" => CreateTableChunker(tokenizer, chunkSize, parameters),
                     "SemanticChunker" => CreateSemanticChunker(tokenizer, chunkSize, parameters),
                     "LateChunker" => CreateLateChunker(tokenizer, chunkSize, parameters),
                     _ => throw new InvalidOperationException($"Unknown chunker: {step.Component.Name}")
@@ -502,6 +504,7 @@ public sealed class Pipeline
                 {
                     "TextChef" => new Chonkie.Chefs.TextChef(),
                     "MarkdownChef" => new Chonkie.Chefs.MarkdownChef(),
+                    "CodeChef" => new Chonkie.Chefs.CodeChef(),
                     _ => Activator.CreateInstance(step.Component.ComponentClass)!
                 };
             }
@@ -565,6 +568,28 @@ public sealed class Pipeline
         var modelPath = FindModelPath(modelName);
         var embeddings = new Chonkie.Embeddings.SentenceTransformers.SentenceTransformerEmbeddings(modelPath);
         return new Chonkie.Chunkers.LateChunker(tokenizer, embeddings, chunkSize);
+    }
+
+    private object CreateTableChunker(Chonkie.Core.Interfaces.ITokenizer tokenizer, int chunkSize, Dictionary<string, object?> parameters)
+    {
+        // TableChunker supports optional repeat_headers parameter
+        var repeatHeaders = false;
+        if (parameters.TryGetValue("repeat_headers", out var rh) && rh is not null)
+        {
+            if (rh is bool boolValue)
+            {
+                repeatHeaders = boolValue;
+            }
+            else if (rh is System.Text.Json.JsonElement jsonElement)
+            {
+                repeatHeaders = jsonElement.ValueKind == System.Text.Json.JsonValueKind.True;
+            }
+            else
+            {
+                repeatHeaders = Convert.ToBoolean(rh);
+            }
+        }
+        return new Chonkie.Chunkers.TableChunker(tokenizer, chunkSize, repeatHeaders);
     }
 
     private static string NormalizeModelName(string modelName)
