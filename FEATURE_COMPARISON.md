@@ -21,7 +21,7 @@ Chonkie.NET is a port of the Python Chonkie library to .NET/C#, aiming for compl
 | **Porters** | 2 | 1 | 1 | 🟡 50% |
 | **Handshakes** | 8 | 0 | 8 | 🔴 0% |
 | **Genies** | 3 | 0 | 3 | 🔴 0% |
-| **Pipeline** | ✓ | ✗ | ✓ | � 100% |
+| **Pipeline** | ✓ | ✗ | ✓ | 🟢 100% |
 | **Utilities** | 2 | 0 | 2 | 🔴 0% |
 
 **Legend:**
