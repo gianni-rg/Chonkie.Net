@@ -478,8 +478,23 @@ public sealed class Pipeline
             // Special handling for different component types
             if (step.Type == "chunk")
             {
-                // Chunkers need a tokenizer - create with default tokenizer if not provided
-                var tokenizer = new Chonkie.Tokenizers.WordTokenizer();
+                // Support tokenizer selection via global pipeline options or step parameters
+                var tokenizerName = "word";
+                if (parameters.TryGetValue("tokenizer", out var tk) && tk is not null)
+                {
+                    tokenizerName = tk.ToString()!.ToLowerInvariant();
+                }
+                // Check for global pipeline options (if implemented)
+                // Example: if (_globalOptions.TryGetValue("tokenizer", out var globalTk)) { tokenizerName = globalTk.ToString()!.ToLowerInvariant(); }
+
+                Chonkie.Core.Interfaces.ITokenizer tokenizer = tokenizerName switch
+                {
+                    "character" => new Chonkie.Tokenizers.CharacterTokenizer(),
+                    "word" => new Chonkie.Tokenizers.WordTokenizer(),
+                    // Add more tokenizer types here as needed
+                    _ => new Chonkie.Tokenizers.WordTokenizer() // fallback
+                };
+
                 var chunkSize = parameters.TryGetValue("chunk_size", out var cs)
                     ? ConvertToInt32(cs)
                     : 512;

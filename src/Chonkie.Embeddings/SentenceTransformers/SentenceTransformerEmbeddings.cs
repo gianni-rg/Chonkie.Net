@@ -131,7 +131,14 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 }
 
                 // Tokenize text with proper tokenizer
-                // Try to use BertTokenizer if available, otherwise fallback to SentenceTransformerTokenizer
+                // Prefer BertTokenizer (WordPiece) when available because many
+                // SentenceTransformer ONNX exports are based on BERT-derived models
+                // and expect WordPiece token IDs and attention-mask semantics.
+                // Fallback to SentenceTransformerTokenizer to support models that
+                // ship only sentence-transformers configs.
+                // Note: Using different tokenizers can change token IDs and thus
+                // embeddings. Ensure the selected tokenizer matches the model
+                // artifacts (e.g., vocab.txt) for best compatibility.
                 EncodingResult encoding;
                 if (_bertTokenizer != null)
                 {
@@ -185,6 +192,9 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 int hiddenDim = shape[2];
 
                 // Flatten attention mask for pooling
+                // PoolingUtilities expects a flat int[] mask, not a tensor. This conversion
+                // is necessary for compatibility, but could be inefficient for large batches.
+                // Consider optimizing if profiling shows this is a bottleneck.
                 var flatAttentionMask = attentionMask.AsEnumerable<long>().Select(x => (int)x).ToArray();
 
                 // Apply pooling
