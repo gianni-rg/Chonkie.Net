@@ -215,7 +215,7 @@ public class TableChunker : BaseChunker
 
             var dataText = string.Join("\n", currentRows);
             currentIndex += dataText.Length;
-            if (currentRows.Count > 0 && currentIndex < currentIndex + chunkText.Length)
+            if (currentRows.Count > 0)
             {
                 currentIndex += 1; // final newline if exists
             }
