@@ -205,8 +205,13 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 // Flatten attention mask for pooling
                 // PoolingUtilities expects a flat int[] mask, not a tensor. This conversion
                 // is necessary for compatibility, but could be inefficient for large batches.
-                // Consider optimizing if profiling shows this is a bottleneck.
-                var flatAttentionMask = attentionMask.AsEnumerable<long>().Select(x => (int)x).ToArray();
+                // Replaced LINQ conversion with a for-loop for better performance.
+                // Further optimization: If PoolingUtilities supports Span<int>, this can avoid allocation entirely.
+                var flatAttentionMask = new int[attentionMask.Length];
+                for (int i = 0; i < attentionMask.Length; i++)
+                {
+                    flatAttentionMask[i] = (int)attentionMask.GetValue(i);
+                }
 
                 // Apply pooling
                 var pooledEmbeddings = PoolingUtilities.ApplyPooling(
