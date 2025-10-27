@@ -46,11 +46,13 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <param name="poolingMode">Pooling mode (default: auto-detect from config).</param>
         /// <param name="normalize">Whether to apply L2 normalization (default: true).</param>
         /// <param name="maxLength">Maximum sequence length (default: from config).</param>
+        /// <param name="sessionOptions">Optional ONNX Runtime SessionOptions. If null, defaults are used.</param>
         public SentenceTransformerEmbeddings(
             string modelPath,
             PoolingMode? poolingMode = null,
             bool normalize = true,
-            int? maxLength = null)
+            int? maxLength = null,
+            SessionOptions? sessionOptions = null)
         {
             if (string.IsNullOrEmpty(modelPath))
             {
@@ -97,10 +99,19 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
             }
 
-            var sessionOptions = new SessionOptions
+            // Allow external configuration of ONNX Runtime SessionOptions.
+            // If not provided, use recommended defaults for stability and performance.
+            if (sessionOptions == null)
             {
-                GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
-            };
+                sessionOptions = new SessionOptions
+                {
+                    GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL,
+                    // Limit parallelism to prevent resource exhaustion on large models
+                    // Using fewer threads reduces memory pressure and improves stability
+                    IntraOpNumThreads = Math.Max(1, Environment.ProcessorCount / 2),
+                    InterOpNumThreads = 1
+                };
+            }
 
             _session = new InferenceSession(onnxModelPath, sessionOptions);
             // Try to load a suitable tokenizer via Microsoft.ML.Tokenizers
