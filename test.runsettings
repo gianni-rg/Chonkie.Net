@@ -8,7 +8,7 @@
       <!-- <AZURE_OPENAI_DEPLOYMENT>your-azure-openai-deployment-here</AZURE_OPENAI_DEPLOYMENT> -->
 
       <!-- Sentence Transformer Model Path (change to test different models) -->
-      <!-- <SENTENCE_TRANSFORMER_MODEL_PATH>your-sentence-transformer-model-path-here</SENTENCE_TRANSFORMER_MODEL_PATH> -->
+      <!-- <SENTENCE_TRANSFORMERS_MODEL_PATH>your-sentence-transformer-model-path-here</SENTENCE_TRANSFORMERS_MODEL_PATH> -->
 
       <!-- OpenAI Integration Test Settings (uncomment and set your key) -->
       <!-- <OPENAI_API_KEY>your-openai-api-key-here</OPENAI_API_KEY> -->

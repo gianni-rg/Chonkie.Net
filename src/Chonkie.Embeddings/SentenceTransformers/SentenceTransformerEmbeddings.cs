@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Chonkie.Embeddings.Base;
+using Microsoft.ML.Tokenizers;
 
 namespace Chonkie.Embeddings.SentenceTransformers
 {
@@ -24,6 +26,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
         private readonly PoolingMode _poolingMode;
         private readonly bool _normalize;
         private bool _disposed;
+        private Microsoft.ML.Tokenizers.BertTokenizer? _bertTokenizer;
 
         /// <inheritdoc />
         public override string Name => "sentence-transformers";
@@ -43,11 +46,13 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <param name="poolingMode">Pooling mode (default: auto-detect from config).</param>
         /// <param name="normalize">Whether to apply L2 normalization (default: true).</param>
         /// <param name="maxLength">Maximum sequence length (default: from config).</param>
+        /// <param name="sessionOptions">Optional ONNX Runtime SessionOptions. If null, defaults are used.</param>
         public SentenceTransformerEmbeddings(
             string modelPath,
             PoolingMode? poolingMode = null,
             bool normalize = true,
-            int? maxLength = null)
+            int? maxLength = null,
+            SessionOptions? sessionOptions = null)
         {
             if (string.IsNullOrEmpty(modelPath))
             {
@@ -80,6 +85,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 ? _poolingConfig.WordEmbeddingDimension
                 : _modelConfig.EffectiveHiddenSize;
 
+
             // Determine pooling mode
             _poolingMode = poolingMode ?? _poolingConfig.GetPrimaryPoolingMode();
 
@@ -93,12 +99,36 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 throw new FileNotFoundException($"ONNX model file not found: {onnxModelPath}");
             }
 
-            var sessionOptions = new SessionOptions
+            // Allow external configuration of ONNX Runtime SessionOptions.
+            // If not provided, use recommended defaults for stability and performance.
+            if (sessionOptions == null)
             {
-                GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL
-            };
+                sessionOptions = new SessionOptions
+                {
+                    GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL,
+                    // Limit parallelism to prevent resource exhaustion on large models
+                    // Using fewer threads reduces memory pressure and improves stability
+                    IntraOpNumThreads = Math.Max(1, Environment.ProcessorCount / 2),
+                    InterOpNumThreads = 1
+                };
+            }
 
             _session = new InferenceSession(onnxModelPath, sessionOptions);
+            // Try to load a suitable tokenizer via Microsoft.ML.Tokenizers
+            try
+            {
+                var modelDir = Path.GetDirectoryName(modelPath) ?? "";
+                var vocabTxt = Path.Combine(modelDir, "vocab.txt");
+                if (File.Exists(vocabTxt))
+                {
+                    // Create a BERT-style WordPiece tokenizer
+                    _bertTokenizer = Microsoft.ML.Tokenizers.BertTokenizer.Create(vocabTxt, new Microsoft.ML.Tokenizers.BertOptions());
+                }
+            }
+            catch
+            {
+                // If tokenizer cannot be loaded, we'll fallback to SimpleTokenize
+            }
         }
 
         /// <inheritdoc />
@@ -112,87 +142,50 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 }
 
                 // Tokenize text with proper tokenizer
-                var encoding = _tokenizer.Encode(text, addSpecialTokens: true);
+                // Prefer BertTokenizer (WordPiece) when available because many
+                // SentenceTransformer ONNX exports are based on BERT-derived models
+                // and expect WordPiece token IDs and attention-mask semantics.
+                // Fallback to SentenceTransformerTokenizer to support models that
+                // ship only sentence-transformers configs.
+                // Note: Using different tokenizers can change token IDs and thus
+                // embeddings. Ensure the selected tokenizer matches the model
+                // artifacts (e.g., vocab.txt) for best compatibility.
+                EncodingResult encoding;
+                if (_bertTokenizer != null)
+                {
+                    encoding = EncodeWithBertTokenizer(text);
+                }
+                else
+                {
+                    encoding = _tokenizer.Encode(text, addSpecialTokens: true);
+                }
 
                 // Create input tensors
                 var inputIds = CreateInputIdsTensor(new[] { encoding.InputIds });
                 var attentionMask = CreateAttentionMaskTensor(new[] { encoding.AttentionMask });
 
-                // Prepare inputs for ONNX
+                // Create inputs (add token_type_ids if the model expects it)
                 var inputs = new List<NamedOnnxValue>
                 {
                     NamedOnnxValue.CreateFromTensor("input_ids", inputIds),
                     NamedOnnxValue.CreateFromTensor("attention_mask", attentionMask)
                 };
 
-                // Add token_type_ids if the model expects it
-                if (_session.InputMetadata.ContainsKey("token_type_ids"))
+                // Some ONNX-exported transformer models require token_type_ids
+                // Provide a zero tensor if the input exists in the model
+                try
                 {
-                    var tokenTypeIds = CreateTokenTypeIdsTensor(new[] { encoding.TokenTypeIds });
-                    inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
+                    var inputNames = _session.InputMetadata.Keys;
+                    if (inputNames.Contains("token_type_ids"))
+                    {
+                        var tokenTypeIds = new DenseTensor<long>(new[] { 1, (int)inputIds.Dimensions[1] });
+                        // initialized to zeros by default
+                        inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
+                    }
                 }
-
-                // Run inference
-                using var results = _session.Run(inputs);
-
-                // Get token embeddings from output
-                var outputTensor = results.First().AsEnumerable<float>().ToArray();
-
-                // Extract dimensions from output
-                var outputMetadata = results.First();
-                var shape = outputMetadata.AsTensor<float>().Dimensions.ToArray();
-
-                int batchSize = shape[0];
-                int seqLength = shape[1];
-                int hiddenDim = shape[2];
-
-                // Apply pooling
-                var pooledEmbeddings = PoolingUtilities.ApplyPooling(
-                    outputTensor,
-                    encoding.AttentionMask,
-                    batchSize,
-                    seqLength,
-                    hiddenDim,
-                    _poolingMode,
-                    _normalize
-                );
-
-                return pooledEmbeddings[0];
-            }, cancellationToken);
-        }
-
-        /// <inheritdoc />
-        public override Task<IReadOnlyList<float[]>> EmbedBatchAsync(
-            IEnumerable<string> texts,
-            CancellationToken cancellationToken = default)
-        {
-            return Task.Run(() =>
-            {
-                var textList = texts.ToList();
-                if (textList.Count == 0)
+                catch
                 {
-                    return (IReadOnlyList<float[]>)Array.Empty<float[]>();
-                }
-
-                // Tokenize all texts with proper padding
-                var batchEncoding = _tokenizer.EncodeBatch(textList, addSpecialTokens: true);
-
-                // Create input tensors
-                var inputIds = CreateInputIdsTensor(batchEncoding.InputIds);
-                var attentionMask = CreateAttentionMaskTensor(batchEncoding.AttentionMask);
-
-                // Prepare inputs for ONNX
-                var inputs = new List<NamedOnnxValue>
-                {
-                    NamedOnnxValue.CreateFromTensor("input_ids", inputIds),
-                    NamedOnnxValue.CreateFromTensor("attention_mask", attentionMask)
-                };
-
-                // Add token_type_ids if the model expects it
-                if (_session.InputMetadata.ContainsKey("token_type_ids"))
-                {
-                    var tokenTypeIds = CreateTokenTypeIdsTensor(batchEncoding.TokenTypeIds);
-                    inputs.Add(NamedOnnxValue.CreateFromTensor("token_type_ids", tokenTypeIds));
+                    // If metadata not available, proceed without token_type_ids
                 }
 
                 // Run inference
@@ -210,9 +203,15 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 int hiddenDim = shape[2];
 
                 // Flatten attention mask for pooling
-                var flatAttentionMask = batchEncoding.AttentionMask
-                    .SelectMany(m => m)
-                    .ToArray();
+                // PoolingUtilities expects a flat int[] mask, not a tensor. This conversion
+                // is necessary for compatibility, but could be inefficient for large batches.
+                // Replaced LINQ conversion with a for-loop for better performance.
+                // Further optimization: If PoolingUtilities supports Span<int>, this can avoid allocation entirely.
+                var flatAttentionMask = new int[attentionMask.Length];
+                for (int i = 0; i < attentionMask.Length; i++)
+                {
+                    flatAttentionMask[i] = (int)attentionMask.GetValue(i);
+                }
 
                 // Apply pooling
                 var pooledEmbeddings = PoolingUtilities.ApplyPooling(
@@ -225,7 +224,8 @@ namespace Chonkie.Embeddings.SentenceTransformers
                     _normalize
                 );
 
-                return (IReadOnlyList<float[]>)pooledEmbeddings;
+                // Return the first (and only) embedding
+                return pooledEmbeddings[0];
             }, cancellationToken);
         }
 
@@ -293,12 +293,48 @@ namespace Chonkie.Embeddings.SentenceTransformers
         }
 
         /// <summary>
+        /// Encodes text using the Microsoft.ML.Tokenizers BertTokenizer.
+        /// </summary>
+        /// <param name="text">The text to encode.</param>
+        /// <returns>An encoding result compatible with the ONNX model.</returns>
+        private EncodingResult EncodeWithBertTokenizer(string text)
+        {
+            if (_bertTokenizer == null)
+            {
+                throw new InvalidOperationException("BertTokenizer is not available");
+            }
+
+            // Encode the text with BertTokenizer
+            var tokenIds = _bertTokenizer.EncodeToIds(text, addSpecialTokens: true);
+
+            // Convert to int array
+            var inputIds = tokenIds.Select(id => (int)id).ToArray();
+
+            // Create attention mask (all 1s for real tokens)
+            var attentionMask = Enumerable.Repeat(1, inputIds.Length).ToArray();
+
+            // Create token type IDs (all 0s for single sequence)
+            var tokenTypeIds = Enumerable.Repeat(0, inputIds.Length).ToArray();
+
+            return new EncodingResult
+            {
+                InputIds = inputIds,
+                AttentionMask = attentionMask,
+                TokenTypeIds = tokenTypeIds
+            };
+        }
+
+        /// <summary>
         /// Counts the number of tokens in the text.
         /// </summary>
         /// <param name="text">The text to tokenize.</param>
         /// <returns>The number of tokens.</returns>
         public int CountTokens(string text)
         {
+            if (_bertTokenizer != null)
+            {
+                return _bertTokenizer.CountTokens(text);
+            }
             return _tokenizer.CountTokens(text);
         }
 
@@ -309,15 +345,7 @@ namespace Chonkie.Embeddings.SentenceTransformers
         /// <returns>A list of token counts for each text.</returns>
         public IReadOnlyList<int> CountTokensBatch(IEnumerable<string> texts)
         {
-            var textList = texts.ToList();
-            var counts = new List<int>(textList.Count);
-
-            foreach (var text in textList)
-            {
-                counts.Add(_tokenizer.CountTokens(text));
-            }
-
-            return counts;
+            return texts.Select(t => CountTokens(t)).ToList();
         }
 
         /// <summary>

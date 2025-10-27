@@ -51,7 +51,7 @@ $env:VOYAGE_API_KEY = "your-voyage-api-key"
 
 #### Sentence Transformers (ONNX)
 ```powershell
-$env:SENTENCE_TRANSFORMER_MODEL_PATH = "C:\path\to\model.onnx"
+$env:SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
 ```
 
 ### Running All Tests

@@ -30,7 +30,7 @@ Each provider's integration tests cover:
 
 1. **Basic API Integration**
    - `EmbedAsync_WithRealAPI_ReturnsValidEmbedding` - Verify basic embedding generation
-   
+
 2. **Custom Model Support**
    - `EmbedAsync_WithCustomModel_ReturnsValidEmbedding` - Test different models
 
@@ -91,7 +91,7 @@ $env:VOYAGE_API_KEY = "your-voyage-key"
 
 ### Sentence Transformers
 ```powershell
-$env:SENTENCE_TRANSFORMER_MODEL_PATH = "C:\path\to\model.onnx"
+$env:SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
 ```
 
 ## Running Integration Tests
