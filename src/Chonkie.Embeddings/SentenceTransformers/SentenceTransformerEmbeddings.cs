@@ -131,7 +131,16 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 }
 
                 // Tokenize text with proper tokenizer
-                var encoding = _tokenizer.Encode(text, addSpecialTokens: true);
+                // Try to use BertTokenizer if available, otherwise fallback to SentenceTransformerTokenizer
+                EncodingResult encoding;
+                if (_bertTokenizer != null)
+                {
+                    encoding = EncodeWithBertTokenizer(text);
+                }
+                else
+                {
+                    encoding = _tokenizer.Encode(text, addSpecialTokens: true);
+                }
 
                 // Create input tensors
                 var inputIds = CreateInputIdsTensor(new[] { encoding.InputIds });
@@ -258,12 +267,48 @@ namespace Chonkie.Embeddings.SentenceTransformers
         }
 
         /// <summary>
+        /// Encodes text using the Microsoft.ML.Tokenizers BertTokenizer.
+        /// </summary>
+        /// <param name="text">The text to encode.</param>
+        /// <returns>An encoding result compatible with the ONNX model.</returns>
+        private EncodingResult EncodeWithBertTokenizer(string text)
+        {
+            if (_bertTokenizer == null)
+            {
+                throw new InvalidOperationException("BertTokenizer is not available");
+            }
+
+            // Encode the text with BertTokenizer
+            var tokenIds = _bertTokenizer.EncodeToIds(text, addSpecialTokens: true);
+
+            // Convert to int array
+            var inputIds = tokenIds.Select(id => (int)id).ToArray();
+
+            // Create attention mask (all 1s for real tokens)
+            var attentionMask = Enumerable.Repeat(1, inputIds.Length).ToArray();
+
+            // Create token type IDs (all 0s for single sequence)
+            var tokenTypeIds = Enumerable.Repeat(0, inputIds.Length).ToArray();
+
+            return new EncodingResult
+            {
+                InputIds = inputIds,
+                AttentionMask = attentionMask,
+                TokenTypeIds = tokenTypeIds
+            };
+        }
+
+        /// <summary>
         /// Counts the number of tokens in the text.
         /// </summary>
         /// <param name="text">The text to tokenize.</param>
         /// <returns>The number of tokens.</returns>
         public int CountTokens(string text)
         {
+            if (_bertTokenizer != null)
+            {
+                return _bertTokenizer.CountTokens(text);
+            }
             return _tokenizer.CountTokens(text);
         }
 
