@@ -9,20 +9,14 @@ namespace Chonkie.Pipeline.Tests;
 internal static class TestHelpers
 {
     /// <summary>
-    /// Gets the model path from environment variable or uses default.
+    /// Gets the model path from environment variable.
+    /// Uses SENTENCE_TRANSFORMERS_MODEL_PATH only; no hard-coded fallback path.
     /// </summary>
-    /// <returns>The model path to use for tests.</returns>
+    /// <returns>The model path to use for tests, or empty string if not set.</returns>
     public static string GetModelPath()
     {
-        // Check environment variable first (same as integration tests)
-        var envPath = Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMER_MODEL_PATH");
-        if (!string.IsNullOrEmpty(envPath))
-        {
-            return envPath;
-        }
-
-        // Fallback to default path
-        return "/workspace/models/all-MiniLM-L6-v2";
+        var envPath = Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH");
+        return envPath ?? string.Empty;
     }
 
     /// <summary>
@@ -32,6 +26,10 @@ internal static class TestHelpers
     public static bool IsModelAvailable()
     {
         var modelPath = GetModelPath();
+        if (string.IsNullOrWhiteSpace(modelPath))
+        {
+            return false;
+        }
         var modelFile = Path.Combine(modelPath, "model.onnx");
         return Directory.Exists(modelPath) && File.Exists(modelFile);
     }
@@ -44,7 +42,7 @@ internal static class TestHelpers
     {
         if (!IsModelAvailable())
         {
-            throw new Xunit.SkipException("Model directory not found. Skipping test that requires ONNX model.");
+            throw new Xunit.SkipException("SENTENCE_TRANSFORMERS_MODEL_PATH not set or model.onnx not found. Skipping test that requires ONNX model.");
         }
     }
 }
