@@ -1,11 +1,13 @@
 # 🦛 Chonkie.NET ✨
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
 [![Status](https://img.shields.io/badge/status-phase_2_in_progress-green)](PORT_PLAN.md)
 [![Tests](https://img.shields.io/badge/tests-50_passing-brightgreen)](tests/)
 
-> **Status:** ✅ Phase 1 Complete - Foundation Established | 🚀 Phase 2 In Progress - Core Chunkers
+> **Status:** ✅ Phase 1 Complete - Foundation Established | 🚀 Phase 2 In Progress - Core Chunkers  
+> **Latest:** 🔥 .NET 10 RTM & C# 14 enhancement plan ready - see [docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md)
 
 A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie) - the no-nonsense, ultra-lightweight text chunking library for RAG applications.
 
@@ -14,10 +16,11 @@ A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie) - the no-nonsen
 Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
 
 - ✨ **Feature Parity** - All chunking strategies from the Python version
-- 🚀 **High Performance** - Leveraging .NET's performance capabilities (Span<T>, SIMD, TPL)
+- 🚀 **High Performance** - Leveraging .NET 10 & C# 14 (Span<T>, SIMD, extension members, stack allocation)
 - 🪶 **Lightweight** - Minimal dependencies, modular NuGet packages
 - 🔌 **32+ Integrations** - Vector databases, embedding providers, LLM services
-- 💪 **Strongly Typed** - Full C# type safety and modern language features
+- 💪 **Strongly Typed** - Full C# 14 type safety and modern language features
+- ⚡ **Optimized** - Stack allocation, devirtualization, TensorPrimitives SIMD operations
 
 ## 🎯 Project Goals
 
@@ -29,6 +32,7 @@ Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringin
 ## 📚 Documentation
 
 - **[Port Plan](PORT_PLAN.md)** - Comprehensive migration plan and progress tracking
+- **[.NET 10 & C# 14 Enhancements](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md)** - Modern .NET features & optimizations
 - **[Changelog](CHANGELOG.md)** - Project changes and version history
 - **Original Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie) | [Docs](https://docs.chonkie.ai)
 

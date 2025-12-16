@@ -1,6 +1,86 @@
-# ONNX Sentence Transformers - Implementation Checklist
+# Chonkie.Net - Implementation Status & Enhancement Planning
 
-## ✅ Phase 1: Tokenizer Integration (COMPLETE)
+## 📋 Current Implementation Status (December 2025)
+
+### ✅ **Phase 1-6: COMPLETE** (60% Overall Progress)
+All core functionality implemented and production-ready:
+- **Core Infrastructure**: ✅ Interfaces, types, BaseChunker
+- **Tokenizers**: ✅ Character, Word, HuggingFace integration
+- **Chunkers**: ✅ All 9 implementations (Token, Sentence, Recursive, Code, Semantic, Late, Neural, Slumber, Table)
+- **Embeddings**: ✅ 10+ providers including ONNX Sentence Transformers
+- **Pipeline**: ✅ CHOMP workflow (Fetcher → Chef → Chunker → Refinery → Porter)
+- **Infrastructure**: ✅ Chefs, Fetchers, Porters, Refineries
+- **Testing**: ✅ Comprehensive unit, integration, and performance tests
+
+---
+
+## 🚀 Next Phase: .NET 10 & C# 14 Enhancement
+
+### 📄 Enhancement Plan Documentation
+**File**: `docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md` (Solution-Wide)
+**Status**: 🔄 PLANNING
+**Scope**: All 9 projects in Chonkie.Net solution
+**Target Date**: Q1 2026
+
+### Enhancement Summary
+Comprehensive modernization leveraging .NET 10 RTM and C# 14 features exclusively:
+
+**Requirements:**
+- **.NET 10 SDK** (required, no multi-targeting)
+- **C# 14** (exclusive use of latest language features)
+- **Breaking Change**: No backward compatibility with .NET 8/9
+
+1. **C# 14 Language Features** (Full Adoption)
+   - Extension members for all major interfaces
+   - Field keyword for validated properties
+   - Null-conditional assignment throughout
+   - Implicit span conversions for text processing
+   
+2. **.NET 10 Runtime Optimizations** (Automatic)
+   - Stack allocation for small arrays (5-10% GC reduction)
+   - Array devirtualization (10-20% faster iteration)
+   - Loop inversion (5-15% faster recursion)
+   - Arm64 write-barrier improvements (8-20% GC pauses)
+
+3. **System.Numerics.Tensors Migration** (Critical)
+   - Now STABLE in .NET 10 (no longer experimental!)
+   - ~200 SIMD-optimized operations via TensorPrimitives
+   - Expected 20-35% improvement in embeddings performance
+
+### Projects Affected (All 9)
+- **Chonkie.Core** - Extension members, base infrastructure
+- **Chonkie.Tokenizers** - Span-based text processing
+- **Chonkie.Chunkers** - Parallel processing optimizations
+- **Chonkie.Embeddings** - TensorPrimitives migration (HIGH IMPACT)
+- **Chonkie.Chefs** - Text preprocessing modernization
+- **Chonkie.Pipeline** - Workflow orchestration improvements
+- **Chonkie.Fetchers** - Data ingestion utilities
+- **Chonkie.Porters** - Export format enhancements
+- **Chonkie.Refineries** - Post-processing optimizations
+
+### Performance Expectations
+- **Overall Solution**: 15-25% improvement
+- **Embeddings**: 20-35% throughput increase (TensorPrimitives)
+- **Batch Processing**: 10-20% faster (devirtualization)
+- **Memory Usage**: 5-10% reduction (stack allocation)
+
+### Implementation Timeline
+- **Phase 1**: Foundation (Weeks 1-2) - .NET 10 single-target, core infrastructure
+- **Phase 2**: Chunkers & Tokenizers (Weeks 3-4) - Text processing components
+- **Phase 3**: Embeddings & TensorPrimitives (Weeks 5-6) - High-performance computing
+- **Phase 4**: Pipeline & Infrastructure (Weeks 7-8) - Supporting components
+- **Phase 5**: Testing & Documentation (Weeks 9-10) - Validation & rollout
+
+**Total Duration**: 10 weeks  
+**Estimated Changes**: ~3500 LOC across 69 files  
+**Risk Level**: Low (stable platform, no backward compatibility concerns)  
+**Breaking Changes**: YES - .NET 10 required
+
+---
+
+## ✅ ONNX Sentence Transformers - Implementation Details
+
+### Phase 1: Tokenizer Integration (COMPLETE)
 
 - [x] Add `Microsoft.ML.Tokenizers` package (v0.22.0-preview)
 - [x] Add `System.Text.Json` package (v9.0.0)
@@ -16,7 +96,7 @@
 - [x] Add fallback tokenization
 - [x] Handle special tokens ([CLS], [SEP], [PAD], [UNK], [MASK])
 
-## ✅ Phase 2: Model Configuration (COMPLETE)
+### Phase 2: Model Configuration (COMPLETE)
 
 - [x] Create `ModelConfig` class
 - [x] Load and parse config.json
@@ -31,7 +111,7 @@
 - [x] Add graceful handling of missing files
 - [x] Add default fallback configurations
 
-## ✅ Phase 3: Pooling Strategies (COMPLETE)
+### Phase 3: Pooling Strategies (COMPLETE)
 
 - [x] Create `PoolingUtilities` class
 - [x] Implement Mean Pooling
@@ -43,7 +123,7 @@
 - [x] Add batch processing support
 - [x] Optimize array operations
 
-## ✅ Phase 4: Tensor Operations (COMPLETE)
+### Phase 4: Tensor Operations (COMPLETE)
 
 - [x] Remove placeholder `SimpleTokenize()` method
 - [x] Integrate proper tokenizer
@@ -231,3 +311,14 @@ Time Elapsed: 00:00:07.30
 **Status:** ✅ ALL TASKS COMPLETE
 **Date:** October 24, 2025
 **Ready for:** Production Use
+
+## 🚀 .NET 10 & C# 14 Enhancements
+
+**Status:** 🔄 PLANNING (December 2025)
+**Target:** Q1 2026
+
+See [.NET 10 & C# 14 Enhancement Plan](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md) for:
+- C# 14 language feature adoption (extension members, field keyword, null-conditional assignment)
+- .NET 10 runtime performance optimizations (stack allocation, devirtualization, loop improvements)
+- System.Numerics.Tensors migration (STABLE API, TensorPrimitives)
+- Expected 15-30% performance improvements

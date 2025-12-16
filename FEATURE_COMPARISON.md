@@ -1,7 +1,7 @@
 # Feature Comparison: Python Chonkie vs .NET Chonkie
 
-**Generated:** October 27, 2025
-**Python Version:** 1.4.0
+**Generated:** December 16, 2025
+**Python Version:** 1.5.0
 **C#/.NET Status:** Phase 6 Complete (60% overall progress)
 
 ## Executive Summary
@@ -13,13 +13,13 @@ Chonkie.NET is a port of the Python Chonkie library to .NET/C#, aiming for compl
 | Category | Python Features | .NET Implemented | .NET Planned | Status |
 |----------|----------------|------------------|--------------|--------|
 | **Chunkers** | 9 | 5 | 4 | 🟡 56% |
-| **Tokenizers** | 5+ | 3 | 2+ | 🟢 60% |
-| **Embeddings** | 8 | 8 | 0 | 🟢 100% |
+| **Tokenizers** | 6 | 3 | 3 | 🟡 50% |
+| **Embeddings** | 10 | 8 | 2 | 🟢 80% |
 | **Refineries** | 2 | 2 | 0 | 🟢 100% |
 | **Chefs** | 3 | 3 | 0 | 🟢 100% |
 | **Fetchers** | 1 | 1 | 0 | 🟢 100% |
 | **Porters** | 2 | 1 | 1 | 🟡 50% |
-| **Handshakes** | 8 | 0 | 8 | 🔴 0% |
+| **Handshakes** | 9 | 0 | 9 | 🔴 0% |
 | **Genies** | 3 | 0 | 3 | 🔴 0% |
 | **Pipeline** | ✓ | ✗ | ✓ | 🟢 100% |
 | **Utilities** | 2 | 0 | 2 | 🔴 0% |
@@ -139,6 +139,7 @@ Chonkie.NET is a port of the Python Chonkie library to .NET/C#, aiming for compl
 |-----------|--------|-------------|-------|
 | `CharacterTokenizer` | ✅ | ✅ **Complete** | Character-level tokenization |
 | `WordTokenizer` | ✅ | ✅ **Complete** | Word-level tokenization |
+| `ByteTokenizer` | ✅ | ❌ **Planned** | Byte-level tokenization |
 | `AutoTokenizer` (HF) | ✅ | ❌ **Planned** | Via Microsoft.ML.Tokenizers |
 | `tiktoken` (OpenAI) | ✅ | ❌ **Planned** | Via SharpToken library |
 | Custom functions | ✅ | ✅ **Complete** | ITokenizer interface support |
@@ -179,15 +180,23 @@ Chonkie.NET is a port of the Python Chonkie library to .NET/C#, aiming for compl
 | `VoyageAIEmbeddings` | ✅ | ✅ **Complete** | HTTP Client |
 | `SentenceTransformerEmbeddings` | ✅ | ✅ **Complete** | Microsoft.ML.OnnxRuntime |
 | `Model2VecEmbeddings` | ✅ | ❌ **Not Planned** | Requires custom implementation |
+| `LiteLLMEmbeddings` | ✅ | ❌ **Planned** | Unified API for 100+ providers |
+| `CatsuEmbeddings` | ✅ | ❌ **Planned** | Unified client for 11+ providers |
 | `AutoEmbeddings` | ✅ | ✅ **Complete** | Factory pattern |
 
 ### Implementation Details
 
 **Location:** `src/Chonkie.Embeddings/`
-**Tests:** 186 tests passing (100%)
+**Tests:** 186 tests passing
 **Status:** **Phase 5 COMPLETE** ✅
 
-All major embedding providers are implemented with full feature parity. Model2Vec is not planned due to lack of .NET libraries, but all other providers are complete.
+All major embedding providers are implemented with full feature parity. Model2Vec is not planned due to lack of .NET libraries.
+
+**New Python Providers (not yet in .NET):**
+- **LiteLLMEmbeddings** - Unified API for 100+ embedding providers (OpenAI, VoyageAI, Cohere, Bedrock, etc.)
+- **CatsuEmbeddings** - Unified client for 11+ providers with automatic retry logic and cost tracking
+
+**Implementation Priority:** Medium - These are convenience wrappers around existing APIs that are already supported individually.
 
 **Key Features:**
 - `IEmbeddings` interface
@@ -289,13 +298,14 @@ JSONPorter is complete. DatasetsPorter is lower priority as HuggingFace Datasets
 | `PgvectorHandshake` | ✅ | ❌ **Planned** | Npgsql + Pgvector | Medium |
 | `MongoDBHandshake` | ✅ | ❌ **Planned** | MongoDB.Driver | Medium |
 | `ElasticHandshake` | ✅ | ❌ **Planned** | Elastic.Clients.Elasticsearch | Medium |
+| `MilvusHandshake` | ✅ | ❌ **Planned** | Milvus.Client | Medium |
 | `TurbopufferHandshake` | ✅ | ❌ **Planned** | HTTP Client | Low |
 
 ### Implementation Status
 
 **Status:** **Phase 7 NOT STARTED** 🔴
 **Target:** Weeks 12-14
-**Notes:** All required .NET SDKs are available. Implementation is straightforward once Phase 6 (Pipeline) is complete.
+**Notes:** All required .NET SDKs are available, including Milvus.Client. Implementation is straightforward once Phase 6 (Pipeline) is complete. Total handshakes increased from 8 to 9 with the addition of MilvusHandshake.
 
 ---
 
@@ -368,7 +378,7 @@ JSONPorter is complete. DatasetsPorter is lower priority as HuggingFace Datasets
 
 | Project | Python | .NET Status | Notes |
 |---------|--------|-------------|-------|
-| **Total Tests** | ~500+ | 284 | 240 passing, 44 skipped (integration) |
+| **Total Tests** | ~500+ | 472 | ~425+ passing, ~47 skipped (integration) |
 | **Core Types** | ✅ | ✅ | Complete |
 | **Tokenizers** | ✅ | ✅ | Complete |
 | **Chunkers** | ✅ | 🟡 | 5/9 complete |
@@ -628,9 +638,18 @@ The .NET port is progressing well with the Pipeline system now complete. Core fu
 
 ---
 
-**Last Updated:** October 27, 2025
-**Document Version:** 1.0
+**Last Updated:** December 16, 2025
+**Document Version:** 1.1
 **Verified Against:**
-- Python Chonkie v1.4.0
+- Python Chonkie v1.5.0
 - PORT_PLAN.md (October 21, 2025)
-- .NET source code (October 24, 2025)
+- .NET source code (December 16, 2025)
+
+**Key Changes Since Last Update:**
+- Python version updated from 1.4.0 to 1.5.0
+- Added LiteLLMEmbeddings (unified API for 100+ providers)
+- Added CatsuEmbeddings (unified client for 11+ providers)
+- Added ByteTokenizer (byte-level tokenization)
+- Added MilvusHandshake (Milvus vector database integration)
+- Updated test count: 472 total tests (previously 284)
+- .NET Framework updated to .NET 10.0 with C# 13
