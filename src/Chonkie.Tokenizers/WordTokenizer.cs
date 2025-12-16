@@ -66,6 +66,30 @@ public class WordTokenizer : BaseTokenizer
         return text.Split(' ', StringSplitOptions.None).Length;
     }
 
+    /// <summary>
+    /// Counts the number of tokens (words) in the given text span.
+    /// C# 14 implicit span conversion allows passing strings directly.
+    /// </summary>
+    /// <param name="text">The text span to count tokens for.</param>
+    /// <returns>The number of words in the text.</returns>
+    public int CountTokens(ReadOnlySpan<char> text)
+    {
+        if (text.IsEmpty)
+        {
+            return 0;
+        }
+
+        int count = 1; // Start with 1 word
+        for (int i = 0; i < text.Length; i++)
+        {
+            if (text[i] == ' ')
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
     /// <inheritdoc/>
     public override string ToString()
     {

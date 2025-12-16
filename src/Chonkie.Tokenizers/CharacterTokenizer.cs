@@ -62,6 +62,17 @@ public class CharacterTokenizer : BaseTokenizer
         return text.Length;
     }
 
+    /// <summary>
+    /// Counts the number of tokens in the given text span.
+    /// C# 14 implicit span conversion allows passing strings directly.
+    /// </summary>
+    /// <param name="text">The text span to count tokens for.</param>
+    /// <returns>The number of tokens (characters) in the text.</returns>
+    public int CountTokens(ReadOnlySpan<char> text)
+    {
+        return text.Length;
+    }
+
     /// <inheritdoc/>
     public override string ToString()
     {

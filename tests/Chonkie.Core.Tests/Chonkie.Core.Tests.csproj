@@ -24,6 +24,10 @@
     <ProjectReference Include="..\..\src\Chonkie.Core\Chonkie.Core.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Tokenizers\Chonkie.Tokenizers.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Chunkers\Chonkie.Chunkers.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Chefs\Chonkie.Chefs.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Fetchers\Chonkie.Fetchers.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Porters\Chonkie.Porters.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Refineries\Chonkie.Refineries.csproj" />
   </ItemGroup>
 
 </Project>

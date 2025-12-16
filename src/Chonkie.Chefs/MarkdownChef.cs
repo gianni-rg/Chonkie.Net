@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Markdig;
@@ -29,6 +30,22 @@ namespace Chonkie.Chefs
             // Convert markdown to HTML (or plain text if needed)
             var html = Markdig.Markdown.ToHtml(text, _pipeline);
             return Task.FromResult(html);
+        }
+
+        /// <summary>
+        /// Processes markdown text span directly.
+        /// C# 14 implicit span conversion allows passing strings directly.
+        /// </summary>
+        /// <param name="text">The markdown text span to process.</param>
+        /// <returns>Processed HTML.</returns>
+        public string Process(ReadOnlySpan<char> text)
+        {
+            if (text.IsEmpty || text.IsWhiteSpace())
+                return string.Empty;
+
+            // Markdig requires string, so we must allocate here
+            var str = text.ToString();
+            return Markdig.Markdown.ToHtml(str, _pipeline);
         }
     }
 }
