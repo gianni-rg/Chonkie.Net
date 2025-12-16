@@ -1,6 +1,7 @@
 namespace Chonkie.Fetchers.Extensions;
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -89,5 +90,52 @@ public static class FetcherExtensions
         /// </summary>
         public static IReadOnlyList<string> CommonCodeExtensions =>
             new[] { ".cs", ".py", ".js", ".ts", ".java", ".cpp", ".c", ".h", ".go", ".rs", ".rb", ".php" };
+    }
+}
+
+/// <summary>
+/// Extension methods for document collections.
+/// </summary>
+public static class DocumentCollectionExtensions
+{
+    /// <summary>
+    /// Filters fetched documents by extension.
+    /// </summary>
+    /// <param name="documents">Documents to filter.</param>
+    /// <param name="extensions">Extensions to include (e.g., ".txt", ".md").</param>
+    /// <returns>Filtered documents.</returns>
+    public static IEnumerable<(string Path, string Content)> FilterByExtension(
+        this IEnumerable<(string Path, string Content)> documents,
+        params string[] extensions)
+    {
+        var extensionSet = new HashSet<string>(extensions.Select(e => e.ToLowerInvariant()));
+        return documents.Where(doc =>
+        {
+            var ext = System.IO.Path.GetExtension(doc.Path).ToLowerInvariant();
+            return extensionSet.Contains(ext);
+        });
+    }
+
+    /// <summary>
+    /// Filters fetched documents by minimum content length.
+    /// </summary>
+    /// <param name="documents">Documents to filter.</param>
+    /// <param name="minLength">Minimum content length in characters.</param>
+    /// <returns>Filtered documents.</returns>
+    public static IEnumerable<(string Path, string Content)> FilterByMinLength(
+        this IEnumerable<(string Path, string Content)> documents,
+        int minLength)
+    {
+        return documents.Where(doc => doc.Content.Length >= minLength);
+    }
+
+    /// <summary>
+    /// Gets total character count across all documents.
+    /// </summary>
+    /// <param name="documents">Documents to count.</param>
+    /// <returns>Total character count.</returns>
+    public static int TotalCharacters(this IEnumerable<(string Path, string Content)> documents)
+    {
+        return documents.Sum(doc => doc.Content.Length);
     }
 }

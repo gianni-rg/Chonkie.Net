@@ -17,15 +17,11 @@ public static class RefineryExtensions
     /// Extension members for IRefinery instances.
     /// </summary>
     extension(IRefinery refinery)
-    {
-        /// <summary>
-        /// Gets the refinery type name (type name without "Refinery" suffix).
-        /// </summary>
+{
+    /// <summary>
+    /// Gets the refinery type name (type name without "Refinery" suffix).
+    /// </summary>
         public string RefineryType => refinery.GetType().Name.Replace("Refinery", string.Empty);
-
-        /// <summary>
-        /// Refines chunks in batches for better memory management with large chunk lists.
-        /// </summary>
         /// <param name="chunks">The chunks to refine.</param>
         /// <param name="batchSize">Number of chunks to process per batch.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
@@ -85,11 +81,12 @@ public static class RefineryExtensions
         /// </summary>
         public static IReadOnlyList<Chunk> Empty => Array.Empty<Chunk>();
     }
+}
 
-    /// <summary>
-    /// Equality comparer for chunks that checks text content and metadata.
-    /// </summary>
-    private class ChunkEqualityComparer : IEqualityComparer<Chunk>
+/// <summary>
+/// Equality comparer for chunks that checks text content and metadata.
+/// </summary>
+internal class ChunkEqualityComparer : IEqualityComparer<Chunk>
     {
         public static readonly ChunkEqualityComparer Instance = new();
 
@@ -104,9 +101,8 @@ public static class RefineryExtensions
                    x.EndIndex == y.EndIndex;
         }
 
-        public int GetHashCode(Chunk obj)
-        {
-            return HashCode.Combine(obj.Text, obj.TokenCount, obj.StartIndex, obj.EndIndex);
-        }
+    public int GetHashCode(Chunk obj)
+    {
+        return HashCode.Combine(obj.Text, obj.TokenCount, obj.StartIndex, obj.EndIndex);
     }
 }
