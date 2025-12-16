@@ -101,6 +101,185 @@ public class EmbeddingsExtensionsTests
         Assert.All(zeroVector, value => Assert.Equal(0.0f, value));
     }
 
+    [Fact]
+    public void CosineSimilarity_WithIdenticalVectors_ReturnsOne()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 3);
+        var v = new[] { 1.0f, 2.0f, 3.0f };
+
+        // Act
+        var similarity = embeddings.CosineSimilarity(v, v);
+
+        // Assert
+        Assert.Equal(1.0f, similarity, precision: 4);
+    }
+
+    [Fact]
+    public void CosineSimilarity_WithOrthogonalVectors_ReturnsZero()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var u = new[] { 1.0f, 0.0f };
+        var v = new[] { 0.0f, 1.0f };
+
+        // Act
+        var similarity = embeddings.CosineSimilarity(u, v);
+
+        // Assert
+        Assert.Equal(0.0f, similarity, precision: 4);
+    }
+
+    [Fact]
+    public void CosineSimilarity_WithOppositeVectors_ReturnsNegativeOne()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 3);
+        var u = new[] { 1.0f, 2.0f, 3.0f };
+        var v = new[] { -1.0f, -2.0f, -3.0f };
+
+        // Act
+        var similarity = embeddings.CosineSimilarity(u, v);
+
+        // Assert
+        Assert.Equal(-1.0f, similarity, precision: 4);
+    }
+
+    [Fact]
+    public void NormalizeInPlace_CreatesUnitVector()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var vector = new[] { 3.0f, 4.0f }; // Magnitude = 5
+
+        // Act
+        embeddings.NormalizeInPlace(vector);
+
+        // Assert
+        var magnitude = embeddings.Magnitude(vector);
+        Assert.Equal(1.0f, magnitude, precision: 4);
+        Assert.Equal(0.6f, vector[0], precision: 4);
+        Assert.Equal(0.8f, vector[1], precision: 4);
+    }
+
+    [Fact]
+    public void NormalizeInPlace_WithZeroVector_RemainsZero()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 3);
+        var vector = new[] { 0.0f, 0.0f, 0.0f };
+
+        // Act
+        embeddings.NormalizeInPlace(vector);
+
+        // Assert
+        Assert.All(vector, value => Assert.Equal(0.0f, value));
+    }
+
+    [Fact]
+    public void BatchCosineSimilarity_CalculatesAllSimilarities()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = new[]
+        {
+            new[] { 1.0f, 0.0f },  // Similar
+            new[] { 0.0f, 1.0f },  // Orthogonal
+            new[] { -1.0f, 0.0f }  // Opposite
+        };
+
+        // Act
+        var similarities = embeddings.BatchCosineSimilarity(query, candidates);
+
+        // Assert
+        Assert.Equal(3, similarities.Length);
+        Assert.Equal(1.0f, similarities[0], precision: 4);
+        Assert.Equal(0.0f, similarities[1], precision: 4);
+        Assert.Equal(-1.0f, similarities[2], precision: 4);
+    }
+
+    [Fact]
+    public void FindMostSimilar_ReturnsCorrectIndexAndScore()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = new[]
+        {
+            new[] { 0.5f, 0.5f },  // 0.707
+            new[] { 1.0f, 0.0f },  // 1.0 (most similar)
+            new[] { 0.0f, 1.0f }   // 0.0
+        };
+
+        // Act
+        var (index, similarity) = embeddings.FindMostSimilar(query, candidates);
+
+        // Assert
+        Assert.Equal(1, index);
+        Assert.Equal(1.0f, similarity, precision: 4);
+    }
+
+    [Fact]
+    public void FindMostSimilar_WithEmptyCandidates_ThrowsException()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = Array.Empty<float[]>();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => embeddings.FindMostSimilar(query, candidates));
+    }
+
+    [Fact]
+    public void FindTopKSimilar_ReturnsSortedResults()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = new[]
+        {
+            new[] { 0.5f, 0.5f },   // Index 0, similarity ~0.707
+            new[] { 1.0f, 0.0f },   // Index 1, similarity 1.0
+            new[] { 0.8f, 0.2f },   // Index 2, similarity ~0.98
+            new[] { 0.0f, 1.0f }    // Index 3, similarity 0.0
+        };
+
+        // Act
+        var topK = embeddings.FindTopKSimilar(query, candidates, k: 2);
+
+        // Assert
+        Assert.Equal(2, topK.Length);
+        Assert.Equal(1, topK[0].Index);  // Most similar
+        Assert.True(topK[0].Similarity > topK[1].Similarity);  // Descending order
+    }
+
+    [Fact]
+    public void FindTopKSimilar_WithInvalidK_ThrowsException()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = new[] { new[] { 1.0f, 0.0f } };
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => embeddings.FindTopKSimilar(query, candidates, k: 0));
+        Assert.Throws<ArgumentException>(() => embeddings.FindTopKSimilar(query, candidates, k: 2));
+    }
+
+    [Fact]
+    public void FindTopKSimilar_WithEmptyCandidates_ThrowsException()
+    {
+        // Arrange
+        var embeddings = new TestEmbeddings("Test", 2);
+        var query = new[] { 1.0f, 0.0f };
+        var candidates = Array.Empty<float[]>();
+
+        // Act & Assert
+        Assert.Throws<ArgumentException>(() => embeddings.FindTopKSimilar(query, candidates, k: 1));
+    }
+
     // Test embeddings implementation
     private class TestEmbeddings : IEmbeddings
     {
