@@ -9,6 +9,9 @@ namespace Chonkie.Embeddings.Tests.Extensions;
 /// </summary>
 public class EmbeddingsExtensionsTests
 {
+    /// <summary>
+    /// Tests that ProviderType property returns the provider name without "Embeddings" suffix.
+    /// </summary>
     [Fact]
     public void ProviderType_ReturnsProviderName()
     {
@@ -22,6 +25,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal("Test", providerType);
     }
 
+    /// <summary>
+    /// Tests that IsNormalized returns true for a unit vector (magnitude = 1).
+    /// </summary>
     [Fact]
     public void IsNormalized_WithUnitVector_ReturnsTrue()
     {
@@ -36,6 +42,9 @@ public class EmbeddingsExtensionsTests
         Assert.True(isNormalized);
     }
 
+    /// <summary>
+    /// Tests that IsNormalized returns false for a non-unit vector.
+    /// </summary>
     [Fact]
     public void IsNormalized_WithNonUnitVector_ReturnsFalse()
     {
@@ -50,6 +59,9 @@ public class EmbeddingsExtensionsTests
         Assert.False(isNormalized);
     }
 
+    /// <summary>
+    /// Tests that Magnitude calculates the L2 norm correctly using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void Magnitude_CalculatesCorrectly()
     {
@@ -64,6 +76,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(5.0f, magnitude, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that Distance calculates Euclidean distance correctly using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void Distance_CalculatesEuclideanDistance()
     {
@@ -79,6 +94,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(5.0f, distance, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that DefaultDimension static property returns 384 (default embedding dimension).
+    /// </summary>
     [Fact]
     public void DefaultDimension_ReturnsPositiveValue()
     {
@@ -90,6 +108,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(384, defaultDim);
     }
 
+    /// <summary>
+    /// Tests that Zero factory method creates a zero vector of specified dimension.
+    /// </summary>
     [Fact]
     public void Zero_ReturnsZeroVector()
     {
@@ -101,6 +122,9 @@ public class EmbeddingsExtensionsTests
         Assert.All(zeroVector, value => Assert.Equal(0.0f, value));
     }
 
+    /// <summary>
+    /// Tests that CosineSimilarity returns 1.0 for identical vectors using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void CosineSimilarity_WithIdenticalVectors_ReturnsOne()
     {
@@ -115,6 +139,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(1.0f, similarity, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that CosineSimilarity returns 0.0 for orthogonal vectors using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void CosineSimilarity_WithOrthogonalVectors_ReturnsZero()
     {
@@ -130,6 +157,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(0.0f, similarity, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that CosineSimilarity returns -1.0 for opposite direction vectors using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void CosineSimilarity_WithOppositeVectors_ReturnsNegativeOne()
     {
@@ -145,6 +175,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(-1.0f, similarity, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that NormalizeInPlace creates a unit vector with magnitude 1.0 using TensorPrimitives.
+    /// </summary>
     [Fact]
     public void NormalizeInPlace_CreatesUnitVector()
     {
@@ -162,6 +195,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(0.8f, vector[1], precision: 4);
     }
 
+    /// <summary>
+    /// Tests that NormalizeInPlace handles zero vector correctly (remains zero).
+    /// </summary>
     [Fact]
     public void NormalizeInPlace_WithZeroVector_RemainsZero()
     {
@@ -176,6 +212,9 @@ public class EmbeddingsExtensionsTests
         Assert.All(vector, value => Assert.Equal(0.0f, value));
     }
 
+    /// <summary>
+    /// Tests that BatchCosineSimilarity calculates similarities for all candidate vectors.
+    /// </summary>
     [Fact]
     public void BatchCosineSimilarity_CalculatesAllSimilarities()
     {
@@ -199,6 +238,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(-1.0f, similarities[2], precision: 4);
     }
 
+    /// <summary>
+    /// Tests that FindMostSimilar returns the correct index and similarity score of the most similar vector.
+    /// </summary>
     [Fact]
     public void FindMostSimilar_ReturnsCorrectIndexAndScore()
     {
@@ -220,6 +262,9 @@ public class EmbeddingsExtensionsTests
         Assert.Equal(1.0f, similarity, precision: 4);
     }
 
+    /// <summary>
+    /// Tests that FindMostSimilar throws ArgumentException when candidates array is empty.
+    /// </summary>
     [Fact]
     public void FindMostSimilar_WithEmptyCandidates_ThrowsException()
     {
@@ -232,6 +277,9 @@ public class EmbeddingsExtensionsTests
         Assert.Throws<ArgumentException>(() => embeddings.FindMostSimilar(query, candidates));
     }
 
+    /// <summary>
+    /// Tests that FindTopKSimilar returns top K results sorted by similarity in descending order.
+    /// </summary>
     [Fact]
     public void FindTopKSimilar_ReturnsSortedResults()
     {
@@ -255,6 +303,9 @@ public class EmbeddingsExtensionsTests
         Assert.True(topK[0].Similarity > topK[1].Similarity);  // Descending order
     }
 
+    /// <summary>
+    /// Tests that FindTopKSimilar throws ArgumentException when K is invalid (zero or greater than candidates length).
+    /// </summary>
     [Fact]
     public void FindTopKSimilar_WithInvalidK_ThrowsException()
     {
@@ -268,6 +319,9 @@ public class EmbeddingsExtensionsTests
         Assert.Throws<ArgumentException>(() => embeddings.FindTopKSimilar(query, candidates, k: 2));
     }
 
+    /// <summary>
+    /// Tests that FindTopKSimilar throws ArgumentException when candidates array is empty.
+    /// </summary>
     [Fact]
     public void FindTopKSimilar_WithEmptyCandidates_ThrowsException()
     {
