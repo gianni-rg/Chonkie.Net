@@ -82,7 +82,7 @@ public static class FetcherExtensions
         /// <summary>
         /// Gets common text file extensions.
         /// </summary>
-        public static IReadOnlyList<string> CommonTextExtensions => 
+        public static IReadOnlyList<string> CommonTextExtensions =>
             new[] { ".txt", ".md", ".rst", ".tex", ".log", ".csv", ".json", ".xml" };
 
         /// <summary>

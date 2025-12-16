@@ -52,11 +52,11 @@ public static class PorterExtensions
             for (int i = 0; i < chunks.Count; i += batchSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var batch = chunks.Skip(i).Take(batchSize).ToList();
                 var batchDestination = $"{destination}.part{i / batchSize}";
                 var success = await porter.ExportAsync(batch, batchDestination, cancellationToken);
-                
+
                 if (!success)
                 {
                     return false;
@@ -81,10 +81,10 @@ public static class PorterExtensions
             foreach (var chunks in chunkLists)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var destination = string.Format(destinationPattern, index++);
                 var success = await porter.ExportAsync(chunks, destination, cancellationToken);
-                
+
                 if (!success)
                 {
                     return false;
@@ -102,7 +102,7 @@ public static class PorterExtensions
         /// <summary>
         /// Gets common export formats.
         /// </summary>
-        public static IReadOnlyList<string> CommonFormats => 
+        public static IReadOnlyList<string> CommonFormats =>
             new[] { "json", "csv", "xml", "parquet", "arrow" };
 
         /// <summary>

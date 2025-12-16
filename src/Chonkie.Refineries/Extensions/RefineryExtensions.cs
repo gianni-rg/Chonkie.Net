@@ -17,10 +17,10 @@ public static class RefineryExtensions
     /// Extension members for IRefinery instances.
     /// </summary>
     extension(IRefinery refinery)
-{
-    /// <summary>
-    /// Gets the refinery type name (type name without "Refinery" suffix).
-    /// </summary>
+    {
+        /// <summary>
+        /// Gets the refinery type name (type name without "Refinery" suffix).
+        /// </summary>
         public string RefineryType => refinery.GetType().Name.Replace("Refinery", string.Empty);
         /// <param name="chunks">The chunks to refine.</param>
         /// <param name="batchSize">Number of chunks to process per batch.</param>
@@ -47,7 +47,7 @@ public static class RefineryExtensions
             for (int i = 0; i < chunks.Count; i += batchSize)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                
+
                 var batch = chunks.Skip(i).Take(batchSize).ToList();
                 var refined = await refinery.RefineAsync(batch, cancellationToken);
                 results.AddRange(refined);
@@ -66,7 +66,7 @@ public static class RefineryExtensions
             CancellationToken cancellationToken = default)
         {
             var refined = await refinery.RefineAsync(chunks, cancellationToken);
-            return refined.Count != chunks.Count || 
+            return refined.Count != chunks.Count ||
                    !refined.SequenceEqual(chunks, ChunkEqualityComparer.Instance);
         }
     }
@@ -87,19 +87,19 @@ public static class RefineryExtensions
 /// Equality comparer for chunks that checks text content and metadata.
 /// </summary>
 internal class ChunkEqualityComparer : IEqualityComparer<Chunk>
-    {
-        public static readonly ChunkEqualityComparer Instance = new();
+{
+    public static readonly ChunkEqualityComparer Instance = new();
 
-        public bool Equals(Chunk? x, Chunk? y)
-        {
-            if (ReferenceEquals(x, y)) return true;
-            if (x is null || y is null) return false;
-            
-            return string.Equals(x.Text, y.Text, StringComparison.Ordinal) &&
-                   x.TokenCount == y.TokenCount &&
-                   x.StartIndex == y.StartIndex &&
-                   x.EndIndex == y.EndIndex;
-        }
+    public bool Equals(Chunk? x, Chunk? y)
+    {
+        if (ReferenceEquals(x, y)) return true;
+        if (x is null || y is null) return false;
+
+        return string.Equals(x.Text, y.Text, StringComparison.Ordinal) &&
+               x.TokenCount == y.TokenCount &&
+               x.StartIndex == y.StartIndex &&
+               x.EndIndex == y.EndIndex;
+    }
 
     public int GetHashCode(Chunk obj)
     {
