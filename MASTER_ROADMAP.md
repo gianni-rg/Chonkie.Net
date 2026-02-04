@@ -1,7 +1,7 @@
 # Chonkie.Net Master Roadmap
-**Last Updated:** February 4, 2026  
-**Version:** v2.1  
-**Current Status:** Phase 6 Complete (65% overall progress)
+**Last Updated:** February 4, 2026 (Night)  
+**Version:** v2.2  
+**Current Status:** Phase 8 Complete, Phase 9 Starting (76% overall progress)
 
 ---
 
@@ -10,16 +10,17 @@
 Chonkie.Net is a high-performance C# port of the Python Chonkie library for text chunking in RAG applications. This document consolidates all implementation plans, checklists, and roadmaps into a single source of truth.
 
 ### Current Status
-- **Completed:** Phases 1-6 (Foundation through Phase 10 Progress)
-- **In Progress:** February 2026 Updates (Genies)
-- **Next:** Complete Genies, Handshakes, and optional features
+- **Completed:** Phases 1-8 (Foundation through Genies)
+- **In Progress:** Phase 9 (Handshakes) - Vector Database Integrations
+- **Next:** Complete Handshakes, Optional Features
 
 ### Key Metrics
-- **Progress:** 65% complete
-- **Tests:** 538 total (472 passing, 66 skipped, 0 failed)
-- **Projects:** 9 of 11 planned (missing: Genies, Handshakes)
+- **Progress:** 76% complete
+- **Tests:** 552 total (552 passing, 78 skipped, 2 pre-existing failures)
+- **Projects:** 10 of 11 planned (Handshakes starting now)
 - **Chunkers:** 10/10 complete ✅
 - **Embeddings:** 7/7 core providers complete ✅
+- **Genies:** 5/6 core complete ✅ (LiteLLM optional)
 - **Infrastructure:** Complete ✅
 
 ---
@@ -35,14 +36,14 @@ Chonkie.Net is a high-performance C# port of the Python Chonkie library for text
 | 5. Embeddings | ✅ Complete | 2 weeks | 100% | - |
 | 6. Pipeline | ✅ Complete | 1 week | 100% | - |
 | 7. C# 14 Enhancements | ✅ Complete | 10 weeks | 100% | - |
-| **8. Genies (NEW)** | 🔴 In Progress | 2 weeks | 0% | **CRITICAL** |
-| **9. Handshakes** | ⬜ Not Started | 3 weeks | 0% | **HIGH** |
+| **8. Genies** | ✅ Complete | 1 day | 100% | - |
+| **9. Handshakes** | 🔴 In Progress | 3 weeks | 0% | **CRITICAL** |
 | 10. Optional Chunkers | ⬜ Not Started | 2 weeks | 0% | **MEDIUM** |
 | 11. Polish & Release | ⬜ Not Started | 2 weeks | 0% | **LOW** |
 
 **Total Timeline:** 24 weeks (estimated)  
-**Time Elapsed:** 16 weeks  
-**Remaining:** 8 weeks
+**Time Elapsed:** 17 weeks  
+**Remaining:** 7 weeks
 
 ---
 
