@@ -601,7 +601,7 @@ Chonkie.NET has made significant progress with **60% overall completion**. The c
 
 ### Verification Against Plan
 
-**PORT_PLAN.md Status:** ✅ Accurate and Up-to-Date
+**docs/archived/PORT_PLAN.md Status:** ✅ Accurate and Up-to-Date
 
 All completed phases match the plan:
 - Phase 1: ✅ Complete (as documented)
@@ -642,7 +642,7 @@ The .NET port is progressing well with the Pipeline system now complete. Core fu
 **Document Version:** 1.1
 **Verified Against:**
 - Python Chonkie v1.5.0
-- PORT_PLAN.md (October 21, 2025)
+- docs/archived/PORT_PLAN.md (October 21, 2025)
 - .NET source code (December 16, 2025)
 
 **Key Changes Since Last Update:**

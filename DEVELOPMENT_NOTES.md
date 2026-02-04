@@ -8,7 +8,7 @@ This file contains quick development notes and reminders for maintaining the Cho
 
 When making progress on the port, remember to update these files:
 
-1. **PORT_PLAN.md** - The master plan document
+1. **MASTER_ROADMAP.md** - The master plan document
    - Update phase progress (checkboxes)
    - Update progress bars in section 12.1
    - Update current status in section 12.2
@@ -28,7 +28,7 @@ When making progress on the port, remember to update these files:
 When completing a task or milestone:
 
 ```bash
-# 1. Update PORT_PLAN.md
+# 1. Update MASTER_ROADMAP.md
 #    - Mark task as complete [x]
 #    - Update progress percentage
 #    - Add entry to "Recent Changes"
@@ -37,13 +37,13 @@ When completing a task or milestone:
 #    - Add entry under [Unreleased] > Added/Changed/Fixed
 
 # 3. Commit changes
-git add PORT_PLAN.md CHANGELOG.md README.md
+git add MASTER_ROADMAP.md CHANGELOG.md README.md
 git commit -m "docs: update progress for [task name]"
 ```
 
 ## Progress Tracking Format
 
-### PORT_PLAN.md Progress Bars
+### MASTER_ROADMAP.md Progress Bars
 
 Each phase has a 10-segment progress bar using these characters:
 - `⬜` - Not started (white)
@@ -89,7 +89,7 @@ Follow Semantic Versioning (SemVer):
 
 ```bash
 # Current date format: October 21, 2025
-# Update in PORT_PLAN.md:
+# Update in MASTER_ROADMAP.md:
 #   **Last Updated:** [DATE]
 # Update in CHANGELOG.md:
 #   ### [Version] - [DATE]
@@ -119,7 +119,7 @@ Use conventional commits for clear history:
 Examples:
 ```bash
 git commit -m "feat: implement CharacterTokenizer"
-git commit -m "docs: update PORT_PLAN.md for Phase 1 progress"
+git commit -m "docs: update MASTER_ROADMAP.md for Phase 1 progress"
 git commit -m "test: add unit tests for Chunk type"
 ```
 
@@ -127,7 +127,7 @@ git commit -m "test: add unit tests for Chunk type"
 
 At the end of each week:
 
-- [ ] Update PORT_PLAN.md progress percentages
+- [ ] Update MASTER_ROADMAP.md progress percentages
 - [ ] Update CHANGELOG.md with completed work
 - [ ] Review and update milestone dates if needed
 - [ ] Check if README.md status needs updating

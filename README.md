@@ -3,7 +3,7 @@
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
-[![Status](https://img.shields.io/badge/status-phase_2_in_progress-green)](PORT_PLAN.md)
+[![Status](https://img.shields.io/badge/status-phase_2_in_progress-green)](STATUS_DASHBOARD.md)
 [![Tests](https://img.shields.io/badge/tests-50_passing-brightgreen)](tests/)
 
 > **Status:** ✅ Phase 1 Complete - Foundation Established | 🚀 Phase 2 In Progress - Core Chunkers  
@@ -31,7 +31,9 @@ Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringin
 
 ## 📚 Documentation
 
-- **[Port Plan](PORT_PLAN.md)** - Comprehensive migration plan and progress tracking
+- **[Master Roadmap](MASTER_ROADMAP.md)** - Consolidated migration plan and progress tracking
+- **[Status Dashboard](STATUS_DASHBOARD.md)** - Current status and sprint tracking
+- **[Historical Port Plan](docs/archived/PORT_PLAN.md)** - Archived original port plan
 - **[.NET 10 & C# 14 Enhancements](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md)** - Modern .NET features & optimizations
 - **[Changelog](CHANGELOG.md)** - Project changes and version history
 - **Original Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie) | [Docs](https://docs.chonkie.ai)
@@ -64,7 +66,7 @@ Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringin
 **Phase 1:** ✅ Complete - Foundation established with 50 passing tests  
 **Estimated v1.0 Release:** Week 18
 
-See [PORT_PLAN.md](PORT_PLAN.md) for the complete 10-phase migration plan.
+See [MASTER_ROADMAP.md](MASTER_ROADMAP.md) for the complete migration plan.
 
 ## 🏗️ Project Structure
 
@@ -79,7 +81,7 @@ Chonkie.Net/
 ├── benchmarks/               # Performance benchmarks
 ├── samples/                  # Usage examples
 ├── docs/                     # Documentation
-└── PORT_PLAN.md             # Detailed port plan
+└── MASTER_ROADMAP.md        # Consolidated port plan
 ```
 
 ## 🤝 Contributing
@@ -87,7 +89,7 @@ Chonkie.Net/
 This project is in the early planning phase. Contributions will be welcome once the foundation is established. 
 
 If you're interested in helping with the port:
-1. Check the [PORT_PLAN.md](PORT_PLAN.md) for current status
+1. Check the [STATUS_DASHBOARD.md](STATUS_DASHBOARD.md) for current status
 2. Look for issues labeled `help-wanted` or `good-first-issue`
 3. Join the discussion in issues and pull requests
 

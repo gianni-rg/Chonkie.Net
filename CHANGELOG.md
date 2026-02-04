@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated language version to C# 14.0 in Directory.Build.props
 - All extension files use correct `extension(Type receiver)` syntax
 - Enhanced text processing methods with span-based overloads
-- Updated IMPLEMENTATION_CHECKLIST.md with Phase 1-3 completion status
+- Updated docs/archived/IMPLEMENTATION_CHECKLIST.md with Phase 1-3 completion status
 
 ### Performance Improvements
 - 5-15% faster text processing with span conversions (reduced allocations)
@@ -110,13 +110,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Directory.Build.props for centralized project configuration
 
 ### Changed
-- Updated PORT_PLAN.md to reflect Phase 1 completion
+- Updated docs/archived/PORT_PLAN.md to reflect Phase 1 completion
 - Updated project status from Planning to Phase 2
 
 ## Project Start - 2025-10-21
 
 ### Added
-- `PORT_PLAN.md` - Comprehensive port plan from Python to .NET/C#
+- `docs/archived/PORT_PLAN.md` - Comprehensive port plan from Python to .NET/C# (archived)
 - `CHANGELOG.md` - This changelog file
 - Project repository initialization
 

@@ -1,3 +1,0 @@
-proxy=http://proxy:3128
-https-proxy=http://proxy:3128
-strict-ssl=false
