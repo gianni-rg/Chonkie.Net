@@ -417,8 +417,8 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Generated files (DevContainer)
-.permissions_fixed
-
 # Model files
 models/
+
+# Visual Studio Code Workspace files
+*.code-workspace
