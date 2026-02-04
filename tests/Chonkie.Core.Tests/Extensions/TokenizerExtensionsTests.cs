@@ -87,11 +87,146 @@ public class TokenizerExtensionsTests
         Assert.True(maxLength > 0);
     }
 
+    #region Additional Extension Member Tests
+
+    [Fact]
+    public void TokenizerName_WithDifferentTokenizers_ReturnsCorrectNames()
+    {
+        // Arrange
+        var testTokenizer = new TestTokenizer();
+        var customTokenizer = new CustomTestTokenizer();
+
+        // Act
+        var testName = testTokenizer.TokenizerName;
+        var customName = customTokenizer.TokenizerName;
+
+        // Assert
+        Assert.Equal("Test", testName);
+        Assert.Equal("CustomTest", customName);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\t")]
+    [InlineData("\n")]
+    public void IsEmpty_WithWhitespaceText_ReturnsFalse(string text)
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+
+        // Act
+        var isEmpty = tokenizer.IsEmpty(text);
+
+        // Assert - whitespace is still tokenized
+        Assert.False(isEmpty);
+    }
+
+    [Fact]
+    public async Task EncodeAsync_WithCancellationToken_CompletesSuccessfully()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+        var text = "hello world test";
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var tokens = await tokenizer.EncodeAsync(text, cts.Token);
+
+        // Assert
+        Assert.NotNull(tokens);
+        Assert.Equal(3, tokens.Count);
+    }
+
+    [Fact]
+    public async Task DecodeAsync_WithCancellationToken_CompletesSuccessfully()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+        var tokens = new[] { 1, 2, 3 };
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        var text = await tokenizer.DecodeAsync(tokens, cts.Token);
+
+        // Assert
+        Assert.Equal("token1 token2 token3", text);
+    }
+
+    [Fact]
+    public async Task EncodeAsync_WithEmptyString_ReturnsEmptyList()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+
+        // Act
+        var tokens = await tokenizer.EncodeAsync(string.Empty);
+
+        // Assert
+        Assert.NotNull(tokens);
+        Assert.Empty(tokens);
+    }
+
+    [Fact]
+    public async Task DecodeAsync_WithEmptyList_ReturnsEmptyString()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+
+        // Act
+        var text = await tokenizer.DecodeAsync(Array.Empty<int>());
+
+        // Assert
+        Assert.Equal(string.Empty, text);
+    }
+
+    [Fact]
+    public async Task EncodeAsync_MultipleCallsConcurrently_AllSucceed()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+        var texts = new[] { "text one", "text two", "text three" };
+
+        // Act
+        var tasks = texts.Select(t => tokenizer.EncodeAsync(t)).ToList();
+        var results = await Task.WhenAll(tasks);
+
+        // Assert
+        Assert.Equal(3, results.Length);
+        Assert.All(results, r => Assert.NotNull(r));
+        Assert.All(results, r => Assert.Equal(2, r.Count));
+    }
+
+    [Fact]
+    public void MaxTokenLength_IsConstant()
+    {
+        // Act
+        var length1 = ITokenizer.MaxTokenLength;
+        var length2 = ITokenizer.MaxTokenLength;
+
+        // Assert
+        Assert.Equal(length1, length2);
+        Assert.Equal(1024 * 1024, length1);
+    }
+
+    [Fact]
+    public void IsEmpty_WithNullText_ThrowsException()
+    {
+        // Arrange
+        var tokenizer = new TestTokenizer();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => tokenizer.IsEmpty(null!));
+    }
+
+    #endregion
+
     // Test tokenizer implementation
     private class TestTokenizer : ITokenizer
     {
         public IReadOnlyList<int> Encode(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
             return text.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                 .Select((_, i) => i + 1)
                 .ToList();
@@ -104,6 +239,7 @@ public class TokenizerExtensionsTests
 
         public int CountTokens(string text)
         {
+            if (text == null) throw new ArgumentNullException(nameof(text));
             return Encode(text).Count;
         }
 
@@ -121,5 +257,15 @@ public class TokenizerExtensionsTests
         {
             return texts.Select(CountTokens).ToList();
         }
+    }
+
+    private class CustomTestTokenizer : ITokenizer
+    {
+        public IReadOnlyList<int> Encode(string text) => Array.Empty<int>();
+        public string Decode(IReadOnlyList<int> tokens) => string.Empty;
+        public int CountTokens(string text) => 0;
+        public IReadOnlyList<IReadOnlyList<int>> EncodeBatch(IEnumerable<string> texts) => Array.Empty<IReadOnlyList<int>>();
+        public IReadOnlyList<string> DecodeBatch(IEnumerable<IReadOnlyList<int>> tokenSequences) => Array.Empty<string>();
+        public IReadOnlyList<int> CountTokensBatch(IEnumerable<string> texts) => Array.Empty<int>();
     }
 }

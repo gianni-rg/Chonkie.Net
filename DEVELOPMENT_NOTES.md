@@ -170,6 +170,45 @@ When creating new documentation:
 - SemVer: https://semver.org/
 - Conventional Commits: https://www.conventionalcommits.org/
 
+## Known Issues
+
+### C# 14 Extension Members Compiler Warnings
+
+**Date:** February 4, 2026  
+**Affected Files:**
+- `src/Chonkie.Core/Extensions/TokenizerExtensions.cs`
+- `src/Chonkie.Tokenizers/CharacterTokenizer.cs`
+- `src/Chonkie.Tokenizers/WordTokenizer.cs`
+
+**Issue:**
+The C# compiler is reporting warnings suggesting to make instance extension members `static`, which is incorrect according to Microsoft's C# 14 documentation. The syntax used in the codebase follows the official C# 14 extension member specification:
+
+```csharp
+extension(ITokenizer tokenizer)  // Instance extensions - NOT static
+{
+    public string TokenizerName => ...;  // Correct: no static modifier
+    public bool IsEmpty(string text) { ... }  // Correct: no static modifier
+}
+
+extension(ITokenizer)  // Static extensions
+{
+    public static int MaxTokenLength => ...;  // Correct: static modifier
+}
+```
+
+**Impact:**
+- The code compiles but shows warnings in the IDE
+- This appears to be a tooling issue with C# 14 preview support or a Roslyn compiler issue
+- The functionality works correctly at runtime
+
+**Resolution:**
+These warnings can be safely ignored. They are false positives. The code follows the official Microsoft documentation for C# 14 extension members:
+- [Extension members documentation](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods)
+- [C# 14 What's New](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14#extension-members)
+
+**Workaround:**
+If the warnings become problematic, we can temporarily revert to traditional extension method syntax using the `this` parameter, but this would lose the C# 14 features like extension properties and static extension members.
+
 ---
 
-**Last Updated:** October 21, 2025
+**Last Updated:** February 4, 2026
