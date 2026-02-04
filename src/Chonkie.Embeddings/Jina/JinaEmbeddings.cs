@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Chonkie.Embeddings.Base;
+using Chonkie.Embeddings.Exceptions;
 
 namespace Chonkie.Embeddings.Jina
 {
@@ -42,51 +43,127 @@ namespace Chonkie.Embeddings.Jina
         /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
-            var requestBody = new
+            try
             {
-                input = new[] { text },
-                model = _model
-            };
-            var content = new StringContent(JsonSerializer.Serialize(requestBody));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var requestBody = new
+                {
+                    input = new[] { text },
+                    model = _model
+                };
+                var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            var response = await _httpClient.PostAsync("https://api.jina.ai/v1/embeddings", content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseJson);
-            var embedding = doc.RootElement.GetProperty("data")[0].GetProperty("embedding");
-            var floats = new List<float>(Dimension);
-            foreach (var value in embedding.EnumerateArray())
-                floats.Add(value.GetSingle());
-            return floats.ToArray();
+                var response = await _httpClient.PostAsync("https://api.jina.ai/v1/embeddings", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var doc = JsonDocument.Parse(responseJson);
+                var embedding = doc.RootElement.GetProperty("data")[0].GetProperty("embedding");
+                var floats = new List<float>(Dimension);
+                foreach (var value in embedding.EnumerateArray())
+                    floats.Add(value.GetSingle());
+                return floats.ToArray();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    $"Network error occurred while calling Jina AI embeddings API: {ex.Message}",
+                    ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    "Request to Jina AI embeddings API timed out",
+                    ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    $"Failed to parse Jina AI API response: {ex.Message}",
+                    ex);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    "Jina AI API response missing expected 'data' or 'embedding' property",
+                    ex);
+            }
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Jina AI embedding: {ex.Message}",
+                    ex);
+            }
         }
 
         /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
-            var requestBody = new
+            try
             {
-                input = texts,
-                model = _model
-            };
-            var content = new StringContent(JsonSerializer.Serialize(requestBody));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var requestBody = new
+                {
+                    input = texts,
+                    model = _model
+                };
+                var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            var response = await _httpClient.PostAsync("https://api.jina.ai/v1/embeddings", content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseJson);
-            var data = doc.RootElement.GetProperty("data");
-            var results = new List<float[]>(data.GetArrayLength());
-            foreach (var item in data.EnumerateArray())
-            {
-                var embedding = item.GetProperty("embedding");
-                var floats = new List<float>(Dimension);
-                foreach (var value in embedding.EnumerateArray())
-                    floats.Add(value.GetSingle());
-                results.Add(floats.ToArray());
+                var response = await _httpClient.PostAsync("https://api.jina.ai/v1/embeddings", content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var doc = JsonDocument.Parse(responseJson);
+                var data = doc.RootElement.GetProperty("data");
+                var results = new List<float[]>(data.GetArrayLength());
+                foreach (var item in data.EnumerateArray())
+                {
+                    var embedding = item.GetProperty("embedding");
+                    var floats = new List<float>(Dimension);
+                    foreach (var value in embedding.EnumerateArray())
+                        floats.Add(value.GetSingle());
+                    results.Add(floats.ToArray());
+                }
+                return results;
             }
-            return results;
+            catch (HttpRequestException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    $"Network error occurred while calling Jina AI embeddings API: {ex.Message}",
+                    ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    "Request to Jina AI embeddings API timed out",
+                    ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    $"Failed to parse Jina AI API response: {ex.Message}",
+                    ex);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    "Jina AI API response missing expected 'data' or 'embedding' property",
+                    ex);
+            }
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Jina AI batch embedding: {ex.Message}",
+                    ex);
+            }
         }
     }
 }
