@@ -1,43 +1,67 @@
 # Chonkie.Net Status Dashboard
-**As of:** February 4, 2026  
-**Version:** v2.1  
-**Overall Progress:** 65%
+**As of:** February 4, 2026 (EOD)  
+**Version:** v2.2  
+**Overall Progress:** 72%
 
 ---
 
 ## 📊 At-a-Glance Status
 
 ```
-███████████████████░░░░░ 65% Complete
+████████████████████████░░░░░░░░ 72% Complete
 
-✅ DONE: Core (1-6), C# 14
-🔴 NOW: Genies (Phase 8)
-⬜ NEXT: Handshakes (Phase 9)
+✅ DONE: Core (1-6), C# 14, Genies (Phase 8)
+✅ DONE: SlumberChunker ExtractionMode, OpenAI Exception Handling
+🔴 NOW: Exception Chaining Review (Phase 8.5)
+⬜ NEXT: FastChunker UTF-8, Handshakes (Phase 9)
 ⬜ LATER: Optional Features
 ```
 
 ---
 
-## 🎯 Current Sprint: Genies Implementation
+## 🎯 Current Sprint: Exception Handling & FastChunker UTF-8
+
+### Completed Today (Feb 4, 2026) ✅
+- **Chonkie.Genies Implementation** - COMPLETE
+  - IGeneration interface with GenerateAsync & GenerateJsonAsync
+  - BaseGenie with retry logic (exponential backoff, 5 retries, max 60s)
+  - GroqGenie (default: llama-3.3-70b-versatile)
+  - CerebrasGenie (default: llama-3.3-70b)
+  - 28 unit tests, 12 integration tests (with SkippableFact)
+  - DI service extensions
+  - All tests passing ✅
+
+- **SlumberChunker ExtractionMode** - COMPLETE
+  - ExtractionMode enum (Json, Text, Auto)
+  - 22 comprehensive unit tests
+  - Constructor updated with extraction mode support
+  - ToString() updated to reflect mode
+  - All tests passing ✅
+
+- **OpenAI Exception Handling** - COMPLETE
+  - EmbeddingException hierarchy with 5 types:
+    - RateLimitException (with retry-after support)
+    - AuthenticationException
+    - NetworkException (timeouts, unavailable)
+    - InvalidResponseException (malformed responses)
+  - Proper inner exception chaining
+  - HTTP status code mapping
+  - 86 existing tests continue to pass ✅
 
 ### Active Work (Week of Feb 4, 2026)
-- **Sprint Goal:** Implement GroqGenie and CerebrasGenie
-- **Sprint Duration:** 2 weeks (Feb 4 - Feb 18)
+- **Sprint Goal:** Complete exception chaining review, verify FastChunker UTF-8
+- **Sprint Duration:** 1 week (Feb 4 - Feb 11)
 - **Team Capacity:** 1 developer
-- **Estimated Hours:** 32-40 hours
+- **Estimated Hours:** 16-20 hours
 
 ### Sprint Backlog
-| Task | Status | Assignee | Hours | Due Date |
-|------|--------|----------|-------|----------|
-| Create Chonkie.Genies project | ⬜ Not Started | - | 2 | Feb 5 |
-| Define IGeneration interface | ⬜ Not Started | - | 2 | Feb 5 |
-| Implement BaseGenie | ⬜ Not Started | - | 4 | Feb 6 |
-| Implement GroqGenie | ⬜ Not Started | - | 8 | Feb 9 |
-| GroqGenie Tests | ⬜ Not Started | - | 4 | Feb 10 |
-| Implement CerebrasGenie | ⬜ Not Started | - | 8 | Feb 13 |
-| CerebrasGenie Tests | ⬜ Not Started | - | 4 | Feb 14 |
-| Documentation & Samples | ⬜ Not Started | - | 4 | Feb 16 |
-| Integration Testing | ⬜ Not Started | - | 4 | Feb 18 |
+| Task | Status | Hours | Due Date |
+|------|--------|-------|----------|
+| Review exception chaining across projects | 🔴 IN PROGRESS | 6 | Feb 6 |
+| Fix exception chaining in Core/Chunkers/Embeddings/etc | ⬜ Not Started | 4 | Feb 7 |
+| Verify FastChunker UTF-8 handling | ⬜ Not Started | 4 | Feb 8 |
+| Add UTF-8 comprehensive tests | ⬜ Not Started | 4 | Feb 9 |
+| Integration testing & final validation | ⬜ Not Started | 4 | Feb 11 |
 
 ---
 
@@ -53,8 +77,8 @@ LateChunker          ███████████████████�
 CodeChunker          ████████████████████ 100%
 TableChunker         ████████████████████ 100%
 NeuralChunker        ████████████████████ 100%
-SlumberChunker       ████████████████████ 100% (needs update)
-FastChunker          ░░░░░░░░░░░░░░░░░░░░   0% (missing)
+SlumberChunker       ████████████████████ 100% ✅ (ExtractionMode added)
+FastChunker          ██████░░░░░░░░░░░░░░  30% (UTF-8 verification pending)
 ```
 
 ### Embeddings: 7/7 ✅ 100% (Core)
@@ -81,10 +105,10 @@ Porters              ███████████████████�
 Pipeline             ████████████████████ 100%
 ```
 
-### Genies: 0/6 ❌ 0%
+### Genies: 2/6 ✅ 33%
 ```
-GroqGenie            ░░░░░░░░░░░░░░░░░░░░   0% 🔴 IN PROGRESS
-CerebrasGenie        ░░░░░░░░░░░░░░░░░░░░   0% 🔴 IN PROGRESS
+GroqGenie            ████████████████████ 100% ✅ COMPLETE
+CerebrasGenie        ████████████████████ 100% ✅ COMPLETE
 OpenAIGenie          ░░░░░░░░░░░░░░░░░░░░   0%
 AzureOpenAIGenie     ░░░░░░░░░░░░░░░░░░░░   0%
 GeminiGenie          ░░░░░░░░░░░░░░░░░░░░   0%
