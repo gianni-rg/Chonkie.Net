@@ -1,27 +1,40 @@
 # Chonkie.Net Status Dashboard
-**As of:** February 4, 2026 (Evening)  
-**Version:** v2.3  
-**Overall Progress:** 73%
+**As of:** February 4, 2026 (Late Evening)  
+**Version:** v2.4  
+**Overall Progress:** 75%
 
 ---
 
 ## 📊 At-a-Glance Status
 
 ```
-█████████████████████████░░░░░░░ 73% Complete
+█████████████████████████░░░░░░░ 75% Complete
 
-✅ DONE: Core (1-6), C# 14, Genies (Phase 8)
+✅ DONE: Core (1-6), C# 14, Genies (Phase 8 - 5/6 complete)
 ✅ DONE: SlumberChunker ExtractionMode, Full Exception Handling
 ✅ DONE: Exception Chaining Review & Implementation (Phase 8.5)
-⬜ NEXT: Handshakes (Phase 9), Additional Genies
-⬜ LATER: Optional Features, FastChunker (native)
+✅ DONE: OpenAI, Azure OpenAI, Gemini Genies (Phase 8 continuation)
+⬜ NEXT: Handshakes (Phase 9)
+⬜ LATER: Optional Features (LiteLLMGenie), FastChunker (native)
 ```
 
 ---
 
-## 🎯 Current Sprint: Exception Handling Complete ✅
+## 🎯 Current Sprint: Additional Genies Complete ✅
 
-### Completed Today (Feb 4, 2026) ✅
+### Completed Today (Feb 4, 2026 - Late Evening) ✅
+- **OpenAI, Azure OpenAI, Gemini Genies** - COMPLETE ✅
+  - OpenAIGenie: OpenAI ChatGPT models (gpt-4o, gpt-4-turbo)
+  - AzureOpenAIGenie: Azure-hosted OpenAI with API key authentication
+  - GeminiGenie: Google Gemini models (gemini-2.0-flash-exp) with custom IChatClient wrapper
+  - All follow BaseGenie pattern with retry logic
+  - Use Microsoft.Extensions.AI abstractions
+  - FromEnvironment factory methods for all genies
+  - Added Azure.AI.OpenAI v2.1.0 dependency
+  - Build successful, all existing tests passing ✅
+  - 552 tests passing, 78 skipped, 2 pre-existing failures
+
+### Completed Today (Feb 4, 2026 - Evening) ✅
 - **Chonkie.Genies Implementation** - COMPLETE
   - IGeneration interface with GenerateAsync & GenerateJsonAsync
   - BaseGenie with retry logic (exponential backoff, 5 retries, max 60s)
@@ -118,13 +131,13 @@ Porters              ███████████████████�
 Pipeline             ████████████████████ 100%
 ```
 
-### Genies: 2/6 ✅ 33%
+### Genies: 5/6 ✅ 83%
 ```
 GroqGenie            ████████████████████ 100% ✅ COMPLETE
 CerebrasGenie        ████████████████████ 100% ✅ COMPLETE
-OpenAIGenie          ░░░░░░░░░░░░░░░░░░░░   0%
-AzureOpenAIGenie     ░░░░░░░░░░░░░░░░░░░░   0%
-GeminiGenie          ░░░░░░░░░░░░░░░░░░░░   0%
+OpenAIGenie          ████████████████████ 100% ✅ COMPLETE
+AzureOpenAIGenie     ████████████████████ 100% ✅ COMPLETE
+GeminiGenie          ████████████████████ 100% ✅ COMPLETE
 LiteLLMGenie         ░░░░░░░░░░░░░░░░░░░░   0% (optional)
 ```
 
