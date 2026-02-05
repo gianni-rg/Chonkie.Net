@@ -13,8 +13,8 @@
 ✅ DONE: Core (1-6), C# 14, Genies Phase 8 (5/5 Complete, 81 tests)
 ✅ DONE: Handshakes Foundation + 3 Core (Qdrant, Weaviate, Pinecone)
 ✅ DONE: SlumberChunker ExtractionMode, Full Exception Handling
-🔴 NOW: Handshakes Phase 9 - 3/11 Complete, Tests All Passing (37 passed, 4 skipped)
-⬜ LATER: Optional Handshakes (Chroma, MongoDB, pgvector, Milvus, Elasticsearch)
+🔴 NOW: Handshakes Phase 9 - 4/11 Complete, Tests All Passing (37 passed, 4 skipped)
+⬜ LATER: Optional Handshakes (Chroma, MongoDB, Milvus, Elasticsearch)
 ```
 
 ---
@@ -147,7 +147,7 @@ WeaviateHandshake    ███████████████████�
 PineconeHandshake    ████████████████████ 100% ✅ COMPLETE
 ChromaHandshake      ░░░░░░░░░░░░░░░░░░░░   0% (future)
 MongoDBHandshake     ░░░░░░░░░░░░░░░░░░░░   0% (future)
-PgvectorHandshake    ░░░░░░░░░░░░░░░░░░░░   0% (future)
+PgvectorHandshake    ████████████████████ 100% ✅ COMPLETE
 MilvusHandshake      ░░░░░░░░░░░░░░░░░░░░   0% (future)
 ElasticsearchHandshake ░░░░░░░░░░░░░░░░░░░ 0% (future)
 TurbopufferHandshake ░░░░░░░░░░░░░░░░░░░░   0% (future)
@@ -229,7 +229,7 @@ Core (472/538)       █████████████████░░�
 
 ### Upcoming Phases (6 weeks)
 - 🔴 **Phase 9:** Handshakes (Weeks 19-21) - **IN PROGRESS**
-  - Week 19: Foundation + Priority DBs (Qdrant, Chroma, Pinecone) - **CURRENT**
+  - Week 19: Foundation + Priority DBs (Qdrant, Weaviate, Pinecone) - **CURRENT**
   - Week 20: Additional DBs (Weaviate, Pgvector, MongoDB, Milvus)
   - Week 21: Final DBs + Integration testing
 - ⬜ **Phase 10:** Optional Chunkers (Weeks 22-23) - **PLANNED**
@@ -395,7 +395,7 @@ LiteLLMGenie      ░░░░░░░░░░░░░░░░░░░░  
 - **Status:** ✅ Committed to main branch
 
 #### Next Steps
-- Phase 9 Milestone 2: Optional Handshakes (Chroma, MongoDB, Pgvector, Milvus, Elasticsearch, Turbopuffer)
+- Phase 9 Milestone 2: Optional Handshakes (Chroma, MongoDB, Milvus, Elasticsearch, Turbopuffer)
 - Phase 8: Continue with remaining Genies (if not starting optional handshakes)
 - Update documentation with Handshakes API guide
 

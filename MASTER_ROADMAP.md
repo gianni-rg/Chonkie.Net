@@ -1,7 +1,7 @@
 # Chonkie.Net Master Roadmap
-**Last Updated:** February 4, 2026 (Night)  
-**Version:** v2.2  
-**Current Status:** Phase 8 Complete, Phase 9 Starting (76% overall progress)
+**Last Updated:** February 5, 2026 (Afternoon)  
+**Version:** v2.4  
+**Current Status:** Phase 8 Complete, Phase 9 In Progress (82% overall progress)
 
 ---
 
@@ -15,12 +15,12 @@ Chonkie.Net is a high-performance C# port of the Python Chonkie library for text
 - **Next:** Complete Handshakes, Optional Features
 
 ### Key Metrics
-- **Progress:** 76% complete
+- **Progress:** 82% complete
 - **Tests:** 552 total (552 passing, 78 skipped, 2 pre-existing failures)
-- **Projects:** 10 of 11 planned (Handshakes starting now)
+- **Projects:** 10 of 11 planned (Handshakes in progress)
 - **Chunkers:** 10/10 complete ✅
 - **Embeddings:** 7/7 core providers complete ✅
-- **Genies:** 5/6 core complete ✅ (LiteLLM optional)
+- **Genies:** 5/5 core complete ✅ (LiteLLM optional)
 - **Infrastructure:** Complete ✅
 
 ---
@@ -37,7 +37,7 @@ Chonkie.Net is a high-performance C# port of the Python Chonkie library for text
 | 6. Pipeline | ✅ Complete | 1 week | 100% | - |
 | 7. C# 14 Enhancements | ✅ Complete | 10 weeks | 100% | - |
 | **8. Genies** | ✅ Complete | 1 day | 100% | - |
-| **9. Handshakes** | 🔴 In Progress | 3 weeks | 0% | **CRITICAL** |
+| **9. Handshakes** | 🔴 In Progress | 3 weeks | 36% | **CRITICAL** |
 | 10. Optional Chunkers | ⬜ Not Started | 2 weeks | 0% | **MEDIUM** |
 | 11. Polish & Release | ⬜ Not Started | 2 weeks | 0% | **LOW** |
 
@@ -52,7 +52,7 @@ Chonkie.Net is a high-performance C# port of the Python Chonkie library for text
 ### New Requirements from Python v1.5.4
 
 #### 1. GroqGenie (NEW)
-**Status:** ❌ Not Started  
+**Status:** ✅ Complete  
 **Priority:** 🔴 CRITICAL  
 **Effort:** 8-10 hours
 
@@ -78,7 +78,7 @@ tests/Chonkie.Genies.Tests/
 ```
 
 #### 2. CerebrasGenie (NEW)
-**Status:** ❌ Not Started  
+**Status:** ✅ Complete  
 **Priority:** 🔴 CRITICAL  
 **Effort:** 8-10 hours
 
@@ -103,7 +103,7 @@ tests/Chonkie.Genies.Tests/
 ```
 
 #### 3. SlumberChunker Enhancements
-**Status:** ⚠️ Needs Update  
+**Status:** ✅ Complete  
 **Priority:** 🟡 MEDIUM  
 **Effort:** 5-8 hours
 
@@ -113,7 +113,7 @@ tests/Chonkie.Genies.Tests/
 - Add safe split index handling
 
 #### 4. Exception Handling Review
-**Status:** ⬜ Not Started  
+**Status:** ✅ Complete  
 **Priority:** 🟡 MEDIUM  
 **Effort:** 4-6 hours
 
@@ -223,7 +223,7 @@ public interface IGeneration
 
 ---
 
-### Phase 9: Handshakes (Weeks 19-21) ⬜ NOT STARTED
+### Phase 9: Handshakes (Weeks 19-21) 🔴 IN PROGRESS
 
 **Goal:** Implement vector database integrations
 
@@ -232,8 +232,8 @@ public interface IGeneration
 **Effort:** 32-40 hours
 
 **Day 1-2: Foundation (12-16 hours)**
-- [ ] Create `Chonkie.Handshakes` project
-- [ ] Define `IHandshake` interface
+- [x] Create `Chonkie.Handshakes` project
+- [x] Define `IHandshake` interface
 ```csharp
 public interface IHandshake
 {
@@ -244,25 +244,25 @@ public interface IHandshake
     Task<Chunk?> GetAsync(string id, CancellationToken ct = default);
 }
 ```
-- [ ] Create `BaseHandshake` abstract class
-- [ ] Set up common utilities
-- [ ] Configure DI extensions
+- [x] Create `BaseHandshake` abstract class
+- [x] Set up common utilities
+- [x] Configure DI extensions
 
 **Day 3: QdrantHandshake (8-10 hours)**
-- [ ] Implement Qdrant integration
-- [ ] Add tests and documentation
+- [x] Implement Qdrant integration
+- [x] Add tests and documentation
 
-**Day 4: ChromaHandshake (8-10 hours)**
-- [ ] Implement ChromaDB integration
-- [ ] Add tests and documentation
+**Day 4: WeaviateHandshake (8-10 hours)**
+- [x] Implement Weaviate integration
+- [x] Add tests and documentation
 
 **Day 5: PineconeHandshake (8-10 hours)**
-- [ ] Implement Pinecone integration
-- [ ] Add tests and documentation
+- [x] Implement Pinecone integration
+- [x] Add tests and documentation
 
 #### Week 20: Additional Vector DBs
-- [ ] Day 1: WeaviateHandshake
-- [ ] Day 2: PgvectorHandshake
+- [ ] Day 1: ChromaHandshake
+- [x] Day 2: PgvectorHandshake
 - [ ] Day 3: MongoDBHandshake
 - [ ] Day 4: MilvusHandshake
 - [ ] Day 5: Integration testing

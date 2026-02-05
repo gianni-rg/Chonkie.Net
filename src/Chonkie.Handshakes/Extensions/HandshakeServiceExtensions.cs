@@ -1,6 +1,7 @@
 using Chonkie.Embeddings.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Pinecone;
 using Qdrant.Client;
 using Weaviate.Client;
@@ -155,6 +156,50 @@ public static class HandshakeServiceExtensions
         {
             var logger = sp.GetService<ILogger<WeaviateHandshake>>();
             return new WeaviateHandshake(client, className, embeddingModel, logger);
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a PgvectorHandshake to the service collection using connection options.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="options">The pgvector handshake configuration options.</param>
+    /// <param name="embeddingModel">The embedding model to use.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddPgvectorHandshake(
+        this IServiceCollection services,
+        PgvectorHandshakeOptions options,
+        IEmbeddings embeddingModel)
+    {
+        services.AddSingleton<IHandshake>(sp =>
+        {
+            var logger = sp.GetService<ILogger<PgvectorHandshake>>();
+            return new PgvectorHandshake(options, embeddingModel, logger);
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a PgvectorHandshake to the service collection with a custom data source.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="dataSource">The Npgsql data source.</param>
+    /// <param name="options">The pgvector handshake configuration options.</param>
+    /// <param name="embeddingModel">The embedding model to use.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddPgvectorHandshake(
+        this IServiceCollection services,
+        NpgsqlDataSource dataSource,
+        PgvectorHandshakeOptions options,
+        IEmbeddings embeddingModel)
+    {
+        services.AddSingleton<IHandshake>(sp =>
+        {
+            var logger = sp.GetService<ILogger<PgvectorHandshake>>();
+            return new PgvectorHandshake(dataSource, options, embeddingModel, logger);
         });
 
         return services;
