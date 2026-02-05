@@ -73,6 +73,13 @@
 | [ADVANCED_CHUNKERS.md](docs/ADVANCED_CHUNKERS.md) | Advanced chunker documentation | Developers | ✅ Complete |
 | [ONNX_MODEL_CONVERSION_GUIDE.md](docs/ONNX_MODEL_CONVERSION_GUIDE.md) | ONNX model conversion guide | ML Engineers | ✅ Complete |
 
+### 🧪 Testing & Integration
+
+| Document | Topic | Audience | Status |
+|----------|-------|----------|--------|
+| **[docs/HANDSHAKES_INTEGRATION_TESTS_SETUP.md](docs/HANDSHAKES_INTEGRATION_TESTS_SETUP.md)** | Handshakes integration tests setup | Developers | ✅ Complete |
+| [docs/INTEGRATION_TESTS_SETUP.md](docs/INTEGRATION_TESTS_SETUP.md) | Embeddings integration tests setup | Developers | ✅ Complete |
+
 ### 📈 Analysis & Comparison
 
 | Document | Comparison | Purpose | Status |
