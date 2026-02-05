@@ -21,7 +21,8 @@ public class TurbopufferHandshakeTests
         // Act & Assert - should not throw
         var handshake = new TurbopufferHandshake(
             embeddingModel,
-            apiKey: "test-api-key");
+            apiKey: "test-api-key",
+            apiUrl: "https://api.turbopuffer.com");
 
         handshake.ShouldNotBeNull();
         handshake.Namespace.ShouldNotBeNullOrWhiteSpace();
@@ -74,7 +75,8 @@ public class TurbopufferHandshakeTests
         var handshake = new TurbopufferHandshake(
             embeddingModel,
             apiKey: "test-key",
-            namespaceName: "random");
+            namespaceName: "random",
+            apiUrl: "https://api.turbopuffer.com");
 
         // Assert
         handshake.Namespace.ShouldNotBe("random");
@@ -92,7 +94,8 @@ public class TurbopufferHandshakeTests
         var handshake = new TurbopufferHandshake(
             embeddingModel,
             apiKey: "test-key",
-            namespaceName: "my_namespace");
+            namespaceName: "my_namespace",
+            apiUrl: "https://api.turbopuffer.com");
 
         // Assert
         handshake.Namespace.ShouldBe("my_namespace");
@@ -110,6 +113,7 @@ public class TurbopufferHandshakeTests
         var handshake = new TurbopufferHandshake(
             embeddingModel,
             apiKey: "test-key",
+            apiUrl: "https://api.turbopuffer.com",
             httpClient: httpClient);
 
         // Assert
@@ -123,8 +127,9 @@ public class TurbopufferHandshakeTests
         var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
         embeddingModel.Dimension.Returns(384);
 
-        // Set environment variable
+        // Set environment variables
         Environment.SetEnvironmentVariable("TURBOPUFFER_API_KEY", "env-api-key");
+        Environment.SetEnvironmentVariable("TURBOPUFFER_API_URL", "https://api.turbopuffer.com");
 
         try
         {
@@ -138,6 +143,7 @@ public class TurbopufferHandshakeTests
         {
             // Clean up
             Environment.SetEnvironmentVariable("TURBOPUFFER_API_KEY", null);
+            Environment.SetEnvironmentVariable("TURBOPUFFER_API_URL", null);
         }
     }
 
@@ -150,7 +156,8 @@ public class TurbopufferHandshakeTests
         var handshake = new TurbopufferHandshake(
             embeddingModel,
             apiKey: "test-key",
-            namespaceName: "my_namespace");
+            namespaceName: "my_namespace",
+            apiUrl: "https://api.turbopuffer.com");
 
         // Act
         var result = handshake.ToString();
@@ -168,7 +175,8 @@ public class TurbopufferHandshakeTests
         embeddingModel.Dimension.Returns(384);
         var handshake = new TurbopufferHandshake(
             embeddingModel,
-            apiKey: "test-key");
+            apiKey: "test-key",
+            apiUrl: "https://api.turbopuffer.com");
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentNullException>(

@@ -19,7 +19,7 @@ public class MilvusHandshakeTests
         embeddingModel.Dimension.Returns(384);
 
         // Act & Assert - should not throw
-        var handshake = new MilvusHandshake(embeddingModel);
+        var handshake = new MilvusHandshake(embeddingModel, "http://localhost:19530");
 
         handshake.ShouldNotBeNull();
         handshake.Dimension.ShouldBe(384);
@@ -59,6 +59,7 @@ public class MilvusHandshakeTests
         // Act
         var handshake = new MilvusHandshake(
             embeddingModel,
+            "http://localhost:19530",
             collectionName: "random");
 
         // Assert
@@ -76,6 +77,7 @@ public class MilvusHandshakeTests
         // Act
         var handshake = new MilvusHandshake(
             embeddingModel,
+            "http://localhost:19530",
             collectionName: "my_collection");
 
         // Assert
@@ -106,6 +108,7 @@ public class MilvusHandshakeTests
         embeddingModel.Dimension.Returns(384);
         var handshake = new MilvusHandshake(
             embeddingModel,
+            "http://localhost:19530",
             collectionName: "test_collection");
 
         // Act
@@ -124,7 +127,7 @@ public class MilvusHandshakeTests
         embeddingModel.Dimension.Returns(1024);
 
         // Act
-        var handshake = new MilvusHandshake(embeddingModel);
+        var handshake = new MilvusHandshake(embeddingModel, "http://localhost:19530");
 
         // Assert
         handshake.Dimension.ShouldBe(1024);
@@ -136,7 +139,7 @@ public class MilvusHandshakeTests
         // Arrange
         var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
         embeddingModel.Dimension.Returns(384);
-        var handshake = new MilvusHandshake(embeddingModel);
+        var handshake = new MilvusHandshake(embeddingModel, "http://localhost:19530");
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentNullException>(() =>

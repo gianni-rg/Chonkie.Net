@@ -17,7 +17,7 @@ public class ChromaHandshakeTests
         embeddingModel.Dimension.Returns(384);
 
         // Act & Assert - should not throw
-        var handshake = new ChromaHandshake("test_collection", embeddingModel);
+        var handshake = new ChromaHandshake("test_collection", embeddingModel, "http://localhost:8000");
         handshake.ShouldNotBeNull();
         handshake.CollectionName.ShouldBe("test_collection");
     }
@@ -49,7 +49,7 @@ public class ChromaHandshakeTests
         embeddingModel.Dimension.Returns(384);
 
         // Act
-        var handshake = new ChromaHandshake("random", embeddingModel);
+        var handshake = new ChromaHandshake("random", embeddingModel, "http://localhost:8000");
 
         // Assert
         handshake.CollectionName.ShouldNotBe("random");
@@ -64,7 +64,7 @@ public class ChromaHandshakeTests
         embeddingModel.Dimension.Returns(384);
 
         // Act - empty string is allowed, but not null
-        var handshake = new ChromaHandshake(string.Empty, embeddingModel);
+        var handshake = new ChromaHandshake(string.Empty, embeddingModel, "http://localhost:8000");
 
         // Assert
         handshake.ShouldNotBeNull();
@@ -76,7 +76,7 @@ public class ChromaHandshakeTests
         // Arrange
         var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
         embeddingModel.Dimension.Returns(384);
-        var handshake = new ChromaHandshake("my_collection", embeddingModel);
+        var handshake = new ChromaHandshake("my_collection", embeddingModel, "http://localhost:8000");
 
         // Act
         var result = handshake.ToString();
@@ -92,7 +92,7 @@ public class ChromaHandshakeTests
         // Arrange
         var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
         embeddingModel.Dimension.Returns(384);
-        var handshake = new ChromaHandshake("test_collection", embeddingModel);
+        var handshake = new ChromaHandshake("test_collection", embeddingModel, "http://localhost:8000");
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentNullException>(() =>

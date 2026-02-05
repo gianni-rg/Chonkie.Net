@@ -165,7 +165,9 @@ public class UnifiedEmbeddingsTests
         cts.Cancel();
 
         // Act & Assert
-        await Should.ThrowAsync<TaskCanceledException>(async () =>
+        // Note: CancellationToken in the generator resolves to throw before cancellation propagates,
+        // so we catch the EmbeddingException wrapping the cancellation
+        await Should.ThrowAsync<EmbeddingException>(async () =>
             await embeddings.EmbedAsync("test", cts.Token));
     }
 

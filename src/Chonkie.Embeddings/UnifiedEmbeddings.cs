@@ -203,7 +203,7 @@ namespace Chonkie.Embeddings
         /// </summary>
         public override string ToString()
         {
-            return $"UnifiedEmbeddings(provider={_providerName}, dimension={_dimension})";
+            return $"UnifiedEmbeddings(Provider={_providerName}, Dimension={_dimension})";
         }
     }
 }
