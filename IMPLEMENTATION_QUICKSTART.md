@@ -488,7 +488,7 @@ public async Task GenerateAsync_ValidPrompt_ReturnsResponse()
 ### Integration Tests (Real API calls)
 
 ```csharp
-[SkippableFact]
+[Fact]
 public async Task GenerateAsync_RealAPI_ReturnsResponse()
 {
     Skip.IfNot(Environment.GetEnvironmentVariable("GROQ_API_KEY") != null, 
@@ -538,12 +538,14 @@ services.AddHttpClient("Groq")
     });
 ```
 
-### 3. Test with [SkippableFact]
+### 3. Test with Assert.Skip
 ```csharp
-[SkippableFact]
 public async Task Integration_Test()
 {
-    Skip.IfNot(apiKeyPresent, "API key not set");
+    if(string.IsNullOrEmpty(apiKey))
+    {
+        Assert.Skip("API key not set. Skipping integration test.");
+    }
     // Test code
 }
 ```
@@ -618,7 +620,7 @@ var options = new JsonSerializerOptions
 - [ ] Implementation complete
 - [ ] All methods working
 - [ ] 10+ unit tests passing
-- [ ] 3+ integration tests (skippable)
+- [ ] 3+ integration tests (using Assert.Skip)
 - [ ] XML documentation complete
 - [ ] Sample usage created
 - [ ] DI extensions working

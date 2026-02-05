@@ -786,7 +786,7 @@ dotnet sln ..\Chonkie.Net.sln add Chonkie.Genies.Tests\Chonkie.Genies.Tests.cspr
 4. **Testing Strategy**
    - Unit tests: Mock HTTP responses
    - Integration tests: Use real APIs with test keys
-   - Use [SkippableFact] for integration tests
+   - Use skippable checks (Assert.Skip) for integration tests
 
 5. **C# 14 Features**
    - Use extension members where appropriate

@@ -29,7 +29,7 @@
 **Tests Passing:** 100+ new tests all green ✅
 
 **✅ COMPLETED ON FEB 5, 2026 (Late Evening):**
-- ✅ **Integration Tests for All 8 Handshakes (100%)** - 32 SkippableFact tests ✅
+- ✅ **Integration Tests for All 8 Handshakes (100%)** - 32 Assert.Skip tests ✅
   - WeaviateHandshakeIntegrationTests.cs (3 tests)
   - PineconeHandshakeIntegrationTests.cs (3 tests)
   - PgvectorHandshakeIntegrationTests.cs (3 tests)
@@ -39,7 +39,7 @@
   - ElasticsearchHandshakeIntegrationTests.cs (3 tests)
   - TurbopufferHandshakeIntegrationTests.cs (3 tests)
   - INTEGRATION_TESTS_AUDIT.md with comprehensive implementation plan
-  - All tests use SkippableFact pattern for graceful service unavailability
+  - All tests use Assert.Skip pattern for graceful service unavailability
   - STATUS_DASHBOARD.md updated: 9/11 (82%) handshakes complete
 
 **🔴 NEXT:**
@@ -268,18 +268,19 @@ tests/Chonkie.Handshakes.Tests/
 ---
 
 ### 7. ✅ Integration Tests for All Handshakes (COMPLETE) [NEW - Feb 5]
-Comprehensive integration test infrastructure for all 8 handshakes using SkippableFact pattern.
+Comprehensive integration test infrastructure for all 8 handshakes using Assert.Skip pattern.
 
 ```csharp
-// Pattern: SkippableFact skips gracefully when service unavailable
-[SkippableFact]
+// Pattern: Assert.Skip skips gracefully when service unavailable
+[Fact]
 public async Task WriteAsync_WithRealDatabase_WritesSuccessfully()
 {
-    Skip.If(!IsServiceAvailable, "Service not available or not configured");
-    
+    if(!IsServiceAvailable)
+        Assert.Skip("Service not available or not configured");
+
     var handshake = new SomeHandshake(options, embeddings);
     var result = await handshake.WriteAsync(chunks);
-    
+
     result.Should().NotBeNull();
     // Cleanup in finally block
 }
@@ -341,14 +342,14 @@ public async Task WriteAsync_WithRealDatabase_WritesSuccessfully()
    - Requires: TURBOPUFFER_API_KEY environment variable
 
 **Test Statistics:**
-- Total Integration Tests: 32 SkippableFact tests across 8 handshakes ✅
+- Total Integration Tests: 32 Assert.Skip tests across 8 handshakes ✅
 - Test Pattern: 3 tests per handshake (WriteAsync, SearchAsync, Random naming)
 - Service Checks: Graceful HTTP, SQL, and MongoDB availability detection
 - Cleanup: Service-specific cleanup methods (HTTP DELETE, SQL DROP, JSON POST)
 - Status: Complete, ready for execution against running services ✅
 
 **Technical Details:**
-- Framework: xUnit with SkippableFact pattern
+- Framework: xUnit with Assert.Skip pattern
 - Embeddings: SentenceTransformerEmbeddings (local, no API key needed)
 - Assertions: Shouldly for readable assertions
 - Service Detection: Custom IsAvailableAsync() methods per handshake type

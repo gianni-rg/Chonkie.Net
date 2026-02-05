@@ -61,7 +61,7 @@
   - BaseGenie with retry logic (exponential backoff, 5 retries, max 60s)
   - GroqGenie (default: llama-3.3-70b-versatile)
   - CerebrasGenie (default: llama-3.3-70b)
-  - 28 unit tests, 12 integration tests (with SkippableFact)
+  - 28 unit tests, 12 integration tests (with Assert.Skip)
   - DI service extensions
   - All tests passing ✅
 
@@ -233,7 +233,7 @@ Core (511/586)       ██████████████████░�
 - WriteAsync with real services + SentenceTransformers embeddings
 - SearchAsync with real services (finds similar chunks)
 - Random collection/index/namespace creation (idempotency tests)
-- SkippableFact for graceful skipping when services unavailable
+- Assert.Skip for graceful skipping when services unavailable
 - Proper cleanup and error handling
 
 ---
@@ -396,7 +396,7 @@ Successfully implemented SearchAsync for all 4 optional handshakes and created c
    - Problem: SearchAsync tests with "ValidQuery" were connecting to actual services
    - Root cause: Tests weren't using mocks, created real HttpClient/MongoClient instances
    - Solution: Removed integration-style tests from unit test files
-   - Pattern adopted: Unit tests = parameter validation only, integration tests = separate folder with SkippableFact
+   - Pattern adopted: Unit tests = parameter validation only, integration tests = separate folder with Assert.Skip for service availability
    - Resolution time: 15 minutes
 
 #### Files Modified
@@ -566,7 +566,7 @@ LiteLLMGenie      ░░░░░░░░░░░░░░░░░░░░  
 
 #### Key Technical Decisions
 - Used mock/substitute objects for IEmbeddings in unit tests
-- Separated integration tests (real database connections) into conditional SkippableFact tests
+- Separated integration tests (real database connections) into conditional Assert.Skip tests
 - Implemented deterministic ID generation for idempotency across runs
 - Used batch embedding operations for efficiency
 - Implemented generic metadata support across all databases
@@ -630,7 +630,7 @@ LiteLLMGenie      ░░░░░░░░░░░░░░░░░░░░  
 - 🟢 **LOW:** Learning curve for new APIs
 
 ### Mitigations
-- Use [SkippableFact] for integration tests
+- Use Assert.Skip for integration tests
 - Implement robust retry logic with exponential backoff
 - Start with comprehensive unit tests before integration
 - Review Python implementation for guidance
@@ -838,7 +838,7 @@ Feb 2026:  90%  ████████████████████ (ta
 ### Lessons Learned
 - C# 14 extension members improve API ergonomics significantly
 - TensorPrimitives provides excellent SIMD performance
-- [SkippableFact] pattern works well for optional integration tests
+- Assert.Skip pattern works well for optional integration tests
 - Parallel processing dramatically improves batch operations
 
 ### Best Practices Established

@@ -40,18 +40,19 @@ Missing integration tests for 8 handshakes that have unit tests but no integrati
 Based on `QdrantHandshakeIntegrationTests.cs`:
 
 ```csharp
-[SkippableFact]
+[Fact]
 public async Task WriteAsync_WithRealDatabase_WritesSuccessfully()
 {
     // Skip conditions (API keys, running instances, etc.)
-    Skip.If(!IsAvailable, "Database/Service not available");
-    
+    if(!IsAvailable)
+        Assert.Skip("Database/Service not available. Skipping integration test.");
+
     // Setup with sample chunks
     // WriteAsync operation
     // Assertions on result.Count and properties
 }
 
-[SkippableFact]
+[Fact]
 public async Task SearchAsync_WithRealDatabase_FindsSimilarChunks()
 {
     // Skip conditions
@@ -60,7 +61,7 @@ public async Task SearchAsync_WithRealDatabase_FindsSimilarChunks()
     // Assertions on result count, similarity scores
 }
 
-[SkippableFact]
+[Fact]
 public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollections()
 {
     // Test idempotency and unique collection names

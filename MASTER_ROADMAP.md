@@ -620,7 +620,7 @@ dotnet add package Polly
 
 ### Testing Strategy
 - Unit tests: xUnit + NSubstitute + Shouldly
-- Integration tests: [SkippableFact] for optional tests
+- Integration tests: Assert.Skip for optional tests
 - Benchmarks: BenchmarkDotNet
 - Coverage: >85% target
 

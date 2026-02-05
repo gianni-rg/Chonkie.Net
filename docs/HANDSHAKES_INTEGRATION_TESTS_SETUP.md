@@ -687,7 +687,7 @@ dotnet test tests/Chonkie.Handshakes.Tests/ `
 
 ### Test Skipping Behavior
 
-Integration tests use `[SkippableFact]` attribute from `Xunit.SkippableFact` package. Tests automatically skip when:
+Integration tests use Assert.Skip from `Xunit.v3` package. Tests skipped when:
 - Required service is not available (connection refused)
 - Required environment variable is not set
 - Required model files are not found

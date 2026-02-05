@@ -34,7 +34,7 @@ Implement February 2026 roadmap features based on Python Chonkie v1.5.4 analysis
 - **GroqGenie.cs** - Fast LLM inference wrapper (default: llama-3.3-70b-versatile)
 - **CerebrasGenie.cs** - Fastest LLM inference wrapper (default: llama-3.3-70b)
 - **GenieServiceExtensions.cs** - DI registration for both Genies
-- **Tests** - Comprehensive unit and integration tests with SkippableFact
+- **Tests** - Comprehensive unit and integration tests with Assert.Skip for integration tests without API keys or external available dependencies
 
 #### Technical Details
 - **Framework:** .NET 10.0 with C# 14
@@ -66,7 +66,7 @@ services.AddCerebrasGenie(apiKey);
 - ✅ Interface compliance (GenerateAsync, GenerateJsonAsync)
 - ✅ Environment variable configuration
 - ✅ Exception handling
-- ✅ Integration tests with SkippableFact (gracefully skip without API keys)
+- ✅ Integration tests with Assert.Skip (gracefully skip without API keys)
 
 ---
 
@@ -357,10 +357,10 @@ Full test run:      ~5 seconds
 - **Benefits:** Stack traces include root cause, easier troubleshooting
 - **Pattern:** `throw new CustomException("message", ex)`
 
-### 4. SkippableFact for Integration Tests
+### 4. Assert.Skip for Integration Tests
 - **Why:** Tests run without API keys, skip gracefully in CI/CD
 - **Benefits:** No test failures when keys unavailable
-- **Library:** Xunit.SkippableFact v1.5.23
+- **Library:** Xunit.v3
 
 ---
 
@@ -370,7 +370,7 @@ Full test run:      ~5 seconds
 2. **Constructor Overload Resolution:** Required parameters beat optional ones; be explicit with model/endpoint
 3. **Exception Handling:** Inner exception chaining is worth the extra code for debugging value
 4. **Test-Driven Approach:** Writing tests first revealed requirements before implementation
-5. **Integration Test Skipping:** SkippableFact pattern prevents CI/CD failures while maintaining test coverage
+5. **Integration Test Skipping:** Assert.Skip prevents CI/CD failures while maintaining test coverage
 
 ---
 

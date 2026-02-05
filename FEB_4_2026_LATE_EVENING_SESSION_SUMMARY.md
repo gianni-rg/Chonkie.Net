@@ -217,7 +217,7 @@ docs: update status dashboard - genies now 83% complete (5/6)
 
 2. **Optional Enhancements (If Time)**
    - Unit tests for new Genies (OpenAI, Azure, Gemini)
-   - Integration tests with SkippableFact pattern
+   - Integration tests with Assert.Skip pattern
    - LiteLLMGenie (optional - lowest priority)
 
 ### Future Sessions

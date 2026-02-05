@@ -148,7 +148,8 @@ Total Tests: 632
 ```
 
 ### Integration Tests Status
-- All integration tests properly use `[SkippableFact]`
+
+- All integration tests properly use `Assert.Skip` for missing API keys or service availability
 - Gracefully skip when API keys not present
 - No regressions introduced by exception handling changes
 
