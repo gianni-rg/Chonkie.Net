@@ -223,6 +223,91 @@ public class ElasticsearchHandshake : BaseHandshake
     }
 
     /// <summary>
+    /// Searches for similar chunks in the Elasticsearch index using KNN vector search.
+    /// </summary>
+    /// <param name="query">The query text to search for.</param>
+    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
+        string query,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        Logger.LogDebug("Searching Elasticsearch index: {IndexName} with limit={Limit}", _indexName, limit);
+
+        try
+        {
+            // Get the embedding for the query
+            var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
+
+            // Execute KNN search using fluent API
+            var searchResponse = await _client.SearchAsync<dynamic>(req => req
+                .Index(_indexName)
+                .Knn(k => k
+                    .Field("embedding")
+                    .QueryVector(queryEmbedding)
+                    .NumCandidates(100))
+                .Size(limit), cancellationToken);
+
+            var results = new List<Dictionary<string, object?>>();
+
+            // Iterate through documents returned from search
+            if (searchResponse?.Documents != null && searchResponse.Documents.Count > 0)
+            {
+                foreach (var document in searchResponse.Documents ?? new List<dynamic>())
+                {
+                    if (document is System.Collections.Generic.IDictionary<string, object> sourceDict)
+                    {
+                        var result = new Dictionary<string, object?>
+                        {
+                            ["id"] = Guid.NewGuid().ToString()
+                        };
+
+                        // Add fields from the source
+                        if (sourceDict.TryGetValue("text", out var text))
+                        {
+                            result["text"] = text;
+                        }
+
+                        if (sourceDict.TryGetValue("start_index", out var startIndex))
+                        {
+                            result["start_index"] = startIndex;
+                        }
+
+                        if (sourceDict.TryGetValue("end_index", out var endIndex))
+                        {
+                            result["end_index"] = endIndex;
+                        }
+
+                        if (sourceDict.TryGetValue("token_count", out var tokenCount))
+                        {
+                            result["token_count"] = tokenCount;
+                        }
+
+                        // Default similarity score
+                        result["similarity"] = 1.0 / (1.0 + results.Count);
+
+                        results.Add(result);
+                    }
+                }
+            }
+
+            Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to search Elasticsearch index");
+            throw new InvalidOperationException($"Failed to search Elasticsearch index '{_indexName}'", ex);
+        }
+    }
+
+    /// <summary>
     /// Generates a random index name.
     /// </summary>
     private string GenerateRandomIndexName() =>

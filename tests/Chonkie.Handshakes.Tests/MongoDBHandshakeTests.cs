@@ -159,4 +159,18 @@ public class MongoDBHandshakeTests
         // Assert
         handshake.Dimension.ShouldBe(768);
     }
+
+    [Fact]
+    public async Task SearchAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
+        embeddingModel.Dimension.Returns(384);
+        var handshake = new MongoDBHandshake(embeddingModel);
+
+        // Act & Assert
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            handshake.SearchAsync(null!));
+    }
+
 }

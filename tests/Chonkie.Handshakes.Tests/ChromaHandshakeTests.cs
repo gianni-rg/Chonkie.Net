@@ -8,7 +8,7 @@ using Xunit;
 namespace Chonkie.Handshakes.Tests;
 
 /// <summary>
-/// Unit tests for ChromaHandshake constructor validation and parameter handling.
+/// Unit tests for ChromaHandshake constructor validation, parameter handling, and search functionality.
 /// </summary>
 public class ChromaHandshakeTests
 {
@@ -87,5 +87,18 @@ public class ChromaHandshakeTests
         // Assert
         result.ShouldContain("ChromaHandshake");
         result.ShouldContain("my_collection");
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
+        embeddingModel.Dimension.Returns(384);
+        var handshake = new ChromaHandshake("test_collection", embeddingModel);
+
+        // Act & Assert
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            handshake.SearchAsync(null!));
     }
 }

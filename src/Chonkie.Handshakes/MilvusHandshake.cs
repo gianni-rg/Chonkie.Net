@@ -174,6 +174,121 @@ public class MilvusHandshake : BaseHandshake
     }
 
     /// <summary>
+    /// Searches for similar chunks in the Milvus collection using vector similarity.
+    /// </summary>
+    /// <param name="query">The query text to search for.</param>
+    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
+        string query,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        Logger.LogDebug("Searching Milvus collection: {CollectionName} with limit={Limit}", _collectionName, limit);
+
+        try
+        {
+            // Get the embedding for the query
+            var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
+
+            // Prepare the search request for Milvus REST API
+            var searchRequest = new
+            {
+                collection_name = _collectionName,
+                search_params = new
+                {
+                    metric_type = "L2"
+                },
+                anns_field = "embedding",
+                limit = limit,
+                output_fields = new[] { "text", "start_index", "end_index", "token_count" },
+                vectors = new[] { queryEmbedding }
+            };
+
+            var json = JsonSerializer.Serialize(searchRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var url = $"{_serverUrl}/v1/search";
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException(
+                    $"Milvus server returned status {response.StatusCode}: {errorContent}");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var jsonDoc = JsonDocument.Parse(responseContent);
+            var root = jsonDoc.RootElement;
+
+            var results = new List<Dictionary<string, object?>>();
+
+            if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var resultItem in resultsElement.EnumerateArray())
+                {
+                    if (resultItem.TryGetProperty("result", out var resultData) && resultData.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var hit in resultData.EnumerateArray())
+                        {
+                            var result = new Dictionary<string, object?>
+                            {
+                                ["id"] = hit.GetProperty("id").GetInt64().ToString()
+                            };
+
+                            // Add fields from the document
+                            if (hit.TryGetProperty("entity", out var entity) && entity.ValueKind == JsonValueKind.Object)
+                            {
+                                foreach (var prop in entity.EnumerateObject())
+                                {
+                                    if (prop.Name == "text")
+                                    {
+                                        result["text"] = prop.Value.GetString();
+                                    }
+                                    else if (prop.Name == "start_index")
+                                    {
+                                        result["start_index"] = prop.Value.GetInt64();
+                                    }
+                                    else if (prop.Name == "end_index")
+                                    {
+                                        result["end_index"] = prop.Value.GetInt64();
+                                    }
+                                    else if (prop.Name == "token_count")
+                                    {
+                                        result["token_count"] = prop.Value.GetInt64();
+                                    }
+                                }
+                            }
+
+                            // Add distance (convert to similarity if needed)
+                            if (hit.TryGetProperty("distance", out var distanceElement))
+                            {
+                                result["similarity"] = 1.0 / (1.0 + distanceElement.GetDouble());
+                            }
+
+                            results.Add(result);
+                        }
+                    }
+                }
+            }
+
+            Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to search Milvus collection");
+            throw new InvalidOperationException($"Failed to search Milvus collection '{_collectionName}'", ex);
+        }
+    }
+
+    /// <summary>
     /// Generates a random collection name using underscore separator for Milvus compatibility.
     /// </summary>
     private string GenerateRandomCollectionName() =>

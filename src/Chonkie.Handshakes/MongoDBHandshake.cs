@@ -271,6 +271,118 @@ public class MongoDBHandshake : BaseHandshake
     }
 
     /// <summary>
+    /// Searches for similar chunks in the MongoDB collection using vector similarity (brute force).
+    /// </summary>
+    /// <param name="query">The query text to search for.</param>
+    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
+        string query,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        Logger.LogDebug("Searching MongoDB collection: {CollectionName} with limit={Limit}", _collectionName, limit);
+
+        try
+        {
+            // Get the embedding for the query
+            var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
+            var queryEmbeddingList = queryEmbedding.ToList();
+
+            // Brute force search: retrieve all documents and compute similarity scores
+            var allDocs = await _collection.Find(new BsonDocument()).ToListAsync(cancellationToken);
+
+            var results = new List<Dictionary<string, object?>>();
+
+            foreach (var doc in allDocs)
+            {
+                if (doc.TryGetValue("embedding", out var embeddingValue))
+                {
+                    // Extract embedding from BSON array
+                    var docEmbedding = new List<double>();
+                    if (embeddingValue.IsBsonArray)
+                    {
+                        foreach (var element in embeddingValue.AsBsonArray)
+                        {
+                            docEmbedding.Add(element.AsDouble);
+                        }
+                    }
+
+                    if (docEmbedding.Count > 0)
+                    {
+                        // Calculate cosine similarity
+                        var queryAsDouble = queryEmbeddingList.ConvertAll(x => (double)x);
+                        var similarity = CosineSimilarity(queryAsDouble, docEmbedding);
+
+                        var result = new Dictionary<string, object?>
+                        {
+                            ["id"] = doc.GetValue("_id").ToString(),
+                            ["text"] = doc.GetValue("text", ""),
+                            ["similarity"] = similarity,
+                            ["start_index"] = doc.GetValue("start_index", 0),
+                            ["end_index"] = doc.GetValue("end_index", 0),
+                            ["token_count"] = doc.GetValue("token_count", 0)
+                        };
+
+                        results.Add(result);
+                    }
+                }
+            }
+
+            // Sort by similarity descending and take top limit
+            results = results
+                .OrderByDescending(r => (double)r["similarity"])
+                .Take(limit)
+                .ToList();
+
+            Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to search MongoDB collection");
+            throw new InvalidOperationException($"Failed to search MongoDB collection '{_collectionName}'", ex);
+        }
+    }
+
+    /// <summary>
+    /// Calculates cosine similarity between two vectors.
+    /// </summary>
+    private static double CosineSimilarity(List<double> vec1, List<double> vec2)
+    {
+        if (vec1.Count != vec2.Count)
+        {
+            throw new ArgumentException("Vectors must have the same length");
+        }
+
+        double dotProduct = 0.0;
+        double mag1 = 0.0;
+        double mag2 = 0.0;
+
+        for (int i = 0; i < vec1.Count; i++)
+        {
+            dotProduct += vec1[i] * vec2[i];
+            mag1 += vec1[i] * vec1[i];
+            mag2 += vec2[i] * vec2[i];
+        }
+
+        mag1 = Math.Sqrt(mag1);
+        mag2 = Math.Sqrt(mag2);
+
+        if (mag1 == 0.0 || mag2 == 0.0)
+        {
+            return 0.0;
+        }
+
+        return dotProduct / (mag1 * mag2);
+    }
+
+    /// <summary>
     /// Generates a random collection/database name.
     /// </summary>
     private string GenerateRandomName() => $"chonkie_{Guid.NewGuid():N}";

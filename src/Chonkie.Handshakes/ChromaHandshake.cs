@@ -172,6 +172,106 @@ public class ChromaHandshake : BaseHandshake
     }
 
     /// <summary>
+    /// Searches for similar chunks in the Chroma collection using vector similarity.
+    /// </summary>
+    /// <param name="query">The query text to search for.</param>
+    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
+        string query,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        Logger.LogDebug("Searching Chroma collection: {CollectionName} with limit={Limit}", _collectionName, limit);
+
+        try
+        {
+            // Get the embedding for the query
+            var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
+
+            // Prepare the query request
+            var queryRequest = new
+            {
+                query_embeddings = new[] { queryEmbedding },
+                n_results = limit,
+                include = new[] { "embeddings", "metadatas", "documents", "distances" }
+            };
+
+            var json = JsonSerializer.Serialize(queryRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var url = $"{_serverUrl}/api/v1/collections/{Uri.EscapeDataString(_collectionName)}/query";
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException(
+                    $"Chroma server returned status {response.StatusCode}: {errorContent}");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var jsonDoc = JsonDocument.Parse(responseContent);
+            var root = jsonDoc.RootElement;
+
+            var results = new List<Dictionary<string, object?>>();
+
+            if (root.TryGetProperty("ids", out var idsElement) && idsElement.ValueKind == JsonValueKind.Array)
+            {
+                var idsList = idsElement.EnumerateArray().ToList();
+                var distancesList = root.GetProperty("distances").EnumerateArray().ToList();
+                var documentsList = root.GetProperty("documents").EnumerateArray().ToList();
+                var metadatasList = root.GetProperty("metadatas").EnumerateArray().ToList();
+
+                for (int i = 0; i < idsList.Count; i++)
+                {
+                    if (idsList[i].ValueKind == JsonValueKind.Array && idsList[i].GetArrayLength() > 0)
+                    {
+                        var idArray = idsList[i].EnumerateArray().ToList();
+                        var distanceArray = distancesList[i].EnumerateArray().ToList();
+                        var documentArray = documentsList[i].EnumerateArray().ToList();
+                        var metadataArray = metadatasList[i].EnumerateArray().ToList();
+
+                        for (int j = 0; j < idArray.Count; j++)
+                        {
+                            var result = new Dictionary<string, object?>
+                            {
+                                ["id"] = idArray[j].GetString(),
+                                ["text"] = documentArray[j].GetString(),
+                                ["similarity"] = 1.0 - distanceArray[j].GetDouble() // Convert distance to similarity
+                            };
+
+                            // Add metadata if available
+                            if (metadataArray[j].ValueKind == JsonValueKind.Object)
+                            {
+                                foreach (var prop in metadataArray[j].EnumerateObject())
+                                {
+                                    result[prop.Name] = prop.Value.Deserialize<object>();
+                                }
+                            }
+
+                            results.Add(result);
+                        }
+                    }
+                }
+            }
+
+            Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
+
+            return results;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to search Chroma collection");
+            throw new InvalidOperationException($"Failed to search Chroma collection '{_collectionName}'", ex);
+        }
+    }
+
+    /// <summary>
     /// Generates a random collection name.
     /// </summary>
     protected string GenerateRandomCollectionName() =>

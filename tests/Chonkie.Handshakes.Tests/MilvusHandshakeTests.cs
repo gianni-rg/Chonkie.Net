@@ -129,4 +129,18 @@ public class MilvusHandshakeTests
         // Assert
         handshake.Dimension.ShouldBe(1024);
     }
+
+    [Fact]
+    public async Task SearchAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var embeddingModel = NSubstitute.Substitute.For<Chonkie.Embeddings.Interfaces.IEmbeddings>();
+        embeddingModel.Dimension.Returns(384);
+        var handshake = new MilvusHandshake(embeddingModel);
+
+        // Act & Assert
+        await Should.ThrowAsync<ArgumentNullException>(() =>
+            handshake.SearchAsync(null!));
+    }
+
 }
