@@ -5,6 +5,7 @@ using Npgsql;
 using Pinecone;
 using Qdrant.Client;
 using Weaviate.Client;
+using System;
 
 namespace Chonkie.Handshakes;
 
@@ -13,6 +14,10 @@ namespace Chonkie.Handshakes;
 /// </summary>
 public static class HandshakeServiceExtensions
 {
+    private const string ChromaServerUrlEnvironmentVariable = "CHONKIE_CHROMA_URL";
+    private const string MilvusServerUrlEnvironmentVariable = "CHONKIE_MILVUS_URL";
+    private const string ElasticsearchServerUrlEnvironmentVariable = "CHONKIE_ELASTICSEARCH_URL";
+
     /// <summary>
     /// Adds a QdrantHandshake to the service collection.
     /// </summary>
@@ -211,16 +216,19 @@ public static class HandshakeServiceExtensions
     /// <param name="services">The service collection.</param>
     /// <param name="collectionName">The name of the Chroma collection.</param>
     /// <param name="embeddingModel">The embedding model to use.</param>
+    /// <param name="serverUrl">The Chroma server URL. If null, uses CHONKIE_CHROMA_URL.</param>
     /// <returns>The service collection for chaining.</returns>
     public static IServiceCollection AddChromaHandshake(
         this IServiceCollection services,
         string collectionName,
-        IEmbeddings embeddingModel)
+        IEmbeddings embeddingModel,
+        string? serverUrl = null)
     {
         services.AddSingleton<IHandshake>(sp =>
         {
             var logger = sp.GetService<ILogger<ChromaHandshake>>();
-            return new ChromaHandshake(collectionName, embeddingModel, logger: logger);
+            var resolvedServerUrl = ResolveRequiredSetting(serverUrl, ChromaServerUrlEnvironmentVariable, nameof(serverUrl));
+            return new ChromaHandshake(collectionName, embeddingModel, resolvedServerUrl, logger: logger);
         });
 
         return services;
@@ -260,13 +268,14 @@ public static class HandshakeServiceExtensions
     public static IServiceCollection AddMilvusHandshake(
         this IServiceCollection services,
         IEmbeddings embeddingModel,
-        string serverUrl = "http://localhost:19530",
+        string? serverUrl = null,
         string collectionName = "random")
     {
         services.AddSingleton<IHandshake>(sp =>
         {
             var logger = sp.GetService<ILogger<MilvusHandshake>>();
-            return new MilvusHandshake(embeddingModel, serverUrl: serverUrl, collectionName: collectionName, logger: logger);
+            var resolvedServerUrl = ResolveRequiredSetting(serverUrl, MilvusServerUrlEnvironmentVariable, nameof(serverUrl));
+            return new MilvusHandshake(embeddingModel, serverUrl: resolvedServerUrl, collectionName: collectionName, logger: logger);
         });
 
         return services;
@@ -284,14 +293,15 @@ public static class HandshakeServiceExtensions
     public static IServiceCollection AddElasticsearchHandshake(
         this IServiceCollection services,
         IEmbeddings embeddingModel,
-        string serverUrl = "http://localhost:9200",
+        string? serverUrl = null,
         string indexName = "random",
         string? apiKey = null)
     {
         services.AddSingleton<IHandshake>(sp =>
         {
             var logger = sp.GetService<ILogger<ElasticsearchHandshake>>();
-            return new ElasticsearchHandshake(embeddingModel, serverUrl, indexName, apiKey, logger: logger);
+            var resolvedServerUrl = ResolveRequiredSetting(serverUrl, ElasticsearchServerUrlEnvironmentVariable, nameof(serverUrl));
+            return new ElasticsearchHandshake(embeddingModel, resolvedServerUrl, indexName, apiKey, logger: logger);
         });
 
         return services;
@@ -316,5 +326,22 @@ public static class HandshakeServiceExtensions
         });
 
         return services;
+    }
+
+    private static string ResolveRequiredSetting(string? value, string environmentVariableName, string parameterName)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        var environmentValue = Environment.GetEnvironmentVariable(environmentVariableName);
+        if (!string.IsNullOrWhiteSpace(environmentValue))
+        {
+            return environmentValue;
+        }
+
+        throw new InvalidOperationException(
+            $"Missing required setting for {parameterName}. Set {environmentVariableName} or pass {parameterName} explicitly.");
     }
 }

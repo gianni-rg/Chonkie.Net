@@ -106,8 +106,6 @@ public class TokenizerExtensionsTests
     }
 
     [Theory]
-    [InlineData("")]
-    [InlineData("   ")]
     [InlineData("\t")]
     [InlineData("\n")]
     public void IsEmpty_WithWhitespaceText_ReturnsFalse(string text)
@@ -118,7 +116,7 @@ public class TokenizerExtensionsTests
         // Act
         var isEmpty = tokenizer.IsEmpty(text);
 
-        // Assert - whitespace is still tokenized
+        // Assert - tabs and newlines are not split by space delimiter, so they produce tokens
         Assert.False(isEmpty);
     }
 

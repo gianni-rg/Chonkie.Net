@@ -28,11 +28,12 @@ public class PgvectorHandshakeIntegrationTests
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
-        var handshake = new PgvectorHandshake(
-            connectionString: DefaultConnectionString,
-            tableName: TableName,
-            embeddingModel: embeddings
-        );
+        var options = new PgvectorHandshakeOptions
+        {
+            ConnectionString = DefaultConnectionString,
+            CollectionName = TableName
+        };
+        var handshake = new PgvectorHandshake(options, embeddings);
 
         var chunks = new[]
         {
@@ -48,7 +49,8 @@ public class PgvectorHandshakeIntegrationTests
             // Assert
             result.ShouldNotBeNull();
             dynamic resultObj = result;
-            ((int)resultObj.Count).ShouldBe(2);
+            var count = Convert.ToInt32(resultObj.Count);
+            count.ShouldBe(2);
         }
         finally
         {
@@ -70,11 +72,12 @@ public class PgvectorHandshakeIntegrationTests
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
-        var handshake = new PgvectorHandshake(
-            connectionString: DefaultConnectionString,
-            tableName: TableName,
-            embeddingModel: embeddings
-        );
+        var options = new PgvectorHandshakeOptions
+        {
+            ConnectionString = DefaultConnectionString,
+            CollectionName = TableName
+        };
+        var handshake = new PgvectorHandshake(options, embeddings);
 
         var chunks = new[]
         {
@@ -101,8 +104,9 @@ public class PgvectorHandshakeIntegrationTests
                 result.ShouldContainKey("id");
                 result.ShouldContainKey("text");
                 result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
-                ((double)result["similarity"]).ShouldBeLessThanOrEqualTo(1);
+                var similarity = Convert.ToDouble(result["similarity"]);
+                similarity.ShouldBeGreaterThanOrEqualTo(0);
+                similarity.ShouldBeLessThanOrEqualTo(1);
             }
         }
         finally
@@ -125,17 +129,19 @@ public class PgvectorHandshakeIntegrationTests
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
-        var handshake1 = new PgvectorHandshake(
-            connectionString: DefaultConnectionString,
-            tableName: "random",
-            embeddingModel: embeddings
-        );
+        var options1 = new PgvectorHandshakeOptions
+        {
+            ConnectionString = DefaultConnectionString,
+            CollectionName = "random"
+        };
+        var handshake1 = new PgvectorHandshake(options1, embeddings);
 
-        var handshake2 = new PgvectorHandshake(
-            connectionString: DefaultConnectionString,
-            tableName: "random",
-            embeddingModel: embeddings
-        );
+        var options2 = new PgvectorHandshakeOptions
+        {
+            ConnectionString = DefaultConnectionString,
+            CollectionName = "random"
+        };
+        var handshake2 = new PgvectorHandshake(options2, embeddings);
 
         var chunks = new[] { new Chunk { Text = "Test", StartIndex = 0, EndIndex = 4, TokenCount = 1 } };
 

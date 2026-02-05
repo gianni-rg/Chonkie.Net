@@ -55,7 +55,9 @@ public abstract class BaseHandshake : IHandshake
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to write {ChunkCount} chunk(s) to {HandshakeName}", chunkCount, GetType().Name);
-            throw;
+            throw new InvalidOperationException(
+                $"Failed to write {chunkCount} chunk(s) with {GetType().Name}.",
+                ex);
         }
     }
 

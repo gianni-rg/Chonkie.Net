@@ -221,7 +221,9 @@ public class QdrantHandshake : BaseHandshake
         catch (Exception ex)
         {
             Logger.LogError(ex, "Failed to ensure collection {CollectionName} exists", _collectionName);
-            throw;
+            throw new InvalidOperationException(
+                $"Failed to ensure Qdrant collection '{_collectionName}' exists.",
+                ex);
         }
     }
 

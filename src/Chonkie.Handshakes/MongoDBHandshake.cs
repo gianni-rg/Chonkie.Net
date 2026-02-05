@@ -31,8 +31,7 @@ namespace Chonkie.Handshakes;
 /// </example>
 public class MongoDBHandshake : BaseHandshake
 {
-    private readonly IMongoClient _client;
-    private readonly IMongoDatabase _database;
+    private const string RandomNameToken = "random";
     private readonly IMongoCollection<BsonDocument> _collection;
     private readonly string _databaseName;
     private readonly string _collectionName;
@@ -87,10 +86,10 @@ public class MongoDBHandshake : BaseHandshake
 
         var uri = BuildConnectionUri(username, password, hostname, actualPort);
 
-        _client = new MongoClient(uri);
+        var client = new MongoClient(uri);
 
         // Handle database name
-        if (databaseName == "random")
+        if (databaseName == RandomNameToken)
         {
             _databaseName = GenerateRandomName();
             Logger.LogInformation("Created random MongoDB database: {DatabaseName}", _databaseName);
@@ -100,10 +99,10 @@ public class MongoDBHandshake : BaseHandshake
             _databaseName = databaseName;
         }
 
-        _database = _client.GetDatabase(_databaseName);
+        var database = client.GetDatabase(_databaseName);
 
         // Handle collection name
-        if (collectionName == "random")
+        if (collectionName == RandomNameToken)
         {
             _collectionName = GenerateRandomName();
             Logger.LogInformation("Created random MongoDB collection: {CollectionName}", _collectionName);
@@ -113,7 +112,7 @@ public class MongoDBHandshake : BaseHandshake
             _collectionName = collectionName;
         }
 
-        _collection = _database.GetCollection<BsonDocument>(_collectionName);
+        _collection = database.GetCollection<BsonDocument>(_collectionName);
     }
 
     /// <summary>
@@ -138,13 +137,13 @@ public class MongoDBHandshake : BaseHandshake
         _embeddingModel = embeddingModel;
         _dimension = embeddingModel.Dimension;
 
-        _client = new MongoClient(uri);
+        var client = new MongoClient(uri);
 
-        _databaseName = databaseName == "random" ? GenerateRandomName() : databaseName;
-        _database = _client.GetDatabase(_databaseName);
+        _databaseName = databaseName == RandomNameToken ? GenerateRandomName() : databaseName;
+        var database = client.GetDatabase(_databaseName);
 
-        _collectionName = collectionName == "random" ? GenerateRandomName() : collectionName;
-        _collection = _database.GetCollection<BsonDocument>(_collectionName);
+        _collectionName = collectionName == RandomNameToken ? GenerateRandomName() : collectionName;
+        _collection = database.GetCollection<BsonDocument>(_collectionName);
 
         Logger.LogInformation("Connected to MongoDB database: {DatabaseName}, collection: {CollectionName}",
             _databaseName, _collectionName);
@@ -169,15 +168,14 @@ public class MongoDBHandshake : BaseHandshake
         ArgumentNullException.ThrowIfNull(client);
         ArgumentNullException.ThrowIfNull(embeddingModel);
 
-        _client = client;
         _embeddingModel = embeddingModel;
         _dimension = embeddingModel.Dimension;
 
-        _databaseName = databaseName == "random" ? GenerateRandomName() : databaseName;
-        _database = _client.GetDatabase(_databaseName);
+        _databaseName = databaseName == RandomNameToken ? GenerateRandomName() : databaseName;
+        var database = client.GetDatabase(_databaseName);
 
-        _collectionName = collectionName == "random" ? GenerateRandomName() : collectionName;
-        _collection = _database.GetCollection<BsonDocument>(_collectionName);
+        _collectionName = collectionName == RandomNameToken ? GenerateRandomName() : collectionName;
+        _collection = database.GetCollection<BsonDocument>(_collectionName);
     }
 
     /// <inheritdoc/>
@@ -335,7 +333,7 @@ public class MongoDBHandshake : BaseHandshake
 
             // Sort by similarity descending and take top limit
             results = results
-                .OrderByDescending(r => (double)r["similarity"])
+                .OrderByDescending(r => Convert.ToDouble(r["similarity"]))
                 .Take(limit)
                 .ToList();
 
@@ -374,7 +372,8 @@ public class MongoDBHandshake : BaseHandshake
         mag1 = Math.Sqrt(mag1);
         mag2 = Math.Sqrt(mag2);
 
-        if (mag1 == 0.0 || mag2 == 0.0)
+        const double magnitudeEpsilon = 1e-12;
+        if (mag1 < magnitudeEpsilon || mag2 < magnitudeEpsilon)
         {
             return 0.0;
         }
@@ -385,7 +384,7 @@ public class MongoDBHandshake : BaseHandshake
     /// <summary>
     /// Generates a random collection/database name.
     /// </summary>
-    private string GenerateRandomName() => $"chonkie_{Guid.NewGuid():N}";
+    private static string GenerateRandomName() => $"chonkie_{Guid.NewGuid():N}";
 
     /// <summary>
     /// Returns a string representation of this handshake instance.

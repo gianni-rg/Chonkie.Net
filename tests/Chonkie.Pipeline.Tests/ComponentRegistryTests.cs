@@ -1,5 +1,5 @@
 using Chonkie.Core.Pipeline;
-using Chonkie.Pipeline;
+using Xunit;
 
 namespace Chonkie.Pipeline.Tests;
 

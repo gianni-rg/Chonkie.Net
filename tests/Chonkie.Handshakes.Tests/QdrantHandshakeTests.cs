@@ -83,12 +83,9 @@ public class QdrantHandshakeTests
     public async Task WriteAsync_WithNullChunks_ThrowsArgumentNullException()
     {
         // Test via BaseHandshake - it validates null input
-        var mockHandshake = Substitute.For<IHandshake>();
-        mockHandshake.WriteAsync(null!, default).Returns(x => throw new ArgumentNullException());
+        var handshake = new NullValidatingHandshake();
 
-        await Should.ThrowAsync<ArgumentNullException>(async () =>
-            await mockHandshake.WriteAsync(null!)
-        );
+        await Should.ThrowAsync<ArgumentNullException>(async () => await handshake.WriteAsync(null!));
     }
 
 
@@ -111,5 +108,13 @@ public class QdrantHandshakeTests
         // This test documents the expected format
         // Expected format: "QdrantHandshake(collection_name=..., dimension=...)"
         true.ShouldBeTrue();
+    }
+
+    private sealed class NullValidatingHandshake : BaseHandshake
+    {
+        protected override Task<object> WriteInternalAsync(IReadOnlyList<Chunk> chunks, CancellationToken cancellationToken)
+        {
+            return Task.FromResult<object>(new { Success = true, Count = chunks.Count });
+        }
     }
 }

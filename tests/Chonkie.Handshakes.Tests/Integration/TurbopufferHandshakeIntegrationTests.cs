@@ -44,7 +44,8 @@ public class TurbopufferHandshakeIntegrationTests
             // Assert
             result.ShouldNotBeNull();
             dynamic resultObj = result;
-            ((int)resultObj.Count).ShouldBe(2);
+            var count = Convert.ToInt32(resultObj.Count);
+            count.ShouldBe(2);
         }
         catch (Exception ex) when (ex.Message.Contains("401") || ex.Message.Contains("authentication"))
         {
@@ -96,7 +97,8 @@ public class TurbopufferHandshakeIntegrationTests
                 result.ShouldContainKey("id");
                 result.ShouldContainKey("text");
                 result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
+                var similarity = Convert.ToDouble(result["similarity"]);
+                similarity.ShouldBeGreaterThanOrEqualTo(0);
             }
         }
         catch (Exception ex) when (ex.Message.Contains("401") || ex.Message.Contains("authentication"))

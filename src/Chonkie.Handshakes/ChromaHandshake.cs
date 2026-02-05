@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Chonkie.Handshakes;
 
@@ -31,6 +30,7 @@ namespace Chonkie.Handshakes;
 /// </example>
 public class ChromaHandshake : BaseHandshake
 {
+    private const string ChromaServerUrlEnvironmentVariable = "CHONKIE_CHROMA_URL";
     private readonly HttpClient _httpClient;
     private readonly string _serverUrl;
     private readonly string _collectionName;
@@ -46,23 +46,23 @@ public class ChromaHandshake : BaseHandshake
     /// </summary>
     /// <param name="collectionName">The name of the collection. Use "random" to generate a random collection name.</param>
     /// <param name="embeddingModel">The embedding model to use for generating vectors from chunk text.</param>
-    /// <param name="serverUrl">The URL to the Chroma server. Defaults to "http://localhost:8000".</param>
+    /// <param name="serverUrl">The URL to the Chroma server. If null, uses CHONKIE_CHROMA_URL.</param>
     /// <param name="httpClient">Optional. An existing HttpClient instance. If not provided, a new one is created.</param>
     /// <param name="logger">Optional logger instance.</param>
     public ChromaHandshake(
         string collectionName,
         IEmbeddings embeddingModel,
-        string serverUrl = "http://localhost:8000",
+        string? serverUrl = null,
         HttpClient? httpClient = null,
         ILogger? logger = null)
         : base(logger)
     {
         ArgumentNullException.ThrowIfNull(collectionName);
         ArgumentNullException.ThrowIfNull(embeddingModel);
-        ArgumentNullException.ThrowIfNull(serverUrl);
 
         _embeddingModel = embeddingModel;
-        _serverUrl = serverUrl.TrimEnd('/');
+        var resolvedServerUrl = ResolveServerUrl(serverUrl);
+        _serverUrl = resolvedServerUrl.TrimEnd('/');
         _httpClient = httpClient ?? new HttpClient();
 
         // Handle random collection name
@@ -215,50 +215,7 @@ public class ChromaHandshake : BaseHandshake
             }
 
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var jsonDoc = JsonDocument.Parse(responseContent);
-            var root = jsonDoc.RootElement;
-
-            var results = new List<Dictionary<string, object?>>();
-
-            if (root.TryGetProperty("ids", out var idsElement) && idsElement.ValueKind == JsonValueKind.Array)
-            {
-                var idsList = idsElement.EnumerateArray().ToList();
-                var distancesList = root.GetProperty("distances").EnumerateArray().ToList();
-                var documentsList = root.GetProperty("documents").EnumerateArray().ToList();
-                var metadatasList = root.GetProperty("metadatas").EnumerateArray().ToList();
-
-                for (int i = 0; i < idsList.Count; i++)
-                {
-                    if (idsList[i].ValueKind == JsonValueKind.Array && idsList[i].GetArrayLength() > 0)
-                    {
-                        var idArray = idsList[i].EnumerateArray().ToList();
-                        var distanceArray = distancesList[i].EnumerateArray().ToList();
-                        var documentArray = documentsList[i].EnumerateArray().ToList();
-                        var metadataArray = metadatasList[i].EnumerateArray().ToList();
-
-                        for (int j = 0; j < idArray.Count; j++)
-                        {
-                            var result = new Dictionary<string, object?>
-                            {
-                                ["id"] = idArray[j].GetString(),
-                                ["text"] = documentArray[j].GetString(),
-                                ["similarity"] = 1.0 - distanceArray[j].GetDouble() // Convert distance to similarity
-                            };
-
-                            // Add metadata if available
-                            if (metadataArray[j].ValueKind == JsonValueKind.Object)
-                            {
-                                foreach (var prop in metadataArray[j].EnumerateObject())
-                                {
-                                    result[prop.Name] = prop.Value.Deserialize<object>();
-                                }
-                            }
-
-                            results.Add(result);
-                        }
-                    }
-                }
-            }
+            var results = ParseChromaResults(responseContent);
 
             Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
 
@@ -274,12 +231,92 @@ public class ChromaHandshake : BaseHandshake
     /// <summary>
     /// Generates a random collection name.
     /// </summary>
-    protected string GenerateRandomCollectionName() =>
+    protected static string GenerateRandomCollectionName() =>
         $"collection_{Guid.NewGuid().ToString("N").AsSpan(0, 24)}".ToString();
 
     /// <summary>
     /// Returns a string representation of this handshake instance.
     /// </summary>
     public override string ToString() => $"ChromaHandshake(collection_name={_collectionName})";
+
+    private static string ResolveServerUrl(string? serverUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(serverUrl))
+        {
+            return serverUrl;
+        }
+
+        var environmentValue = Environment.GetEnvironmentVariable(ChromaServerUrlEnvironmentVariable);
+        if (!string.IsNullOrWhiteSpace(environmentValue))
+        {
+            return environmentValue;
+        }
+
+        throw new InvalidOperationException(
+            $"Chroma server URL not provided. Set {ChromaServerUrlEnvironmentVariable} or pass serverUrl.");
+    }
+
+    private static List<Dictionary<string, object?>> ParseChromaResults(string responseContent)
+    {
+        using var jsonDoc = JsonDocument.Parse(responseContent);
+        var root = jsonDoc.RootElement;
+
+        if (!root.TryGetProperty("ids", out var idsElement) || idsElement.ValueKind != JsonValueKind.Array)
+        {
+            return new List<Dictionary<string, object?>>();
+        }
+
+        var idsList = idsElement.EnumerateArray().ToList();
+        var distancesList = root.GetProperty("distances").EnumerateArray().ToList();
+        var documentsList = root.GetProperty("documents").EnumerateArray().ToList();
+        var metadatasList = root.GetProperty("metadatas").EnumerateArray().ToList();
+
+        var results = new List<Dictionary<string, object?>>();
+
+        for (int i = 0; i < idsList.Count; i++)
+        {
+            if (idsList[i].ValueKind != JsonValueKind.Array || idsList[i].GetArrayLength() == 0)
+            {
+                continue;
+            }
+
+            var idArray = idsList[i].EnumerateArray().ToList();
+            var distanceArray = distancesList[i].EnumerateArray().ToList();
+            var documentArray = documentsList[i].EnumerateArray().ToList();
+            var metadataArray = metadatasList[i].EnumerateArray().ToList();
+
+            AddResultsFromGroup(results, idArray, distanceArray, documentArray, metadataArray);
+        }
+
+        return results;
+    }
+
+    private static void AddResultsFromGroup(
+        List<Dictionary<string, object?>> results,
+        List<JsonElement> idArray,
+        List<JsonElement> distanceArray,
+        List<JsonElement> documentArray,
+        List<JsonElement> metadataArray)
+    {
+        for (int j = 0; j < idArray.Count; j++)
+        {
+            var result = new Dictionary<string, object?>
+            {
+                ["id"] = idArray[j].GetString(),
+                ["text"] = documentArray[j].GetString(),
+                ["similarity"] = 1.0 - distanceArray[j].GetDouble()
+            };
+
+            if (metadataArray[j].ValueKind == JsonValueKind.Object)
+            {
+                foreach (var prop in metadataArray[j].EnumerateObject())
+                {
+                    result[prop.Name] = prop.Value.Deserialize<object>();
+                }
+            }
+
+            results.Add(result);
+        }
+    }
 }
 

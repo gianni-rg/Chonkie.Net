@@ -1,10 +1,8 @@
 using Chonkie.Core.Types;
 using Chonkie.Embeddings.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Chonkie.Handshakes;
 
@@ -30,6 +28,12 @@ namespace Chonkie.Handshakes;
 /// </example>
 public class MilvusHandshake : BaseHandshake
 {
+    private const string MilvusServerUrlEnvironmentVariable = "CHONKIE_MILVUS_URL";
+    private const string TextFieldName = "text";
+    private const string StartIndexFieldName = "start_index";
+    private const string EndIndexFieldName = "end_index";
+    private const string TokenCountFieldName = "token_count";
+    private const string EmbeddingFieldName = "embedding";
     private readonly HttpClient _httpClient;
     private readonly string _serverUrl;
     private readonly string _collectionName;
@@ -50,24 +54,24 @@ public class MilvusHandshake : BaseHandshake
     /// Initializes a new instance of the <see cref="MilvusHandshake"/> class.
     /// </summary>
     /// <param name="embeddingModel">The embedding model to use for generating vectors from chunk text.</param>
-    /// <param name="serverUrl">The URL to the Milvus server. Defaults to "http://localhost:19530".</param>
+    /// <param name="serverUrl">The URL to the Milvus server. If null, uses CHONKIE_MILVUS_URL.</param>
     /// <param name="collectionName">The collection name. Use "random" to generate a random name.</param>
     /// <param name="httpClient">Optional. An existing HttpClient instance. If not provided, a new one is created.</param>
     /// <param name="logger">Optional logger instance.</param>
     public MilvusHandshake(
         IEmbeddings embeddingModel,
-        string serverUrl = "http://localhost:19530",
+        string? serverUrl = null,
         string collectionName = "random",
         HttpClient? httpClient = null,
         ILogger? logger = null)
         : base(logger)
     {
         ArgumentNullException.ThrowIfNull(embeddingModel);
-        ArgumentNullException.ThrowIfNull(serverUrl);
 
         _embeddingModel = embeddingModel;
         _dimension = embeddingModel.Dimension;
-        _serverUrl = serverUrl.TrimEnd('/');
+        var resolvedServerUrl = ResolveServerUrl(serverUrl);
+        _serverUrl = resolvedServerUrl.TrimEnd('/');
         _httpClient = httpClient ?? new HttpClient();
 
         // Handle collection name
@@ -108,11 +112,11 @@ public class MilvusHandshake : BaseHandshake
                 collection_name = _collectionName,
                 records = new object[]
                 {
-                    new { field_name = "text", field_values = textList },
-                    new { field_name = "start_index", field_values = startIndices },
-                    new { field_name = "end_index", field_values = endIndices },
-                    new { field_name = "token_count", field_values = tokenCounts },
-                    new { field_name = "embedding", field_values = embeddings }
+                    new { field_name = TextFieldName, field_values = textList },
+                    new { field_name = StartIndexFieldName, field_values = startIndices },
+                    new { field_name = EndIndexFieldName, field_values = endIndices },
+                    new { field_name = TokenCountFieldName, field_values = tokenCounts },
+                    new { field_name = EmbeddingFieldName, field_values = embeddings }
                 }
             };
 
@@ -154,26 +158,6 @@ public class MilvusHandshake : BaseHandshake
     }
 
     /// <summary>
-    /// Generates a unique deterministic ID for a chunk using UUID5.
-    /// </summary>
-    private string GenerateId(int index, Chunk chunk)
-    {
-        var input = $"{_collectionName}::chunk-{index}:{chunk.Text}";
-        var bytes = Encoding.UTF8.GetBytes(input);
-
-        using var sha1 = SHA1.Create();
-        var hash = sha1.ComputeHash(bytes);
-
-        var guidBytes = new byte[16];
-        Buffer.BlockCopy(hash, 0, guidBytes, 0, 16);
-
-        guidBytes[6] = (byte)((guidBytes[6] & 0x0f) | 0x50);
-        guidBytes[8] = (byte)((guidBytes[8] & 0x3f) | 0x80);
-
-        return new Guid(guidBytes).ToString();
-    }
-
-    /// <summary>
     /// Searches for similar chunks in the Milvus collection using vector similarity.
     /// </summary>
     /// <param name="query">The query text to search for.</param>
@@ -196,18 +180,7 @@ public class MilvusHandshake : BaseHandshake
             var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
 
             // Prepare the search request for Milvus REST API
-            var searchRequest = new
-            {
-                collection_name = _collectionName,
-                search_params = new
-                {
-                    metric_type = "L2"
-                },
-                anns_field = "embedding",
-                limit = limit,
-                output_fields = new[] { "text", "start_index", "end_index", "token_count" },
-                vectors = new[] { queryEmbedding }
-            };
+            var searchRequest = BuildSearchRequest(queryEmbedding, limit);
 
             var json = JsonSerializer.Serialize(searchRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -223,59 +196,7 @@ public class MilvusHandshake : BaseHandshake
             }
 
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var jsonDoc = JsonDocument.Parse(responseContent);
-            var root = jsonDoc.RootElement;
-
-            var results = new List<Dictionary<string, object?>>();
-
-            if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var resultItem in resultsElement.EnumerateArray())
-                {
-                    if (resultItem.TryGetProperty("result", out var resultData) && resultData.ValueKind == JsonValueKind.Array)
-                    {
-                        foreach (var hit in resultData.EnumerateArray())
-                        {
-                            var result = new Dictionary<string, object?>
-                            {
-                                ["id"] = hit.GetProperty("id").GetInt64().ToString()
-                            };
-
-                            // Add fields from the document
-                            if (hit.TryGetProperty("entity", out var entity) && entity.ValueKind == JsonValueKind.Object)
-                            {
-                                foreach (var prop in entity.EnumerateObject())
-                                {
-                                    if (prop.Name == "text")
-                                    {
-                                        result["text"] = prop.Value.GetString();
-                                    }
-                                    else if (prop.Name == "start_index")
-                                    {
-                                        result["start_index"] = prop.Value.GetInt64();
-                                    }
-                                    else if (prop.Name == "end_index")
-                                    {
-                                        result["end_index"] = prop.Value.GetInt64();
-                                    }
-                                    else if (prop.Name == "token_count")
-                                    {
-                                        result["token_count"] = prop.Value.GetInt64();
-                                    }
-                                }
-                            }
-
-                            // Add distance (convert to similarity if needed)
-                            if (hit.TryGetProperty("distance", out var distanceElement))
-                            {
-                                result["similarity"] = 1.0 / (1.0 + distanceElement.GetDouble());
-                            }
-
-                            results.Add(result);
-                        }
-                    }
-                }
-            }
+            var results = ParseSearchResults(responseContent);
 
             Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
 
@@ -291,11 +212,115 @@ public class MilvusHandshake : BaseHandshake
     /// <summary>
     /// Generates a random collection name using underscore separator for Milvus compatibility.
     /// </summary>
-    private string GenerateRandomCollectionName() =>
+    private static string GenerateRandomCollectionName() =>
         $"collection_{Guid.NewGuid().ToString("N").Substring(0, 24)}";
 
     /// <summary>
     /// Returns a string representation of this handshake instance.
     /// </summary>
     public override string ToString() => $"MilvusHandshake(collection_name={_collectionName})";
+
+    private static string ResolveServerUrl(string? serverUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(serverUrl))
+        {
+            return serverUrl;
+        }
+
+        var environmentValue = Environment.GetEnvironmentVariable(MilvusServerUrlEnvironmentVariable);
+        if (!string.IsNullOrWhiteSpace(environmentValue))
+        {
+            return environmentValue;
+        }
+
+        throw new InvalidOperationException(
+            $"Milvus server URL not provided. Set {MilvusServerUrlEnvironmentVariable} or pass serverUrl.");
+    }
+
+    private object BuildSearchRequest(IEnumerable<float> queryEmbedding, int limit)
+    {
+        return new
+        {
+            collection_name = _collectionName,
+            search_params = new
+            {
+                metric_type = "L2"
+            },
+            anns_field = EmbeddingFieldName,
+            limit = limit,
+            output_fields = new[] { TextFieldName, StartIndexFieldName, EndIndexFieldName, TokenCountFieldName },
+            vectors = new[] { queryEmbedding }
+        };
+    }
+
+    private static List<Dictionary<string, object?>> ParseSearchResults(string responseContent)
+    {
+        using var jsonDoc = JsonDocument.Parse(responseContent);
+        var root = jsonDoc.RootElement;
+
+        if (!root.TryGetProperty("results", out var resultsElement) || resultsElement.ValueKind != JsonValueKind.Array)
+        {
+            return new List<Dictionary<string, object?>>();
+        }
+
+        var results = new List<Dictionary<string, object?>>();
+
+        foreach (var resultItem in resultsElement.EnumerateArray())
+        {
+            if (!resultItem.TryGetProperty("result", out var resultData) || resultData.ValueKind != JsonValueKind.Array)
+            {
+                continue;
+            }
+
+            AddResultItems(results, resultData);
+        }
+
+        return results;
+    }
+
+    private static void AddResultItems(List<Dictionary<string, object?>> results, JsonElement resultData)
+    {
+        foreach (var hit in resultData.EnumerateArray())
+        {
+            var result = new Dictionary<string, object?>
+            {
+                ["id"] = hit.GetProperty("id").GetInt64().ToString()
+            };
+
+            if (hit.TryGetProperty("entity", out var entity) && entity.ValueKind == JsonValueKind.Object)
+            {
+                AddEntityFields(result, entity);
+            }
+
+            if (hit.TryGetProperty("distance", out var distanceElement))
+            {
+                result["similarity"] = 1.0 / (1.0 + distanceElement.GetDouble());
+            }
+
+            results.Add(result);
+        }
+    }
+
+    private static void AddEntityFields(Dictionary<string, object?> result, JsonElement entity)
+    {
+        foreach (var prop in entity.EnumerateObject())
+        {
+            if (prop.Name == TextFieldName)
+            {
+                result[TextFieldName] = prop.Value.GetString();
+            }
+            else if (prop.Name == StartIndexFieldName)
+            {
+                result[StartIndexFieldName] = prop.Value.GetInt64();
+            }
+            else if (prop.Name == EndIndexFieldName)
+            {
+                result[EndIndexFieldName] = prop.Value.GetInt64();
+            }
+            else if (prop.Name == TokenCountFieldName)
+            {
+                result[TokenCountFieldName] = prop.Value.GetInt64();
+            }
+        }
+    }
 }

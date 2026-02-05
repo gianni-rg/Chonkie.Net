@@ -1,10 +1,10 @@
 using Chonkie.Core.Types;
 using Chonkie.Embeddings.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Chonkie.Handshakes;
 
@@ -31,11 +31,12 @@ namespace Chonkie.Handshakes;
 /// </example>
 public class TurbopufferHandshake : BaseHandshake
 {
+    private const string TurbopufferApiUrlEnvironmentVariable = "TURBOPUFFER_API_URL";
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private readonly string _namespace;
     private readonly IEmbeddings _embeddingModel;
-    private const string DefaultApiUrl = "https://api.turbopuffer.com/v1";
+    private readonly string _apiUrl;
 
     /// <summary>
     /// Gets the namespace name in Turbopuffer.
@@ -53,12 +54,14 @@ public class TurbopufferHandshake : BaseHandshake
     /// <param name="embeddingModel">The embedding model to use for generating vectors from chunk text.</param>
     /// <param name="apiKey">Optional. The Turbopuffer API key. If not provided, uses TURBOPUFFER_API_KEY environment variable.</param>
     /// <param name="namespaceName">The Turbopuffer namespace. Use "random" to generate a random name.</param>
+    /// <param name="apiUrl">Optional. The Turbopuffer API URL. If not provided, uses TURBOPUFFER_API_URL environment variable.</param>
     /// <param name="httpClient">Optional. An existing HttpClient instance. If not provided, a new one is created.</param>
     /// <param name="logger">Optional logger instance.</param>
     public TurbopufferHandshake(
         IEmbeddings embeddingModel,
         string? apiKey = null,
         string namespaceName = "random",
+        string? apiUrl = null,
         HttpClient? httpClient = null,
         ILogger? logger = null)
         : base(logger)
@@ -76,6 +79,7 @@ public class TurbopufferHandshake : BaseHandshake
             throw new ArgumentException("API key cannot be empty", nameof(apiKey));
 
         _httpClient = httpClient ?? new HttpClient();
+        _apiUrl = ResolveApiUrl(apiUrl);
 
         // Configure HTTP client with authentication header
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
@@ -129,7 +133,7 @@ public class TurbopufferHandshake : BaseHandshake
             var json = JsonSerializer.Serialize(upsertRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var url = $"{DefaultApiUrl}/namespaces/{Uri.EscapeDataString(_namespace)}/vectors/upsert";
+            var url = $"{_apiUrl}/namespaces/{Uri.EscapeDataString(_namespace)}/vectors/upsert";
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -216,7 +220,7 @@ public class TurbopufferHandshake : BaseHandshake
             var json = JsonSerializer.Serialize(queryRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var url = $"{DefaultApiUrl}/namespaces/{Uri.EscapeDataString(_namespace)}/vectors/query";
+            var url = $"{_apiUrl}/namespaces/{Uri.EscapeDataString(_namespace)}/vectors/query";
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
@@ -227,100 +231,7 @@ public class TurbopufferHandshake : BaseHandshake
             }
 
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var jsonDoc = JsonDocument.Parse(responseContent);
-            var root = jsonDoc.RootElement;
-
-            var results = new List<Dictionary<string, object?>>();
-
-            // Parse Turbopuffer response format
-            if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var result in resultsElement.EnumerateArray())
-                {
-                    var resultDict = new Dictionary<string, object?>();
-
-                    // Extract id
-                    if (result.TryGetProperty("id", out var idElement))
-                    {
-                        resultDict["id"] = idElement.GetString();
-                    }
-
-                    // Convert distance to similarity: 1.0 - distance
-                    if (result.TryGetProperty("$dist", out var distElement))
-                    {
-                        double distance = distElement.GetDouble();
-                        resultDict["similarity"] = 1.0 - distance;
-                        resultDict["distance"] = distance;
-                    }
-
-                    // Extract attributes
-                    if (result.TryGetProperty("text", out var textElement))
-                    {
-                        resultDict["text"] = textElement.GetString();
-                    }
-
-                    if (result.TryGetProperty("start_index", out var startElement))
-                    {
-                        resultDict["start_index"] = startElement.GetInt32();
-                    }
-
-                    if (result.TryGetProperty("end_index", out var endElement))
-                    {
-                        resultDict["end_index"] = endElement.GetInt32();
-                    }
-
-                    if (result.TryGetProperty("token_count", out var tokenElement))
-                    {
-                        resultDict["token_count"] = tokenElement.GetInt32();
-                    }
-
-                    results.Add(resultDict);
-                }
-            }
-            // Alternative response format with rows array
-            else if (root.TryGetProperty("rows", out var rowsElement) && rowsElement.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var row in rowsElement.EnumerateArray())
-                {
-                    var resultDict = new Dictionary<string, object?>();
-
-                    // Extract id
-                    if (row.TryGetProperty("id", out var idElement))
-                    {
-                        resultDict["id"] = idElement.GetString();
-                    }
-
-                    // Convert distance to similarity
-                    if (row.TryGetProperty("$dist", out var distElement))
-                    {
-                        double distance = distElement.GetDouble();
-                        resultDict["similarity"] = 1.0 - distance;
-                        resultDict["distance"] = distance;
-                    }
-
-                    // Extract all other attributes
-                    foreach (var prop in row.EnumerateObject())
-                    {
-                        if (prop.Name is not "id" and not "$dist")
-                        {
-                            if (prop.Value.ValueKind == JsonValueKind.Number)
-                            {
-                                resultDict[prop.Name] = prop.Value.GetInt32();
-                            }
-                            else if (prop.Value.ValueKind == JsonValueKind.String)
-                            {
-                                resultDict[prop.Name] = prop.Value.GetString();
-                            }
-                            else
-                            {
-                                resultDict[prop.Name] = prop.Value.GetRawText();
-                            }
-                        }
-                    }
-
-                    results.Add(resultDict);
-                }
-            }
+            var results = ParseSearchResults(responseContent);
 
             Logger.LogInformation("Found {ResultCount} similar chunks in Turbopuffer namespace", results.Count);
             return results.AsReadOnly();
@@ -344,13 +255,135 @@ public class TurbopufferHandshake : BaseHandshake
     /// <summary>
     /// Generates a random namespace name for Turbopuffer.
     /// </summary>
-    private string GenerateRandomNamespace() =>
+    private static string GenerateRandomNamespace() =>
         $"ns_{Guid.NewGuid().ToString("N").Substring(0, 24)}";
 
     /// <summary>
     /// Returns a string representation of this handshake instance.
     /// </summary>
     public override string ToString() => $"TurbopufferHandshake(namespace={_namespace}, api_key={ApiKeyMasked})";
+
+    private static string ResolveApiUrl(string? apiUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(apiUrl))
+        {
+            return apiUrl;
+        }
+
+        var environmentValue = Environment.GetEnvironmentVariable(TurbopufferApiUrlEnvironmentVariable);
+        if (!string.IsNullOrWhiteSpace(environmentValue))
+        {
+            return environmentValue;
+        }
+
+        throw new InvalidOperationException(
+            $"Turbopuffer API URL not provided. Set {TurbopufferApiUrlEnvironmentVariable} or pass apiUrl.");
+    }
+
+    private static List<Dictionary<string, object?>> ParseSearchResults(string responseContent)
+    {
+        using var jsonDoc = JsonDocument.Parse(responseContent);
+        var root = jsonDoc.RootElement;
+
+        if (TryParseResultsArray(root, out var results))
+        {
+            return results;
+        }
+
+        if (TryParseRowsArray(root, out results))
+        {
+            return results;
+        }
+
+        return new List<Dictionary<string, object?>>();
+    }
+
+    private static bool TryParseResultsArray(JsonElement root, out List<Dictionary<string, object?>> results)
+    {
+        results = new List<Dictionary<string, object?>>();
+
+        if (!root.TryGetProperty("results", out var resultsElement) || resultsElement.ValueKind != JsonValueKind.Array)
+        {
+            return false;
+        }
+
+        foreach (var result in resultsElement.EnumerateArray())
+        {
+            var resultDict = CreateBaseResult(result);
+            AddSimpleField(result, resultDict, "text");
+            AddSimpleField(result, resultDict, "start_index");
+            AddSimpleField(result, resultDict, "end_index");
+            AddSimpleField(result, resultDict, "token_count");
+            results.Add(resultDict);
+        }
+
+        return true;
+    }
+
+    private static bool TryParseRowsArray(JsonElement root, out List<Dictionary<string, object?>> results)
+    {
+        results = new List<Dictionary<string, object?>>();
+
+        if (!root.TryGetProperty("rows", out var rowsElement) || rowsElement.ValueKind != JsonValueKind.Array)
+        {
+            return false;
+        }
+
+        foreach (var row in rowsElement.EnumerateArray())
+        {
+            var resultDict = CreateBaseResult(row);
+
+            foreach (var prop in row.EnumerateObject().Where(prop => prop.Name is not "id" and not "$dist"))
+            {
+                resultDict[prop.Name] = ConvertJsonValue(prop.Value);
+            }
+
+            results.Add(resultDict);
+        }
+
+        return true;
+    }
+
+    private static Dictionary<string, object?> CreateBaseResult(JsonElement element)
+    {
+        var result = new Dictionary<string, object?>();
+
+        if (element.TryGetProperty("id", out var idElement))
+        {
+            result["id"] = idElement.GetString();
+        }
+
+        if (element.TryGetProperty("$dist", out var distElement))
+        {
+            var distance = distElement.GetDouble();
+            result["similarity"] = 1.0 - distance;
+            result["distance"] = distance;
+        }
+
+        return result;
+    }
+
+    private static void AddSimpleField(JsonElement element, Dictionary<string, object?> target, string fieldName)
+    {
+        if (element.TryGetProperty(fieldName, out var fieldElement))
+        {
+            target[fieldName] = ConvertJsonValue(fieldElement);
+        }
+    }
+
+    private static object? ConvertJsonValue(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.Number when element.TryGetInt64(out var int64Value) => int64Value,
+            JsonValueKind.Number => element.GetDouble(),
+            JsonValueKind.String => element.GetString(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => element.GetRawText()
+        };
+    }
 }
 
 /// <summary>
@@ -423,8 +456,6 @@ internal static class TurbopufferClientFactory
             throw new InvalidOperationException("Write method not found on Turbopuffer namespace");
 
         var args = new object[] { data, distanceMetric };
-        var paramNames = new[] { "upsert_columns", "distance_metric" };
-
         method.Invoke(@namespace, args);
     }
 }

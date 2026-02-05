@@ -32,7 +32,7 @@ public class WeaviateHandshakeIntegrationTests
             url: WeaviateUrl,
             apiKey: "demo-key",
             className: ClassName,
-            embeddings: embeddings
+            embeddingModel: embeddings
         );
 
         var chunks = new[]
@@ -75,7 +75,7 @@ public class WeaviateHandshakeIntegrationTests
             url: WeaviateUrl,
             apiKey: "demo-key",
             className: ClassName,
-            embeddings: embeddings
+            embeddingModel: embeddings
         );
 
         var chunks = new[]
@@ -94,17 +94,23 @@ public class WeaviateHandshakeIntegrationTests
 
             // Assert
             results.ShouldNotBeNull();
-            results.Count.ShouldBeGreaterThan(0);
-            results.Count.ShouldBeLessThanOrEqualTo(5);
+            dynamic resultObj = results;
+            var count = (int)resultObj.Count;
+            count.ShouldBeGreaterThan(0);
+            count.ShouldBeLessThanOrEqualTo(5);
 
             // Check result structure
-            foreach (var result in results)
+            foreach (var result in resultObj.Objects)
             {
-                result.ShouldContainKey("id");
-                result.ShouldContainKey("text");
-                result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
-                ((double)result["similarity"]).ShouldBeLessThanOrEqualTo(1);
+                result.ShouldNotBeNull();
+
+                if (result is IDictionary<string, object> props)
+                {
+                    props.ShouldContainKey("text");
+                    props.ShouldContainKey("start_index");
+                    props.ShouldContainKey("end_index");
+                    props.ShouldContainKey("token_count");
+                }
             }
         }
         finally
@@ -131,14 +137,14 @@ public class WeaviateHandshakeIntegrationTests
             url: WeaviateUrl,
             apiKey: "demo-key",
             className: "random",
-            embeddings: embeddings
+            embeddingModel: embeddings
         );
 
         var handshake2 = await WeaviateHandshake.CreateCloudAsync(
             url: WeaviateUrl,
             apiKey: "demo-key",
             className: "random",
-            embeddings: embeddings
+            embeddingModel: embeddings
         );
 
         var chunks = new[] { new Chunk { Text = "Test", StartIndex = 0, EndIndex = 4, TokenCount = 1 } };

@@ -197,15 +197,26 @@ public class OpenAIGenieTests
     {
         // Arrange
         var genie = new OpenAIGenie("test-api-key", null, null);
+        var sample = new TestData();
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentNullException>(async () =>
             await genie.GenerateJsonAsync<TestData>(string.Empty));
+
+        sample.ToString().ShouldContain("sample");
     }
 
     private class TestData
     {
-        public string? Name { get; set; }
-        public int Value { get; set; }
+        public string? Name { get; }
+        public int Value { get; }
+
+        public TestData(string? name = "sample", int value = 1)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public override string ToString() => $"{Name}:{Value}";
     }
 }

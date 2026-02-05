@@ -27,7 +27,7 @@ public class QdrantHandshakeIntegrationTests
         Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
 
         // Arrange
-        var embeddings = new OpenAIEmbeddings(apiKey);
+        var embeddings = new OpenAIEmbeddings(apiKey!);
         var handshake = new QdrantHandshake(
             url: QdrantUrl,
             collectionName: CollectionName,
@@ -110,7 +110,7 @@ public class QdrantHandshakeIntegrationTests
         Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
 
         // Arrange
-        var embeddings = new OpenAIEmbeddings(apiKey);
+        var embeddings = new OpenAIEmbeddings(apiKey!);
         var handshake = new QdrantHandshake(
             url: QdrantUrl,
             collectionName: CollectionName,

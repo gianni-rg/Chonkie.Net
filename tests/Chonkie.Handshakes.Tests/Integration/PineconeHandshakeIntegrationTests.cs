@@ -1,7 +1,9 @@
 using Chonkie.Core.Types;
 using Chonkie.Embeddings.SentenceTransformers;
 using Chonkie.Handshakes;
+using Pinecone;
 using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Chonkie.Handshakes.Tests.Integration;
@@ -28,7 +30,7 @@ public class PineconeHandshakeIntegrationTests
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
         var handshake = new PineconeHandshake(
-            apiKey: apiKey,
+            apiKey: apiKey!,
             indexName: IndexName,
             embeddingModel: embeddings
         );
@@ -70,7 +72,7 @@ public class PineconeHandshakeIntegrationTests
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
         var handshake = new PineconeHandshake(
-            apiKey: apiKey,
+            apiKey: apiKey!,
             indexName: IndexName,
             embeddingModel: embeddings
         );
@@ -91,16 +93,25 @@ public class PineconeHandshakeIntegrationTests
 
             // Assert
             results.ShouldNotBeNull();
-            results.Count.ShouldBeGreaterThan(0);
-            results.Count.ShouldBeLessThanOrEqualTo(5);
+            results.Matches.ShouldNotBeNull();
+            var matches = results.Matches?.ToList() ?? new List<ScoredVector>();
+            var matchCount = matches.Count;
+            matchCount.ShouldBeGreaterThan(0);
+            matchCount.ShouldBeLessThanOrEqualTo(5);
 
             // Check result structure
-            foreach (var result in results)
+            if (matches.Count > 0)
             {
-                result.ShouldContainKey("id");
-                result.ShouldContainKey("text");
-                result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
+                foreach (var match in matches)
+                {
+                    match.Metadata.ShouldNotBeNull();
+                    match.Metadata.ShouldContainKey("text");
+                    match.Metadata.ShouldContainKey("start_index");
+                    match.Metadata.ShouldContainKey("end_index");
+                    match.Metadata.ShouldContainKey("token_count");
+                    var score = match.Score is null ? 0f : Convert.ToSingle(match.Score);
+                    score.ShouldBeGreaterThanOrEqualTo(0f);
+                }
             }
         }
         catch (Exception ex) when (ex.Message.Contains("index") || ex.Message.Contains("404"))
@@ -124,14 +135,14 @@ public class PineconeHandshakeIntegrationTests
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
         var handshake1 = new PineconeHandshake(
-            apiKey: apiKey,
+            apiKey: apiKey!,
             indexName: IndexName,
             embeddingModel: embeddings,
             @namespace: "random"
         );
 
         var handshake2 = new PineconeHandshake(
-            apiKey: apiKey,
+            apiKey: apiKey!,
             indexName: IndexName,
             embeddingModel: embeddings,
             @namespace: "random"

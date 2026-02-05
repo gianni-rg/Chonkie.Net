@@ -31,6 +31,7 @@ namespace Chonkie.Handshakes;
 /// </example>
 public class ElasticsearchHandshake : BaseHandshake
 {
+    private const string ElasticsearchServerUrlEnvironmentVariable = "CHONKIE_ELASTICSEARCH_URL";
     private readonly ElasticsearchClient _client;
     private readonly string _indexName;
     private readonly IEmbeddings _embeddingModel;
@@ -50,14 +51,14 @@ public class ElasticsearchHandshake : BaseHandshake
     /// Initializes a new instance of the <see cref="ElasticsearchHandshake"/> class.
     /// </summary>
     /// <param name="embeddingModel">The embedding model to use for generating vectors from chunk text.</param>
-    /// <param name="serverUrl">The URL to the Elasticsearch server. Defaults to "http://localhost:9200".</param>
+    /// <param name="serverUrl">The URL to the Elasticsearch server. If null, uses CHONKIE_ELASTICSEARCH_URL.</param>
     /// <param name="indexName">The name of the Elasticsearch index. Use "random" to generate a random name.</param>
     /// <param name="apiKey">Optional. The API key for authentication.</param>
     /// <param name="client">Optional. An existing ElasticsearchClient instance.</param>
     /// <param name="logger">Optional logger instance.</param>
     public ElasticsearchHandshake(
         IEmbeddings embeddingModel,
-        string serverUrl = "http://localhost:9200",
+        string? serverUrl = null,
         string indexName = "random",
         string? apiKey = null,
         ElasticsearchClient? client = null,
@@ -65,7 +66,8 @@ public class ElasticsearchHandshake : BaseHandshake
         : base(logger)
     {
         ArgumentNullException.ThrowIfNull(embeddingModel);
-        ArgumentNullException.ThrowIfNull(serverUrl);
+
+        var resolvedServerUrl = ResolveServerUrl(serverUrl);
 
         _embeddingModel = embeddingModel;
         _dimension = embeddingModel.Dimension;
@@ -78,7 +80,7 @@ public class ElasticsearchHandshake : BaseHandshake
         }
         else
         {
-            var settings = new ElasticsearchClientSettings(new Uri(serverUrl));
+            var settings = new ElasticsearchClientSettings(new Uri(resolvedServerUrl));
 
             // Add API key authentication if provided
             if (!string.IsNullOrWhiteSpace(apiKey))
@@ -87,7 +89,7 @@ public class ElasticsearchHandshake : BaseHandshake
             }
 
             _client = new ElasticsearchClient(settings);
-            Logger.LogInformation("Created Elasticsearch client for {ServerUrl}", serverUrl);
+            Logger.LogInformation("Created Elasticsearch client for {ServerUrl}", resolvedServerUrl);
         }
 
         // Handle index name
@@ -165,7 +167,7 @@ public class ElasticsearchHandshake : BaseHandshake
 
             return new
             {
-                Success = bulkResponse.Errors == false,
+                Success = !bulkResponse.Errors,
                 Count = successCount,
                 IndexName = _indexName
             };
@@ -246,55 +248,14 @@ public class ElasticsearchHandshake : BaseHandshake
 
             // Execute KNN search using fluent API
             var searchResponse = await _client.SearchAsync<dynamic>(req => req
-                .Index(_indexName)
+                .Indices(_indexName)
                 .Knn(k => k
                     .Field("embedding")
                     .QueryVector(queryEmbedding)
                     .NumCandidates(100))
                 .Size(limit), cancellationToken);
 
-            var results = new List<Dictionary<string, object?>>();
-
-            // Iterate through documents returned from search
-            if (searchResponse?.Documents != null && searchResponse.Documents.Count > 0)
-            {
-                foreach (var document in searchResponse.Documents ?? new List<dynamic>())
-                {
-                    if (document is System.Collections.Generic.IDictionary<string, object> sourceDict)
-                    {
-                        var result = new Dictionary<string, object?>
-                        {
-                            ["id"] = Guid.NewGuid().ToString()
-                        };
-
-                        // Add fields from the source
-                        if (sourceDict.TryGetValue("text", out var text))
-                        {
-                            result["text"] = text;
-                        }
-
-                        if (sourceDict.TryGetValue("start_index", out var startIndex))
-                        {
-                            result["start_index"] = startIndex;
-                        }
-
-                        if (sourceDict.TryGetValue("end_index", out var endIndex))
-                        {
-                            result["end_index"] = endIndex;
-                        }
-
-                        if (sourceDict.TryGetValue("token_count", out var tokenCount))
-                        {
-                            result["token_count"] = tokenCount;
-                        }
-
-                        // Default similarity score
-                        result["similarity"] = 1.0 / (1.0 + results.Count);
-
-                        results.Add(result);
-                    }
-                }
-            }
+            var results = BuildSearchResults(searchResponse?.Documents);
 
             Logger.LogInformation("Search complete: found {ResultCount} matching chunks", results.Count);
 
@@ -310,12 +271,83 @@ public class ElasticsearchHandshake : BaseHandshake
     /// <summary>
     /// Generates a random index name.
     /// </summary>
-    private string GenerateRandomIndexName() =>
+    private static string GenerateRandomIndexName() =>
         $"chonkie-{Guid.NewGuid().ToString("N").Substring(0, 8)}".ToLowerInvariant();
 
     /// <summary>
     /// Returns a string representation of this handshake instance.
     /// </summary>
     public override string ToString() => $"ElasticsearchHandshake(index_name={_indexName})";
+
+    private static string ResolveServerUrl(string? serverUrl)
+    {
+        if (!string.IsNullOrWhiteSpace(serverUrl))
+        {
+            return serverUrl;
+        }
+
+        var environmentValue = Environment.GetEnvironmentVariable(ElasticsearchServerUrlEnvironmentVariable);
+        if (!string.IsNullOrWhiteSpace(environmentValue))
+        {
+            return environmentValue;
+        }
+
+        throw new InvalidOperationException(
+            $"Elasticsearch server URL not provided. Set {ElasticsearchServerUrlEnvironmentVariable} or pass serverUrl.");
+    }
+
+    private static List<Dictionary<string, object?>> BuildSearchResults(IReadOnlyCollection<dynamic>? documents)
+    {
+        var results = new List<Dictionary<string, object?>>();
+
+        if (documents is null || documents.Count == 0)
+        {
+            return results;
+        }
+
+        foreach (var document in documents)
+        {
+            if (document is System.Collections.Generic.IDictionary<string, object> sourceDict)
+            {
+                results.Add(BuildResultFromSource(sourceDict, results.Count));
+            }
+        }
+
+        return results;
+    }
+
+    private static Dictionary<string, object?> BuildResultFromSource(
+        System.Collections.Generic.IDictionary<string, object> sourceDict,
+        int resultIndex)
+    {
+        var result = new Dictionary<string, object?>
+        {
+            ["id"] = Guid.NewGuid().ToString()
+        };
+
+        if (sourceDict.TryGetValue("text", out var text))
+        {
+            result["text"] = text;
+        }
+
+        if (sourceDict.TryGetValue("start_index", out var startIndex))
+        {
+            result["start_index"] = startIndex;
+        }
+
+        if (sourceDict.TryGetValue("end_index", out var endIndex))
+        {
+            result["end_index"] = endIndex;
+        }
+
+        if (sourceDict.TryGetValue("token_count", out var tokenCount))
+        {
+            result["token_count"] = tokenCount;
+        }
+
+        result["similarity"] = 1.0 / (1.0 + resultIndex);
+
+        return result;
+    }
 }
 

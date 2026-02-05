@@ -46,7 +46,8 @@ public class MilvusHandshakeIntegrationTests
             // Assert
             result.ShouldNotBeNull();
             dynamic resultObj = result;
-            ((int)resultObj.Count).ShouldBe(2);
+            var count = Convert.ToInt32(resultObj.Count);
+            count.ShouldBe(2);
         }
         finally
         {
@@ -98,7 +99,8 @@ public class MilvusHandshakeIntegrationTests
                 result.ShouldContainKey("id");
                 result.ShouldContainKey("text");
                 result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
+                var similarity = Convert.ToDouble(result["similarity"]);
+                similarity.ShouldBeGreaterThanOrEqualTo(0);
             }
         }
         finally

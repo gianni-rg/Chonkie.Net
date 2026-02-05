@@ -24,15 +24,6 @@ public class WeaviateHandshakeTests
         _mockEmbeddings.Name.Returns("test-embeddings");
     }
 
-    // Helper method to create a mock WeaviateClient (note: cannot actually be mocked for calls)
-    private static WeaviateClient CreateMockClient()
-    {
-        // We cannot mock WeaviateClient as it's a concrete class without parameterless constructor.
-        // For constructor tests, we'll pass null and test the validation catches it.
-        // For property tests, we can't instantiate, so we'll focus on static method validation.
-        return null!;
-    }
-
     [Fact]
     public void Constructor_WithNullClient_ThrowsArgumentNullException()
     {

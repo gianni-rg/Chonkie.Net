@@ -171,6 +171,7 @@ public class GeminiGenieTests
     {
         // Arrange
         var genie = new GeminiGenie("test-api-key", "gemini-1.5-pro");
+        var sample = new TestData();
 
         // Act
         var result = genie.ToString();
@@ -178,11 +179,20 @@ public class GeminiGenieTests
         // Assert
         result.ShouldContain("GeminiGenie");
         result.ShouldContain("gemini-1.5-pro");
+        sample.ToString().ShouldContain("sample");
     }
 
     private class TestData
     {
-        public string? Name { get; set; }
-        public int Value { get; set; }
+        public string? Name { get; }
+        public int Value { get; }
+
+        public TestData(string? name = "sample", int value = 1)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public override string ToString() => $"{Name}:{Value}";
     }
 }

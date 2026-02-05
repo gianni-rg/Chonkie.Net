@@ -1,6 +1,3 @@
-using Chonkie.Core.Types;
-using Chonkie.Embeddings;
-using Chonkie.Handshakes;
 using NSubstitute;
 using Shouldly;
 using Xunit;

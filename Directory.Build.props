@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Gianni Rosa Gallina</Authors>
     <Company>Gianni Rosa Gallina</Company>
-    <Copyright>Copyright © 2025 Gianni Rosa Gallina</Copyright>
+    <Copyright>Copyright © 2025-2026 Gianni Rosa Gallina</Copyright>
     <PackageProjectUrl>https://github.com/gianni-rg/Chonkie.Net</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/gianni-rg/Chonkie.Net</RepositoryUrl>
@@ -21,6 +21,11 @@
   <PropertyGroup>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Tests'))">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591;xUnit3003;xUnit1051</NoWarn>
   </PropertyGroup>
 
 </Project>

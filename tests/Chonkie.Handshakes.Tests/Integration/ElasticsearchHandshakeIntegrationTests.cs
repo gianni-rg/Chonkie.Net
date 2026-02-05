@@ -46,8 +46,9 @@ public class ElasticsearchHandshakeIntegrationTests
             // Assert
             result.ShouldNotBeNull();
             dynamic resultObj = result;
-            ((bool)resultObj.Success).ShouldBeTrue();
-            ((int)resultObj.Count).ShouldBe(2);
+            Convert.ToBoolean(resultObj.Success).ShouldBeTrue();
+            var count = Convert.ToInt32(resultObj.Count);
+            count.ShouldBe(2);
         }
         finally
         {
@@ -99,7 +100,8 @@ public class ElasticsearchHandshakeIntegrationTests
                 result.ShouldContainKey("id");
                 result.ShouldContainKey("text");
                 result.ShouldContainKey("similarity");
-                ((double)result["similarity"]).ShouldBeGreaterThanOrEqualTo(0);
+                var similarity = Convert.ToDouble(result["similarity"]);
+                similarity.ShouldBeGreaterThanOrEqualTo(0);
             }
         }
         finally
