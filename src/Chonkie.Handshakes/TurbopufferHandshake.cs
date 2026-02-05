@@ -179,6 +179,169 @@ public class TurbopufferHandshake : BaseHandshake
     }
 
     /// <summary>
+    /// Searches the Turbopuffer namespace for chunks similar to the query.
+    /// </summary>
+    /// <param name="query">The query string to search for.</param>
+    /// <param name="limit">The maximum number of results to return. Defaults to 5.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
+        string query,
+        int limit = 5,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        Logger.LogDebug("Searching Turbopuffer namespace: {Namespace} with limit={Limit}", _namespace, limit);
+
+        try
+        {
+            // Get the embedding for the query
+            var queryEmbedding = await _embeddingModel.EmbedAsync(query, cancellationToken);
+
+            // Prepare the query request in Turbopuffer format
+            var queryRequest = new
+            {
+                rank_by = new object[]
+                {
+                    "vector",
+                    "ANN",
+                    queryEmbedding.ToList()
+                },
+                top_k = limit,
+                include_attributes = new[] { "text", "start_index", "end_index", "token_count" }
+            };
+
+            var json = JsonSerializer.Serialize(queryRequest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var url = $"{DefaultApiUrl}/namespaces/{Uri.EscapeDataString(_namespace)}/vectors/query";
+            var response = await _httpClient.PostAsync(url, content, cancellationToken);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new InvalidOperationException(
+                    $"Turbopuffer API returned status {response.StatusCode}: {errorContent}");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var jsonDoc = JsonDocument.Parse(responseContent);
+            var root = jsonDoc.RootElement;
+
+            var results = new List<Dictionary<string, object?>>();
+
+            // Parse Turbopuffer response format
+            if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var result in resultsElement.EnumerateArray())
+                {
+                    var resultDict = new Dictionary<string, object?>();
+
+                    // Extract id
+                    if (result.TryGetProperty("id", out var idElement))
+                    {
+                        resultDict["id"] = idElement.GetString();
+                    }
+
+                    // Convert distance to similarity: 1.0 - distance
+                    if (result.TryGetProperty("$dist", out var distElement))
+                    {
+                        double distance = distElement.GetDouble();
+                        resultDict["similarity"] = 1.0 - distance;
+                        resultDict["distance"] = distance;
+                    }
+
+                    // Extract attributes
+                    if (result.TryGetProperty("text", out var textElement))
+                    {
+                        resultDict["text"] = textElement.GetString();
+                    }
+
+                    if (result.TryGetProperty("start_index", out var startElement))
+                    {
+                        resultDict["start_index"] = startElement.GetInt32();
+                    }
+
+                    if (result.TryGetProperty("end_index", out var endElement))
+                    {
+                        resultDict["end_index"] = endElement.GetInt32();
+                    }
+
+                    if (result.TryGetProperty("token_count", out var tokenElement))
+                    {
+                        resultDict["token_count"] = tokenElement.GetInt32();
+                    }
+
+                    results.Add(resultDict);
+                }
+            }
+            // Alternative response format with rows array
+            else if (root.TryGetProperty("rows", out var rowsElement) && rowsElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var row in rowsElement.EnumerateArray())
+                {
+                    var resultDict = new Dictionary<string, object?>();
+
+                    // Extract id
+                    if (row.TryGetProperty("id", out var idElement))
+                    {
+                        resultDict["id"] = idElement.GetString();
+                    }
+
+                    // Convert distance to similarity
+                    if (row.TryGetProperty("$dist", out var distElement))
+                    {
+                        double distance = distElement.GetDouble();
+                        resultDict["similarity"] = 1.0 - distance;
+                        resultDict["distance"] = distance;
+                    }
+
+                    // Extract all other attributes
+                    foreach (var prop in row.EnumerateObject())
+                    {
+                        if (prop.Name is not "id" and not "$dist")
+                        {
+                            if (prop.Value.ValueKind == JsonValueKind.Number)
+                            {
+                                resultDict[prop.Name] = prop.Value.GetInt32();
+                            }
+                            else if (prop.Value.ValueKind == JsonValueKind.String)
+                            {
+                                resultDict[prop.Name] = prop.Value.GetString();
+                            }
+                            else
+                            {
+                                resultDict[prop.Name] = prop.Value.GetRawText();
+                            }
+                        }
+                    }
+
+                    results.Add(resultDict);
+                }
+            }
+
+            Logger.LogInformation("Found {ResultCount} similar chunks in Turbopuffer namespace", results.Count);
+            return results.AsReadOnly();
+        }
+        catch (JsonException ex)
+        {
+            Logger.LogError(ex, "Failed to parse Turbopuffer search response");
+            throw new InvalidOperationException(
+                $"Failed to parse search response from Turbopuffer for namespace '{_namespace}'",
+                ex);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to search Turbopuffer namespace");
+            throw new InvalidOperationException(
+                $"Failed to search namespace '{_namespace}' in Turbopuffer",
+                ex);
+        }
+    }
+
+    /// <summary>
     /// Generates a random namespace name for Turbopuffer.
     /// </summary>
     private string GenerateRandomNamespace() =>
