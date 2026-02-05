@@ -177,7 +177,7 @@ Try to respect the following structure as a guideline:
 
 ### Unit Test Best Practices
 
-- **Test framework**: Use xUnit (preferred) or check what test framework is used by the project (do not introduce new frameworks).
+- **Test framework**: Use xUnit v3 (preferred) or check what test framework is used by the project (do not introduce new frameworks).
 - **Naming**: `MethodName_Scenario_ExpectedBehavior` (e.g., `Add_SingleNumber_ReturnsSameNumber`)
 - **Organization**: Separate test projects per application/library project; use folders to mirror namespace structure
 - Place test projects in a dedicated `tests/` folder from the root of the repository.
@@ -192,7 +192,7 @@ Try to respect the following structure as a guideline:
 - Use test fixtures for shared setup/teardown logic
 - Ensure tests are independent and can run in any order
 - **Integration Tests**: if tests require specific environment variables, infrastructure or configurations, document them clearly in the technical documentation. Consider them integration tests instead of unit tests.
-  - Adopt [SkippableFacts](https://github.com/AArnott/Xunit.SkippableFact) for handling dynamically running tests to verify conditions (and skip those that cannot run in certain environments and/or if runtime conditions are not fulfilled).
+  - Use Assert.Skip to handle dynamically running tests, verify conditions, and skip those that cannot run in certain environments and/or if runtime conditions are not fulfilled.
 
 ### Testing Guidelines
 
