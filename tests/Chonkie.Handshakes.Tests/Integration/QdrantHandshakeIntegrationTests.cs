@@ -16,7 +16,7 @@ public class QdrantHandshakeIntegrationTests
     private const string QdrantUrl = "http://localhost:6333";
     private const string CollectionName = "chonkie-integration-test";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealQdrantAndOpenAI_WritesSuccessfully()
     {
         // Skip if Qdrant is not available or API key is missing
@@ -59,7 +59,7 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealQdrantAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Qdrant is not available
@@ -103,7 +103,7 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealQdrantAndOpenAI_FindsSimilarChunks()
     {
         // Skip if prerequisites not met
@@ -152,7 +152,7 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollection()
     {
         // Skip if Qdrant is not available

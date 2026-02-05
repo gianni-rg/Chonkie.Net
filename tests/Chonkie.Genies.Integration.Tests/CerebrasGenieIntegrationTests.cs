@@ -7,7 +7,7 @@ public class CerebrasGenieIntegrationTests
 {
     private static string? GetApiKey() => Environment.GetEnvironmentVariable("CEREBRAS_API_KEY");
 
-    
+    [Fact]
     public async Task GenerateAsync_WithValidPrompt_ShouldReturnResponse()
     {
         // Arrange
@@ -26,7 +26,7 @@ public class CerebrasGenieIntegrationTests
         response.ShouldContain("Chonkie", Case.Insensitive);
     }
 
-    
+    [Fact]
     public async Task GenerateJsonAsync_WithValidPrompt_ShouldReturnStructuredData()
     {
         // Arrange
@@ -46,7 +46,7 @@ public class CerebrasGenieIntegrationTests
         response.Age.ShouldBeGreaterThan(0);
     }
 
-    
+    [Fact]
     public async Task GenerateAsync_WithLongPrompt_ShouldHandleSuccessfully()
     {
         // Arrange
@@ -65,7 +65,7 @@ public class CerebrasGenieIntegrationTests
         response.Length.ShouldBeGreaterThan(50);
     }
 
-    
+    [Fact]
     public async Task GenerateJsonAsync_WithComplexObject_ShouldDeserializeCorrectly()
     {
         // Arrange
@@ -88,7 +88,7 @@ public class CerebrasGenieIntegrationTests
         response.Features.Count.ShouldBeGreaterThan(0);
     }
 
-    
+    [Fact]
     public async Task FromEnvironment_WithValidKey_ShouldWork()
     {
         // Arrange
@@ -106,7 +106,7 @@ public class CerebrasGenieIntegrationTests
         response.ShouldNotBeNullOrWhiteSpace();
     }
 
-    
+    [Fact]
     public async Task GenerateAsync_WithCustomModel_ShouldWork()
     {
         // Arrange

@@ -18,7 +18,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests embedding with real model returns a valid embedding.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_WithRealModel_ReturnsValidEmbedding()
     {
         // Arrange
@@ -41,7 +41,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests batch embedding with multiple texts returns valid embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
     {
         // Arrange
@@ -68,7 +68,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that similar texts produce similar embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
     {
         // Arrange
@@ -97,7 +97,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests embedding with empty string returns a valid embedding.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
     {
         // Arrange
@@ -118,7 +118,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that disposing releases resources without throwing exceptions.
     /// </summary>
-    
+    [Fact]
     public void Dispose_ReleasesResources_NoExceptionThrown()
     {
         // Arrange
@@ -138,7 +138,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that large batch embedding handles chunking properly.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
     {
         // Arrange
@@ -170,7 +170,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests Dimension property returns positive value.
     /// </summary>
-    
+    [Fact]
     public void Dimension_ReturnsPositiveValue()
     {
         // Arrange
@@ -191,7 +191,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests MaxSequenceLength property returns positive value.
     /// </summary>
-    
+    [Fact]
     public void MaxSequenceLength_ReturnsPositiveValue()
     {
         // Arrange
@@ -210,7 +210,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests CountTokens returns expected token count.
     /// </summary>
-    
+    [Fact]
     public void CountTokens_ReturnsExpectedCount()
     {
         // Arrange
@@ -234,7 +234,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests CountTokens with empty string returns zero or minimal count.
     /// </summary>
-    
+    [Fact]
     public void CountTokens_EmptyString_ReturnsMinimalCount()
     {
         // Arrange
@@ -256,7 +256,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests CountTokensBatch returns expected token counts for multiple texts.
     /// </summary>
-    
+    [Fact]
     public void CountTokensBatch_ReturnsExpectedCounts()
     {
         // Arrange
@@ -285,7 +285,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests CountTokensBatch with empty list returns empty list.
     /// </summary>
-    
+    [Fact]
     public void CountTokensBatch_EmptyList_ReturnsEmptyList()
     {
         // Arrange
@@ -309,7 +309,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests ToString returns formatted string.
     /// </summary>
-    
+    [Fact]
     public void ToString_ReturnsFormattedString()
     {
         // Arrange
@@ -334,7 +334,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests Name property returns expected value.
     /// </summary>
-    
+    [Fact]
     public void Name_ReturnsExpectedValue()
     {
         // Arrange
@@ -353,7 +353,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests embedding normalization when enabled.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_WithNormalization_ProducesUnitVectors()
     {
         // Arrange
@@ -377,7 +377,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests batch embedding produces consistent results with single embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_ProducesConsistentResults()
     {
         // Arrange
@@ -411,7 +411,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that embeddings have the correct dimension.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_ReturnedEmbeddingHasCorrectDimension()
     {
         // Arrange
@@ -434,7 +434,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests batch embeddings all have the correct dimension.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_AllEmbeddingsHaveCorrectDimension()
     {
         // Arrange
@@ -458,7 +458,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that identical texts produce identical embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_IdenticalTexts_ProduceIdenticalEmbeddings()
     {
         // Arrange
@@ -483,7 +483,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests similarity method produces values in valid range.
     /// </summary>
-    
+    [Fact]
     public async Task Similarity_ProducesValidRange()
     {
         // Arrange
@@ -509,7 +509,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that long text is handled correctly.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_LongText_HandlesCorrectly()
     {
         // Arrange
@@ -535,7 +535,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
     /// <summary>
     /// Tests CountTokens with various text lengths.
     /// </summary>
-    
+    [Fact]
     public void CountTokens_VariousLengths_ReturnsAppropriateCount()
     {
         // Arrange

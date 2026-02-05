@@ -15,7 +15,7 @@ public class ChromaHandshakeIntegrationTests
     private const string ChromaUrl = "http://localhost:8000";
     private const string CollectionName = "chonkie-integration-test";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealChromaAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Chroma is not available
@@ -60,7 +60,7 @@ public class ChromaHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealChroma_FindsSimilarChunks()
     {
         // Skip if Chroma is not available
@@ -117,7 +117,7 @@ public class ChromaHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollections()
     {
         // Skip if Chroma is not available

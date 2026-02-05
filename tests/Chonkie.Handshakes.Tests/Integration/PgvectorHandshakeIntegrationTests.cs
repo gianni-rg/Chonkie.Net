@@ -15,7 +15,7 @@ public class PgvectorHandshakeIntegrationTests
     private const string DefaultConnectionString = "Host=localhost;Port=5432;Database=chonkie_test;Username=postgres;Password=postgres";
     private const string TableName = "chunks_integration_test";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealPostgresAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if PostgreSQL is not available or pgvector extension is not installed
@@ -61,7 +61,7 @@ public class PgvectorHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealPostgres_FindsSimilarChunks()
     {
         // Skip if PostgreSQL is not available
@@ -120,7 +120,7 @@ public class PgvectorHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomTableName_CreatesUniqueTables()
     {
         // Skip if PostgreSQL is not available

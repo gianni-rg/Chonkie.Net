@@ -15,7 +15,7 @@ public class WeaviateHandshakeIntegrationTests
     private const string WeaviateUrl = "http://localhost:8080";
     private const string ClassName = "ChonkieIntegrationTest";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealWeaviateAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Weaviate is not available
@@ -60,7 +60,7 @@ public class WeaviateHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealWeaviate_FindsSimilarChunks()
     {
         // Skip if Weaviate is not available
@@ -124,7 +124,7 @@ public class WeaviateHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomClassName_CreatesUniqueClasses()
     {
         // Skip if Weaviate is not available

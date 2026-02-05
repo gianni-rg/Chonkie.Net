@@ -18,7 +18,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     /// <summary>
     /// Tests embedding with real API returns a valid embedding.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_WithRealAPI_ReturnsValidEmbedding()
     {
         // Arrange
@@ -41,7 +41,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     /// <summary>
     /// Tests batch embedding with multiple texts returns valid embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_WithMultipleTexts_ReturnsValidEmbeddings()
     {
         // Arrange
@@ -68,7 +68,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that similar texts produce similar embeddings.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_SimilarTexts_ProduceSimilarEmbeddings()
     {
         // Arrange
@@ -98,7 +98,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     /// <summary>
     /// Tests embedding with empty string returns a valid embedding.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedAsync_EmptyString_ReturnsValidEmbedding()
     {
         // Arrange
@@ -119,7 +119,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
     /// <summary>
     /// Tests that large batch embedding handles chunking properly.
     /// </summary>
-    
+    [Fact]
     public async Task EmbedBatchAsync_LargeBatch_HandlesChunking()
     {
         // Arrange

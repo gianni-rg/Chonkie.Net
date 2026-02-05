@@ -12,7 +12,7 @@ namespace Chonkie.Handshakes.Tests.Integration;
 /// </summary>
 public class TurbopufferHandshakeIntegrationTests
 {
-    
+    [Fact]
     public async Task WriteAsync_WithRealTurbopufferAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if API key is missing
@@ -56,7 +56,7 @@ public class TurbopufferHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealTurbopuffer_FindsSimilarChunks()
     {
         // Skip if API key is missing
@@ -112,7 +112,7 @@ public class TurbopufferHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomNamespace_CreatesUniqueNamespaces()
     {
         // Skip if API key is missing

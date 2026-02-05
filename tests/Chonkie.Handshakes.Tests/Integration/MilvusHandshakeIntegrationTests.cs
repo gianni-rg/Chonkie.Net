@@ -14,7 +14,7 @@ public class MilvusHandshakeIntegrationTests
 {
     private const string MilvusUrl = "http://localhost:19530";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealMilvusAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Milvus is not available
@@ -58,7 +58,7 @@ public class MilvusHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealMilvus_FindsSimilarChunks()
     {
         // Skip if Milvus is not available
@@ -114,7 +114,7 @@ public class MilvusHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollections()
     {
         // Skip if Milvus is not available

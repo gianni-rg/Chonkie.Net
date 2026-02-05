@@ -16,7 +16,7 @@ public class PineconeHandshakeIntegrationTests
 {
     private const string IndexName = "chonkie-integration-test";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealPineconeAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if API key is missing
@@ -60,7 +60,7 @@ public class PineconeHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealPinecone_FindsSimilarChunks()
     {
         // Skip if API key is missing
@@ -125,7 +125,7 @@ public class PineconeHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomNamespace_CreatesUniqueNamespaces()
     {
         // Skip if API key is missing

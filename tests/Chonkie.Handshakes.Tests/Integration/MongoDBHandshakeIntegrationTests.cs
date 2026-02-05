@@ -12,7 +12,7 @@ namespace Chonkie.Handshakes.Tests.Integration;
 /// </summary>
 public class MongoDBHandshakeIntegrationTests
 {
-    
+    [Fact]
     public async Task WriteAsync_WithRealMongoDBAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if MongoDB is not available
@@ -56,7 +56,7 @@ public class MongoDBHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealMongoDB_FindsSimilarChunks()
     {
         // Skip if MongoDB is not available
@@ -113,7 +113,7 @@ public class MongoDBHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomDatabaseName_CreatesUniqueDatabases()
     {
         // Skip if MongoDB is not available

@@ -7,7 +7,7 @@ public class GroqGenieIntegrationTests
 {
     private static string? GetApiKey() => Environment.GetEnvironmentVariable("GROQ_API_KEY");
 
-    
+    [Fact]
     public async Task GenerateAsync_WithValidPrompt_ShouldReturnResponse()
     {
         // Arrange
@@ -26,7 +26,7 @@ public class GroqGenieIntegrationTests
         response.ShouldContain("Chonkie", Case.Insensitive);
     }
 
-    
+    [Fact]
     public async Task GenerateJsonAsync_WithValidPrompt_ShouldReturnStructuredData()
     {
         // Arrange
@@ -46,7 +46,7 @@ public class GroqGenieIntegrationTests
         response.Age.ShouldBeGreaterThan(0);
     }
 
-    
+    [Fact]
     public async Task GenerateAsync_WithLongPrompt_ShouldHandleSuccessfully()
     {
         // Arrange
@@ -65,7 +65,7 @@ public class GroqGenieIntegrationTests
         response.Length.ShouldBeGreaterThan(50);
     }
 
-    
+    [Fact]
     public async Task GenerateJsonAsync_WithComplexObject_ShouldDeserializeCorrectly()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class GroqGenieIntegrationTests
         response.Genres.Count.ShouldBeGreaterThan(0);
     }
 
-    
+    [Fact]
     public async Task FromEnvironment_WithValidKey_ShouldWork()
     {
         // Arrange
@@ -107,7 +107,7 @@ public class GroqGenieIntegrationTests
         response.ShouldNotBeNullOrWhiteSpace();
     }
 
-    
+    [Fact]
     public async Task GenerateAsync_WithCustomModel_ShouldWork()
     {
         // Arrange

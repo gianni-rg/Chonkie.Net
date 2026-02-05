@@ -14,7 +14,7 @@ public class ElasticsearchHandshakeIntegrationTests
 {
     private const string ElasticsearchUrl = "http://localhost:9200";
 
-    
+    [Fact]
     public async Task WriteAsync_WithRealElasticsearchAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Elasticsearch is not available
@@ -59,7 +59,7 @@ public class ElasticsearchHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task SearchAsync_WithRealElasticsearch_FindsSimilarChunks()
     {
         // Skip if Elasticsearch is not available
@@ -115,7 +115,7 @@ public class ElasticsearchHandshakeIntegrationTests
         }
     }
 
-    
+    [Fact]
     public async Task WriteAsync_WithRandomIndexName_CreatesUniqueIndices()
     {
         // Skip if Elasticsearch is not available
