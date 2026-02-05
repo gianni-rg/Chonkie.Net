@@ -316,4 +316,5 @@ public static class HandshakeServiceExtensions
         });
 
         return services;
-    }}
+    }
+}

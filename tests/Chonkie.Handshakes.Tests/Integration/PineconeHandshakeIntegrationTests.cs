@@ -93,7 +93,7 @@ public class PineconeHandshakeIntegrationTests
             results.ShouldNotBeNull();
             results.Count.ShouldBeGreaterThan(0);
             results.Count.ShouldBeLessThanOrEqualTo(5);
-            
+
             // Check result structure
             foreach (var result in results)
             {
@@ -134,7 +134,7 @@ public class PineconeHandshakeIntegrationTests
             apiKey: apiKey,
             indexName: IndexName,
             embeddingModel: embeddings,
-            @namespace: "random"  
+            @namespace: "random"
         );
 
         var chunks = new[] { new Chunk { Text = "Test", StartIndex = 0, EndIndex = 4, TokenCount = 1 } };
@@ -147,7 +147,7 @@ public class PineconeHandshakeIntegrationTests
 
             result1.ShouldNotBeNull();
             result2.ShouldNotBeNull();
-            
+
             // Namespace names should be different
             handshake1.ToString().ShouldNotBe(handshake2.ToString());
         }

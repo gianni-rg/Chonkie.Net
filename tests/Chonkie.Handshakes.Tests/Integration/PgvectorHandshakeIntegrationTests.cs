@@ -94,7 +94,7 @@ public class PgvectorHandshakeIntegrationTests
             results.ShouldNotBeNull();
             results.Count.ShouldBeGreaterThan(0);
             results.Count.ShouldBeLessThanOrEqualTo(5);
-            
+
             // Check result structure
             foreach (var result in results)
             {
@@ -147,7 +147,7 @@ public class PgvectorHandshakeIntegrationTests
 
             result1.ShouldNotBeNull();
             result2.ShouldNotBeNull();
-            
+
             // Table names should be different
             handshake1.ToString().ShouldNotBe(handshake2.ToString());
         }
@@ -166,12 +166,12 @@ public class PgvectorHandshakeIntegrationTests
         {
             using var connection = new Npgsql.NpgsqlConnection(DefaultConnectionString);
             await connection.OpenAsync();
-            
+
             // Check if pgvector extension is available
             using var cmd = connection.CreateCommand();
             cmd.CommandText = "SELECT 1 FROM pg_extension WHERE extname = 'vector'";
             var result = await cmd.ExecuteScalarAsync();
-            
+
             return result != null;
         }
         catch
@@ -189,7 +189,7 @@ public class PgvectorHandshakeIntegrationTests
         {
             using var connection = new Npgsql.NpgsqlConnection(DefaultConnectionString);
             await connection.OpenAsync();
-            
+
             using var cmd = connection.CreateCommand();
             cmd.CommandText = $"DROP TABLE IF EXISTS {TableName}";
             await cmd.ExecuteNonQueryAsync();

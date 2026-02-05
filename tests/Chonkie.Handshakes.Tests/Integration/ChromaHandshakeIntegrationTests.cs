@@ -93,7 +93,7 @@ public class ChromaHandshakeIntegrationTests
             // Assert
             results.ShouldNotBeNull();
             results.Count.ShouldBeLessThanOrEqualTo(5);
-            
+
             // Check result structure
             foreach (var result in results)
             {
@@ -146,7 +146,7 @@ public class ChromaHandshakeIntegrationTests
 
             result1.ShouldNotBeNull();
             result2.ShouldNotBeNull();
-            
+
             // Collection names should be different
             handshake1.ToString().ShouldNotBe(handshake2.ToString());
         }

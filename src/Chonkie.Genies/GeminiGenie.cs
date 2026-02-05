@@ -106,7 +106,7 @@ public class GeminiGenie : BaseGenie
             CancellationToken cancellationToken = default)
         {
             var endpoint = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:generateContent?key={_apiKey}";
-            
+
             // Build Gemini request format
             var messageList = chatMessages.ToList();
             var parts = messageList.Select(m => new { text = m.Text }).ToArray();
@@ -120,7 +120,7 @@ public class GeminiGenie : BaseGenie
 
             var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
             using var doc = JsonDocument.Parse(responseJson);
-            
+
             var text = doc.RootElement
                 .GetProperty("candidates")[0]
                 .GetProperty("content")

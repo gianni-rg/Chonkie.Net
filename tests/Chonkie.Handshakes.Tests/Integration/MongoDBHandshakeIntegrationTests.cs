@@ -90,7 +90,7 @@ public class MongoDBHandshakeIntegrationTests
             results.ShouldNotBeNull();
             results.Count.ShouldBeGreaterThan(0);
             results.Count.ShouldBeLessThanOrEqualTo(5);
-            
+
             // Check result structure
             foreach (var result in results)
             {
@@ -144,7 +144,7 @@ public class MongoDBHandshakeIntegrationTests
 
             result1.ShouldNotBeNull();
             result2.ShouldNotBeNull();
-            
+
             // Database names should be different
             handshake1.ToString().ShouldNotBe(handshake2.ToString());
         }

@@ -56,7 +56,7 @@ public class EmbeddingRateLimitException : EmbeddingException
     /// <param name="message">The error message.</param>
     /// <param name="innerException">The inner exception.</param>
     /// <param name="retryAfterSeconds">Optional retry-after time in seconds.</param>
-    public EmbeddingRateLimitException(string message, Exception innerException, int? retryAfterSeconds = null) 
+    public EmbeddingRateLimitException(string message, Exception innerException, int? retryAfterSeconds = null)
         : base(message, innerException)
     {
         RetryAfterSeconds = retryAfterSeconds;
@@ -156,7 +156,7 @@ public class EmbeddingInvalidResponseException : EmbeddingException
     /// <param name="message">The error message.</param>
     /// <param name="innerException">The inner exception.</param>
     /// <param name="statusCode">Optional HTTP status code.</param>
-    public EmbeddingInvalidResponseException(string message, Exception innerException, int? statusCode = null) 
+    public EmbeddingInvalidResponseException(string message, Exception innerException, int? statusCode = null)
         : base(message, innerException)
     {
         StatusCode = statusCode;

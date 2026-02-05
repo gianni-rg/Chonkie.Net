@@ -269,13 +269,13 @@ public class PineconeHandshakeTests
         var resultType = result.GetType();
         var countProperty = resultType.GetProperty("Count");
         var successProperty = resultType.GetProperty("Success");
-        
+
         countProperty.ShouldNotBeNull();
         successProperty.ShouldNotBeNull();
-        
+
         var countValue = (int?)countProperty.GetValue(result);
         var successValue = (bool?)successProperty.GetValue(result);
-        
+
         countValue.ShouldBe(0);
         successValue.ShouldBe(true);
     }

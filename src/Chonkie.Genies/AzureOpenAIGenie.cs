@@ -47,10 +47,10 @@ public class AzureOpenAIGenie : BaseGenie
     {
         if (string.IsNullOrWhiteSpace(endpoint))
             throw new ArgumentException("Endpoint cannot be empty or whitespace.", nameof(endpoint));
-        
+
         if (string.IsNullOrWhiteSpace(apiKey))
             throw new ArgumentException("API key cannot be empty or whitespace.", nameof(apiKey));
-        
+
         if (string.IsNullOrWhiteSpace(deploymentName))
             throw new ArgumentException("Deployment name cannot be empty or whitespace.", nameof(deploymentName));
     }
@@ -60,7 +60,7 @@ public class AzureOpenAIGenie : BaseGenie
         var azureClient = new AzureOpenAIClient(
             new Uri(endpoint),
             new Azure.AzureKeyCredential(apiKey));
-        
+
         return azureClient.GetChatClient(deploymentName).AsIChatClient();
     }
 
