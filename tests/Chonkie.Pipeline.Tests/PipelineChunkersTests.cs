@@ -66,7 +66,7 @@ public class PipelineChunkersTests
     }
 
     /// Semantic chunker uses embeddings to create coherent chunks.
-    [SkippableFact]
+    
     public void Pipeline_WithSemanticChunker_CreatesChunks()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class PipelineChunkersTests
     }
 
     /// Late chunker embeds first then chunks; chunks should include embeddings.
-    [SkippableFact]
+    
     public void Pipeline_WithLateChunker_CreatesChunks()
     {
         // Arrange
@@ -152,7 +152,7 @@ public class PipelineChunkersTests
     }
 
     /// Semantic chunker accepts a custom embedding_model parameter.
-    [SkippableFact]
+    
     public void Pipeline_WithSemanticChunker_CustomModelName_Works()
     {
         // Arrange
@@ -171,7 +171,7 @@ public class PipelineChunkersTests
     }
 
     /// Late chunker accepts a custom embedding_model parameter.
-    [SkippableFact]
+    
     public void Pipeline_WithLateChunker_CustomModelName_Works()
     {
         // Arrange

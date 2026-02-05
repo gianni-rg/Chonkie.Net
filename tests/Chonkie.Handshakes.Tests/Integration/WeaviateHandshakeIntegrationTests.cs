@@ -15,16 +15,18 @@ public class WeaviateHandshakeIntegrationTests
     private const string WeaviateUrl = "http://localhost:8080";
     private const string ClassName = "ChonkieIntegrationTest";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealWeaviateAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Weaviate is not available
         var isWeaviateAvailable = await IsWeaviateAvailableAsync();
-        Skip.If(!isWeaviateAvailable, "Weaviate server not available at " + WeaviateUrl);
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -58,16 +60,18 @@ public class WeaviateHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealWeaviate_FindsSimilarChunks()
     {
         // Skip if Weaviate is not available
         var isWeaviateAvailable = await IsWeaviateAvailableAsync();
-        Skip.If(!isWeaviateAvailable, "Weaviate server not available at " + WeaviateUrl);
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -120,16 +124,18 @@ public class WeaviateHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomClassName_CreatesUniqueClasses()
     {
         // Skip if Weaviate is not available
         var isWeaviateAvailable = await IsWeaviateAvailableAsync();
-        Skip.If(!isWeaviateAvailable, "Weaviate server not available at " + WeaviateUrl);
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

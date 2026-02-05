@@ -31,8 +31,4 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Shared\XunitSkippable.cs" Link="Shared\XunitSkippable.cs" />
-  </ItemGroup>
-
 </Project>

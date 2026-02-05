@@ -135,7 +135,7 @@ namespace Chonkie.Embeddings.Tests
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")) ||
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")))
             {
-                return; // Skip test
+                Assert.Skip("Azure OpenAI credentials not configured");
             }
 
             // Act
@@ -211,7 +211,7 @@ namespace Chonkie.Embeddings.Tests
             // Skip if model path is not set
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH")))
             {
-                return; // Skip test - model file not available
+                Assert.Skip("Sentence Transformers model path not configured");
             }
 
             // Act

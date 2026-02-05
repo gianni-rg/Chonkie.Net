@@ -16,16 +16,18 @@ public class PineconeHandshakeIntegrationTests
 {
     private const string IndexName = "chonkie-integration-test";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealPineconeAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "PINECONE_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("PINECONE_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -54,20 +56,22 @@ public class PineconeHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("index") || ex.Message.Contains("404"))
         {
             // Skip if index doesn't exist
-            Skip.If(true, "Pinecone index not available or not properly configured");
+            Assert.Skip("Pinecone index not available or not properly configured");
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealPinecone_FindsSimilarChunks()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "PINECONE_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("PINECONE_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -117,20 +121,22 @@ public class PineconeHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("index") || ex.Message.Contains("404"))
         {
             // Skip if index doesn't exist
-            Skip.If(true, "Pinecone index not available or not properly configured");
+            Assert.Skip("Pinecone index not available or not properly configured");
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomNamespace_CreatesUniqueNamespaces()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "PINECONE_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("PINECONE_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -165,7 +171,7 @@ public class PineconeHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("index") || ex.Message.Contains("404"))
         {
             // Skip if index doesn't exist
-            Skip.If(true, "Pinecone index not available or not properly configured");
+            Assert.Skip("Pinecone index not available or not properly configured");
         }
     }
 }

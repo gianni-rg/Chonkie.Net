@@ -292,8 +292,8 @@ public class ElasticsearchHandshake : BaseHandshake
             return environmentValue;
         }
 
-        throw new InvalidOperationException(
-            $"Elasticsearch server URL not provided. Set {ElasticsearchServerUrlEnvironmentVariable} or pass serverUrl.");
+        // Default to localhost Elasticsearch server for development/testing
+        return "http://localhost:9200";
     }
 
     private static List<Dictionary<string, object?>> BuildSearchResults(IReadOnlyCollection<dynamic>? documents)

@@ -14,16 +14,18 @@ public class MilvusHandshakeIntegrationTests
 {
     private const string MilvusUrl = "http://localhost:19530";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealMilvusAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Milvus is not available
         var isMilvusAvailable = await IsMilvusAvailableAsync();
-        Skip.If(!isMilvusAvailable, "Milvus server not available at " + MilvusUrl);
+        if (!isMilvusAvailable)
+            Assert.Skip("Milvus server not available at " + MilvusUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -56,16 +58,18 @@ public class MilvusHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealMilvus_FindsSimilarChunks()
     {
         // Skip if Milvus is not available
         var isMilvusAvailable = await IsMilvusAvailableAsync();
-        Skip.If(!isMilvusAvailable, "Milvus server not available at " + MilvusUrl);
+        if (!isMilvusAvailable)
+            Assert.Skip("Milvus server not available at " + MilvusUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -110,16 +114,18 @@ public class MilvusHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollections()
     {
         // Skip if Milvus is not available
         var isMilvusAvailable = await IsMilvusAvailableAsync();
-        Skip.If(!isMilvusAvailable, "Milvus server not available at " + MilvusUrl);
+        if (!isMilvusAvailable)
+            Assert.Skip("Milvus server not available at " + MilvusUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

@@ -37,12 +37,9 @@ internal static class TestHelpers
     /// <summary>
     /// Skips the test if the model is not available.
     /// </summary>
-    /// <exception cref="Xunit.SkipException">Thrown if the model is not available.</exception>
     public static void SkipIfModelNotAvailable()
     {
         if (!IsModelAvailable())
-        {
-            throw new Xunit.SkipException("SENTENCE_TRANSFORMERS_MODEL_PATH not set or model.onnx not found. Skipping test that requires ONNX model.");
-        }
+            Assert.Skip("SENTENCE_TRANSFORMERS_MODEL_PATH not set or model.onnx not found. Skipping test that requires ONNX model.");
     }
 }

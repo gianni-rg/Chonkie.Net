@@ -36,7 +36,7 @@ public class AzureOpenAIGenie : BaseGenie
         string? apiVersion = null,
         ILogger<AzureOpenAIGenie>? logger = null)
         : base(
-            CreateChatClient(endpoint, apiKey, deploymentName, apiVersion ?? DefaultApiVersion),
+            ValidateAndCreateChatClient(endpoint, apiKey, deploymentName, apiVersion ?? DefaultApiVersion),
             new GenieOptions
             {
                 ApiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey)),
@@ -45,6 +45,12 @@ public class AzureOpenAIGenie : BaseGenie
             },
             logger)
     {
+    }
+
+    private static IChatClient ValidateAndCreateChatClient(string endpoint, string apiKey, string deploymentName, string apiVersion)
+    {
+        // Validate parameters before attempting to create the client
+        // This ensures ArgumentException is thrown instead of TypeLoadException from SDK initialization
         if (string.IsNullOrWhiteSpace(endpoint))
             throw new ArgumentException("Endpoint cannot be empty or whitespace.", nameof(endpoint));
 
@@ -53,6 +59,8 @@ public class AzureOpenAIGenie : BaseGenie
 
         if (string.IsNullOrWhiteSpace(deploymentName))
             throw new ArgumentException("Deployment name cannot be empty or whitespace.", nameof(deploymentName));
+
+        return CreateChatClient(endpoint, apiKey, deploymentName, apiVersion);
     }
 
     private static IChatClient CreateChatClient(string endpoint, string apiKey, string deploymentName, string apiVersion)

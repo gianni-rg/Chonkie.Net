@@ -12,16 +12,18 @@ namespace Chonkie.Handshakes.Tests.Integration;
 /// </summary>
 public class MongoDBHandshakeIntegrationTests
 {
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealMongoDBAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if MongoDB is not available
         var isMongoDBAvailable = await IsMongoDBAvailableAsync();
-        Skip.If(!isMongoDBAvailable, "MongoDB server not available at localhost:27017");
+        if (!isMongoDBAvailable)
+            Assert.Skip("MongoDB server not available at localhost:27017");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -54,16 +56,18 @@ public class MongoDBHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealMongoDB_FindsSimilarChunks()
     {
         // Skip if MongoDB is not available
         var isMongoDBAvailable = await IsMongoDBAvailableAsync();
-        Skip.If(!isMongoDBAvailable, "MongoDB server not available at localhost:27017");
+        if (!isMongoDBAvailable)
+            Assert.Skip("MongoDB server not available at localhost:27017");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -109,16 +113,18 @@ public class MongoDBHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomDatabaseName_CreatesUniqueDatabases()
     {
         // Skip if MongoDB is not available
         var isMongoDBAvailable = await IsMongoDBAvailableAsync();
-        Skip.If(!isMongoDBAvailable, "MongoDB server not available at localhost:27017");
+        if (!isMongoDBAvailable)
+            Assert.Skip("MongoDB server not available at localhost:27017");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

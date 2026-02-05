@@ -1,4 +1,5 @@
 using System;
+using Xunit;
 
 namespace Chonkie.Embeddings.Integration.Tests;
 
@@ -17,7 +18,7 @@ public static class TestHelpers
         // Treat missing or obviously placeholder/invalid values as "not set" to avoid false failures
         if (string.IsNullOrWhiteSpace(value) || IsObviouslyPlaceholder(value!, variableName))
         {
-            throw new Xunit.SkipException($"Environment variable {variableName} not set or invalid. Skipping integration test.");
+            Assert.Skip($"Environment variable {variableName} not set or invalid. Skipping integration test.");
         }
 
         return value!;

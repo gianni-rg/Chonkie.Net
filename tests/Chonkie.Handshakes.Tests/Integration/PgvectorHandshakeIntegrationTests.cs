@@ -15,16 +15,18 @@ public class PgvectorHandshakeIntegrationTests
     private const string DefaultConnectionString = "Host=localhost;Port=5432;Database=chonkie_test;Username=postgres;Password=postgres";
     private const string TableName = "chunks_integration_test";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealPostgresAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if PostgreSQL is not available or pgvector extension is not installed
         var isPostgresAvailable = await IsPostgresAvailableAsync();
-        Skip.If(!isPostgresAvailable, "PostgreSQL server not available or pgvector extension not installed");
+        if (!isPostgresAvailable)
+            Assert.Skip("PostgreSQL server not available or pgvector extension not installed");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -59,16 +61,18 @@ public class PgvectorHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealPostgres_FindsSimilarChunks()
     {
         // Skip if PostgreSQL is not available
         var isPostgresAvailable = await IsPostgresAvailableAsync();
-        Skip.If(!isPostgresAvailable, "PostgreSQL server not available or pgvector extension not installed");
+        if (!isPostgresAvailable)
+            Assert.Skip("PostgreSQL server not available or pgvector extension not installed");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -116,16 +120,18 @@ public class PgvectorHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomTableName_CreatesUniqueTables()
     {
         // Skip if PostgreSQL is not available
         var isPostgresAvailable = await IsPostgresAvailableAsync();
-        Skip.If(!isPostgresAvailable, "PostgreSQL server not available or pgvector extension not installed");
+        if (!isPostgresAvailable)
+            Assert.Skip("PostgreSQL server not available or pgvector extension not installed");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

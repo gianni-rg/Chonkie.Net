@@ -15,16 +15,18 @@ public class ChromaHandshakeIntegrationTests
     private const string ChromaUrl = "http://localhost:8000";
     private const string CollectionName = "chonkie-integration-test";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealChromaAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Chroma is not available
         var isChromaAvailable = await IsChromaAvailableAsync();
-        Skip.If(!isChromaAvailable, "Chroma server not available at " + ChromaUrl);
+        if (!isChromaAvailable)
+            Assert.Skip("Chroma server not available at " + ChromaUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -58,16 +60,18 @@ public class ChromaHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealChroma_FindsSimilarChunks()
     {
         // Skip if Chroma is not available
         var isChromaAvailable = await IsChromaAvailableAsync();
-        Skip.If(!isChromaAvailable, "Chroma server not available at " + ChromaUrl);
+        if (!isChromaAvailable)
+            Assert.Skip("Chroma server not available at " + ChromaUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -113,16 +117,18 @@ public class ChromaHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollections()
     {
         // Skip if Chroma is not available
         var isChromaAvailable = await IsChromaAvailableAsync();
-        Skip.If(!isChromaAvailable, "Chroma server not available at " + ChromaUrl);
+        if (!isChromaAvailable)
+            Assert.Skip("Chroma server not available at " + ChromaUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

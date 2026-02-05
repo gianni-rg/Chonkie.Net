@@ -16,15 +16,17 @@ public class QdrantHandshakeIntegrationTests
     private const string QdrantUrl = "http://localhost:6333";
     private const string CollectionName = "chonkie-integration-test";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealQdrantAndOpenAI_WritesSuccessfully()
     {
         // Skip if Qdrant is not available or API key is missing
         var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "OPENAI_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("OPENAI_API_KEY environment variable not set");
 
         var isQdrantAvailable = await IsQdrantAvailableAsync();
-        Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
+        if (!isQdrantAvailable)
+            Assert.Skip("Qdrant server not available at " + QdrantUrl);
 
         // Arrange
         var embeddings = new OpenAIEmbeddings(apiKey!);
@@ -57,16 +59,18 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealQdrantAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Qdrant is not available
         var isQdrantAvailable = await IsQdrantAvailableAsync();
-        Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
+        if (!isQdrantAvailable)
+            Assert.Skip("Qdrant server not available at " + QdrantUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -99,15 +103,17 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealQdrantAndOpenAI_FindsSimilarChunks()
     {
         // Skip if prerequisites not met
         var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "OPENAI_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("OPENAI_API_KEY environment variable not set");
 
         var isQdrantAvailable = await IsQdrantAvailableAsync();
-        Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
+        if (!isQdrantAvailable)
+            Assert.Skip("Qdrant server not available at " + QdrantUrl);
 
         // Arrange
         var embeddings = new OpenAIEmbeddings(apiKey!);
@@ -146,16 +152,18 @@ public class QdrantHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomCollectionName_CreatesUniqueCollection()
     {
         // Skip if Qdrant is not available
         var isQdrantAvailable = await IsQdrantAvailableAsync();
-        Skip.If(!isQdrantAvailable, "Qdrant server not available at " + QdrantUrl);
+        if (!isQdrantAvailable)
+            Assert.Skip("Qdrant server not available at " + QdrantUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

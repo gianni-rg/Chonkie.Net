@@ -14,16 +14,18 @@ public class ElasticsearchHandshakeIntegrationTests
 {
     private const string ElasticsearchUrl = "http://localhost:9200";
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealElasticsearchAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if Elasticsearch is not available
         var isElasticsearchAvailable = await IsElasticsearchAvailableAsync();
-        Skip.If(!isElasticsearchAvailable, "Elasticsearch server not available at " + ElasticsearchUrl);
+        if (!isElasticsearchAvailable)
+            Assert.Skip("Elasticsearch server not available at " + ElasticsearchUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -57,16 +59,18 @@ public class ElasticsearchHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealElasticsearch_FindsSimilarChunks()
     {
         // Skip if Elasticsearch is not available
         var isElasticsearchAvailable = await IsElasticsearchAvailableAsync();
-        Skip.If(!isElasticsearchAvailable, "Elasticsearch server not available at " + ElasticsearchUrl);
+        if (!isElasticsearchAvailable)
+            Assert.Skip("Elasticsearch server not available at " + ElasticsearchUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -111,16 +115,18 @@ public class ElasticsearchHandshakeIntegrationTests
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomIndexName_CreatesUniqueIndices()
     {
         // Skip if Elasticsearch is not available
         var isElasticsearchAvailable = await IsElasticsearchAvailableAsync();
-        Skip.If(!isElasticsearchAvailable, "Elasticsearch server not available at " + ElasticsearchUrl);
+        if (!isElasticsearchAvailable)
+            Assert.Skip("Elasticsearch server not available at " + ElasticsearchUrl);
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);

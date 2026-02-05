@@ -24,8 +24,4 @@
     <ProjectReference Include="..\..\src\Chonkie.Genies\Chonkie.Genies.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Shared\XunitSkippable.cs" Link="Shared\XunitSkippable.cs" />
-  </ItemGroup>
-
 </Project>

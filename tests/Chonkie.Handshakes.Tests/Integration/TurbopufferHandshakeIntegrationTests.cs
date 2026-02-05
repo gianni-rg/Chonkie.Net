@@ -12,16 +12,18 @@ namespace Chonkie.Handshakes.Tests.Integration;
 /// </summary>
 public class TurbopufferHandshakeIntegrationTests
 {
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRealTurbopufferAndSentenceTransformers_WritesSuccessfully()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("TURBOPUFFER_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "TURBOPUFFER_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("TURBOPUFFER_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -50,20 +52,22 @@ public class TurbopufferHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("401") || ex.Message.Contains("authentication"))
         {
             // Skip if authentication fails
-            Skip.If(true, "Turbopuffer API key authentication failed");
+            Assert.Skip("Turbopuffer API key authentication failed");
         }
     }
 
-    [SkippableFact]
+    
     public async Task SearchAsync_WithRealTurbopuffer_FindsSimilarChunks()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("TURBOPUFFER_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "TURBOPUFFER_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("TURBOPUFFER_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -104,20 +108,22 @@ public class TurbopufferHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("401") || ex.Message.Contains("authentication"))
         {
             // Skip if authentication fails
-            Skip.If(true, "Turbopuffer API key authentication failed");
+            Assert.Skip("Turbopuffer API key authentication failed");
         }
     }
 
-    [SkippableFact]
+    
     public async Task WriteAsync_WithRandomNamespace_CreatesUniqueNamespaces()
     {
         // Skip if API key is missing
         var apiKey = Environment.GetEnvironmentVariable("TURBOPUFFER_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "TURBOPUFFER_API_KEY environment variable not set");
+        if (string.IsNullOrEmpty(apiKey))
+            Assert.Skip("TURBOPUFFER_API_KEY environment variable not set");
 
         // Check if model directory exists
         var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
-        Skip.If(!Directory.Exists(modelPath), $"Model directory not found at {modelPath}");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
 
         // Arrange
         var embeddings = new SentenceTransformerEmbeddings(modelPath);
@@ -150,7 +156,7 @@ public class TurbopufferHandshakeIntegrationTests
         catch (Exception ex) when (ex.Message.Contains("401") || ex.Message.Contains("authentication"))
         {
             // Skip if authentication fails
-            Skip.If(true, "Turbopuffer API key authentication failed");
+            Assert.Skip("Turbopuffer API key authentication failed");
         }
     }
 }

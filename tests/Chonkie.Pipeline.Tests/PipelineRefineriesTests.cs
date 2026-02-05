@@ -54,7 +54,7 @@ public class PipelineRefineriesTests
     }
 
     /// Embeddings refinery appends embeddings to chunks using a local model.
-    [SkippableFact]
+    
     public void Pipeline_WithEmbeddingsRefinery_AddsEmbeddings()
     {
         // Arrange

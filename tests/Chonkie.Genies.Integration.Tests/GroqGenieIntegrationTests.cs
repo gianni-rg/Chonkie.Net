@@ -7,12 +7,13 @@ public class GroqGenieIntegrationTests
 {
     private static string? GetApiKey() => Environment.GetEnvironmentVariable("GROQ_API_KEY");
 
-    [SkippableFact]
+    
     public async Task GenerateAsync_WithValidPrompt_ShouldReturnResponse()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         var genie = new GroqGenie(apiKey!, null, null, null);
         var prompt = "Say 'Hello, Chonkie!' and nothing else.";
@@ -25,12 +26,13 @@ public class GroqGenieIntegrationTests
         response.ShouldContain("Chonkie", Case.Insensitive);
     }
 
-    [SkippableFact]
+    
     public async Task GenerateJsonAsync_WithValidPrompt_ShouldReturnStructuredData()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         var genie = new GroqGenie(apiKey!, null, null, null);
         var prompt = "Generate a person with name 'John Doe' and age 30 in JSON format";
@@ -44,12 +46,13 @@ public class GroqGenieIntegrationTests
         response.Age.ShouldBeGreaterThan(0);
     }
 
-    [SkippableFact]
+    
     public async Task GenerateAsync_WithLongPrompt_ShouldHandleSuccessfully()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         var genie = new GroqGenie(apiKey!, null, null, null);
         var prompt = "Explain the concept of chunking in RAG systems in 2-3 sentences.";
@@ -62,12 +65,13 @@ public class GroqGenieIntegrationTests
         response.Length.ShouldBeGreaterThan(50);
     }
 
-    [SkippableFact]
+    
     public async Task GenerateJsonAsync_WithComplexObject_ShouldDeserializeCorrectly()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         var genie = new GroqGenie(apiKey!, null, null, null);
         var prompt = @"Generate a book with title, author, year published (use 2024), 
@@ -85,12 +89,13 @@ public class GroqGenieIntegrationTests
         response.Genres.Count.ShouldBeGreaterThan(0);
     }
 
-    [SkippableFact]
+    
     public async Task FromEnvironment_WithValidKey_ShouldWork()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         var genie = GroqGenie.FromEnvironment();
         var prompt = "Say 'Test passed!' and nothing else.";
@@ -102,12 +107,13 @@ public class GroqGenieIntegrationTests
         response.ShouldNotBeNullOrWhiteSpace();
     }
 
-    [SkippableFact]
+    
     public async Task GenerateAsync_WithCustomModel_ShouldWork()
     {
         // Arrange
         var apiKey = GetApiKey();
-        Skip.If(string.IsNullOrWhiteSpace(apiKey), "GROQ_API_KEY environment variable not set");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            Assert.Skip("GROQ_API_KEY environment variable not set");
 
         // Using a different supported model
         var genie = new GroqGenie(apiKey!, "llama-3.3-70b-versatile", null, null);
