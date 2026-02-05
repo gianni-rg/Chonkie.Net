@@ -1,19 +1,19 @@
 # Chonkie.Net Status Dashboard
-**As of:** February 5, 2026 (Afternoon)  
-**Version:** v2.7  
-**Overall Progress:** 80%
+**As of:** February 5, 2026 (Evening)  
+**Version:** v2.8  
+**Overall Progress:** 82%
 
 ---
 
 ## 📊 At-a-Glance Status
 
 ```
-████████████████████████████░░░░ 80% Complete
+████████████████████████████░░░░ 82% Complete
 
 ✅ DONE: Core (1-6), C# 14, Genies Phase 8 (5/5 Complete, 81 tests)
-✅ DONE: Handshakes Foundation + 3 Core (Qdrant, Weaviate, Pinecone)
-✅ DONE: SlumberChunker ExtractionMode, Full Exception Handling
-🔴 NOW: Handshakes Phase 9 - 4/11 Complete, Tests All Passing (37 passed, 4 skipped)
+✅ DONE: Handshakes Foundation + 4 Core (Qdrant, Weaviate, Pinecone, Pgvector)
+✅ DONE: SlumberChunker ExtractionMode, Full Exception Handling, SQL Injection Prevention
+🔴 NOW: Handshakes Phase 9 - 4/11 Complete, Tests All Passing (50 passed, 4 skipped)
 ⬜ LATER: Optional Handshakes (Chroma, MongoDB, Milvus, Elasticsearch)
 ```
 
@@ -140,7 +140,7 @@ GeminiGenie          ███████████████████�
 LiteLLMGenie         ░░░░░░░░░░░░░░░░░░░░   0% (optional)
 ```
 
-### Handshakes: 3/11 ✅ 27% (Core + Testing Complete)
+### Handshakes: 4/11 ✅ 36% (Core + Testing Complete)
 ```
 QdrantHandshake      ████████████████████ 100% ✅ COMPLETE
 WeaviateHandshake    ████████████████████ 100% ✅ COMPLETE

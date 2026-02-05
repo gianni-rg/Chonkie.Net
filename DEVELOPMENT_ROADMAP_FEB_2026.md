@@ -1,6 +1,6 @@
 # Chonkie.Net - Development Roadmap (February 2026)
 **Based on Python Chonkie v1.5.4 Analysis**  
-**Last Updated:** February 5, 2026 (Afternoon) - Phase 9 Progress Update
+**Last Updated:** February 5, 2026 (Evening) - Phase 9 Pgvector Complete
 
 ---
 
@@ -13,12 +13,13 @@ Since the January 2026 analysis, Python Chonkie has advanced to v1.5.4 with **11
 - CerebrasGenie Implementation (100%) - 28 unit tests, 12 integration tests  
 - SlumberChunker ExtractionMode (100%) - 22 unit tests
 - OpenAI Exception Handling (100%) - 5 exception types, proper chaining
+- PgvectorHandshake Implementation (100%) - 13 unit tests, SQL injection prevention ✅
 
 **🔴 NOW IN PROGRESS:**
-- Phase 9 Handshakes (Chroma, MongoDB, Milvus)
+- Phase 9 Handshakes (Chroma, MongoDB, Milvus) - 4/11 complete (36%)
 - FastChunker UTF-8 multi-byte character verification
 
-**Estimated Remaining Effort:** 12-18 hours (3-4 days)
+**Estimated Remaining Effort:** 15-20 hours (4-5 days)
 
 ---
 
@@ -375,7 +376,140 @@ catch (Exception ex)
 
 ---
 
-### 6. ⏳ NEXT: FastChunker UTF-8 Verification
+### 6. ✅ COMPLETE: PgvectorHandshake Implementation
+**Status:** ✅ COMPLETE (Feb 5, 2026)  
+**Effort:** 8-10 hours (COMPLETED)  
+**Location:** `src/Chonkie.Handshakes/PgvectorHandshake.cs` ✅
+
+#### ✅ Completed Implementation
+- ✅ PostgreSQL/pgvector vector database integration
+- ✅ Batch upsert operations with transaction safety
+- ✅ Vector similarity search with metadata filtering
+- ✅ HNSW and IVFFlat index creation
+- ✅ Collection management (create, delete, info)
+- ✅ UUID5 deterministic chunk ID generation for idempotency
+- ✅ Lazy table initialization on first use
+- ✅ JSON metadata storage (chunk text, token count, context, etc.)
+- ✅ Comprehensive logging for debugging
+
+#### ✅ Security Hardening - SQL Injection Prevention
+- ✅ ValidateIndexOptions private method with allowlist pattern
+- ✅ Whitelist of valid index parameter keys:
+  - HNSW: `m` (max connections), `ef_construction` (search parameter)
+  - IVFFlat: `lists` (number of lists), `probes` (number of probes)
+- ✅ Non-positive value validation (all values must be > 0)
+- ✅ Validation runs BEFORE database connection (fail-fast)
+- ✅ Prevents malicious keys from being concatenated into SQL
+
+#### ✅ Implementation Details
+```csharp
+// Initialize with connection string
+var options = new PgvectorHandshakeOptions
+{
+    ConnectionString = "Host=localhost;Database=chonkie;Username=user;Password=pass;",
+    CollectionName = "embeddings",
+    VectorDimensions = 384
+};
+var handshake = new PgvectorHandshake(options, embeddings);
+
+// Initialize with NpgsqlDataSource (for connection pooling)
+var dataSource = NpgsqlDataSource.Create("Host=localhost;Database=chonkie;...");
+var handshake2 = new PgvectorHandshake(dataSource, options, embeddings);
+
+// Write chunks
+var result = await handshake.WriteAsync(chunks);
+// Returns: { Success = true, Count = chunks.Count, CollectionName = "embeddings" }
+
+// Search
+var results = await handshake.SearchAsync(
+    queryEmbedding: embedding,
+    topK: 5,
+    metadata: new Dictionary<string, string> { { "source", "docs" } }
+);
+// Returns: List<SearchResult> with matching chunks and distances
+
+// Create index
+await handshake.CreateIndexAsync(
+    method: "hnsw",  // or "ivfflat"
+    distanceOperator: "vector_cosine_ops",  // or "vector_l2_ops", "vector_ip_ops"
+    indexOptions: new Dictionary<string, int> { { "m", 16 }, { "ef_construction", 200 } }
+);
+// Throws ArgumentException if invalid keys or non-positive values
+
+// Delete collection
+await handshake.DeleteCollectionAsync();
+
+// Get collection info
+var info = await handshake.GetCollectionInfoAsync();
+// Returns: { RowCount = 1000, Metadata = { ... } }
+```
+
+#### ✅ Files Created
+```
+src/Chonkie.Handshakes/
+├── PgvectorHandshake.cs (489 lines, complete implementation)
+├── PgvectorHandshakeOptions.cs (35 lines, init-only record)
+└── Extensions/HandshakeServiceExtensions.cs (updated with 2 overloads)
+
+tests/Chonkie.Handshakes.Tests/
+├── PgvectorHandshakeTests.cs (217 lines, 13 comprehensive tests)
+```
+
+#### ✅ Test Coverage
+```
+1. Constructor_WithNullEmbeddingModel_ThrowsArgumentNullException
+2. Constructor_WithInvalidCollectionName_ThrowsArgumentException (3 cases)
+3. Constructor_WithValidParameters_SetsProperties
+4. Constructor_WithCustomVectorDimensions_UsesProvidedValue
+5. Constructor_WithNullDataSource_ThrowsArgumentNullException
+6. Constructor_WithDataSource_SetsProperties
+7. ToString_ReturnsFormattedString
+8. CreateIndexAsync_WithInvalidOptionKeyForHnsw_ThrowsArgumentException
+9. CreateIndexAsync_WithNonPositiveIntegerValue_ThrowsArgumentException (3 cases)
+```
+- ✅ All 13 tests passing (100% pass rate)
+- ✅ Coverage: Constructor validation, property retention, index option validation
+
+#### ✅ DI Extensions
+```csharp
+// Option 1: Connection string-based registration
+services.AddPgvectorHandshake(options, embeddings);
+
+// Option 2: Data source-based registration (for connection pooling)
+var dataSource = NpgsqlDataSource.Create(connectionString);
+services.AddPgvectorHandshake(dataSource, options, embeddings);
+
+// Usage
+var handshake = serviceProvider.GetRequiredService<IHandshake>();
+```
+
+#### ✅ Validation Example
+```csharp
+// ✅ Valid index options pass through
+await handshake.CreateIndexAsync(indexOptions: new() { { "m", 16 }, { "ef_construction", 200 } });
+
+// ❌ Invalid keys rejected before SQL construction
+await handshake.CreateIndexAsync(indexOptions: new() { { "invalid_key", 10 } });
+// Throws: ArgumentException("Invalid index option 'invalid_key' for method 'hnsw'...")
+
+// ❌ Non-positive values rejected
+await handshake.CreateIndexAsync(indexOptions: new() { { "m", 0 } });
+// Throws: ArgumentException("Index option 'm' must be a positive integer, but got 0...")
+```
+
+#### ✅ Test Results
+- ✅ 13 unit tests passing (100% pass rate)
+- ✅ Build successful with 0 errors
+- ✅ Compilation verified
+
+#### ✅ Commit
+- ✅ Committed: `feat(handshakes): Implement PgvectorHandshake with SQL injection hardening`
+- ✅ Files: 7 changed, 821 insertions
+- ✅ Git status: Clean working directory
+
+---
+
+### 7. ⏳ NEXT: FastChunker UTF-8 Verification
 **Status:** ⏳ NOT YET STARTED (Scheduled for Feb 6)  
 **Effort:** 2-3 hours  
 **Location:** `src/Chonkie.Chunkers/FastChunker.cs` (IF EXISTS)
