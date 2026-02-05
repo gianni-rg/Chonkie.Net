@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Pinecone;
 using Qdrant.Client;
+using Weaviate.Client;
 
 namespace Chonkie.Handshakes;
 
@@ -104,6 +105,56 @@ public static class HandshakeServiceExtensions
         {
             var logger = sp.GetService<ILogger<PineconeHandshake>>();
             return new PineconeHandshake(client, indexName, embeddingModel, @namespace, logger);
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a WeaviateHandshake to the service collection using the factory method for Weaviate Cloud.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="url">The Weaviate Cloud URL.</param>
+    /// <param name="apiKey">The Weaviate Cloud API key.</param>
+    /// <param name="className">The Weaviate class (collection) name.</param>
+    /// <param name="embeddingModel">The embedding model to use.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddWeaviateHandshake(
+        this IServiceCollection services,
+        string url,
+        string apiKey,
+        string className,
+        IEmbeddings embeddingModel)
+    {
+        services.AddSingleton<IHandshake>(sp =>
+        {
+            var logger = sp.GetService<ILogger<WeaviateHandshake>>();
+            // Since CreateCloudAsync is async, we need to use Task.Run or call it synchronously
+            // For serviceCollection registration, we'll block here (acceptable pattern for DI)
+            return WeaviateHandshake.CreateCloudAsync(url, apiKey, className, embeddingModel, logger).GetAwaiter().GetResult();
+        });
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a WeaviateHandshake to the service collection with a custom client.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="client">The Weaviate client.</param>
+    /// <param name="className">The Weaviate class (collection) name.</param>
+    /// <param name="embeddingModel">The embedding model to use.</param>
+    /// <returns>The service collection for chaining.</returns>
+    public static IServiceCollection AddWeaviateHandshake(
+        this IServiceCollection services,
+        WeaviateClient client,
+        string className,
+        IEmbeddings embeddingModel)
+    {
+        services.AddSingleton<IHandshake>(sp =>
+        {
+            var logger = sp.GetService<ILogger<WeaviateHandshake>>();
+            return new WeaviateHandshake(client, className, embeddingModel, logger);
         });
 
         return services;
