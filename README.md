@@ -75,6 +75,15 @@ var result = await FluentPipeline.Create()
 
 ## 📚 Documentation
 
+### 🎓 **[Complete Tutorial Guide](docs/TUTORIALS_INDEX.md)** ← Start Here!
+Learn Chonkie.Net step-by-step with interactive tutorials:
+- [Quick-Start Guide](docs/TUTORIALS_01_QUICK_START.md) (10 min) - Your first chunks
+- [RAG Tutorial](docs/TUTORIALS_02_RAG.md) (45 min) - Build a complete RAG system
+- [Chunkers Deep Dive](docs/TUTORIALS_03_CHUNKERS.md) (30 min) - Master all 10 chunkers
+- [Vector Database Guide](docs/TUTORIALS_04_VECTORDB.md) (30 min) - Store & search embeddings
+- [Pipeline Configuration](docs/TUTORIALS_05_PIPELINES.md) (60 min) - Advanced workflows
+
+### 📊 Project Documentation
 - **[Status Dashboard](STATUS_DASHBOARD.md)** - Current status and sprint tracking
 - **[Master Roadmap](MASTER_ROADMAP.md)** - Consolidated roadmap and progress tracking
 - **[Implementation Quickstart](IMPLEMENTATION_QUICKSTART.md)** - Implementation guide
