@@ -50,6 +50,7 @@
 | Document | Topic | Status | Priority |
 |----------|-------|--------|----------|
 | **[IMPLEMENTATION_QUICKSTART.md](IMPLEMENTATION_QUICKSTART.md)** | Phase 11 quick start | ✅ Current | 🔴 High |
+| **[docs/MIGRATION_GUIDE_PYTHON_TO_NET.md](docs/MIGRATION_GUIDE_PYTHON_TO_NET.md)** | Python → .NET migration | ✅ Complete | 🔴 High |
 | [FASTCHUNKER_IMPLEMENTATION_GUIDE.md](FASTCHUNKER_IMPLEMENTATION_GUIDE.md) | FastChunker implementation details | ✅ Complete | 🟡 Medium |
 | [docs/archived/IMPLEMENTATION_CHECKLIST.md](docs/archived/IMPLEMENTATION_CHECKLIST.md) | Overall feature checklist | ⚠️ Superseded | 🟢 Low |
 | [docs/archived/IMPLEMENTATION_CHECKLIST_DETAILED.md](docs/archived/IMPLEMENTATION_CHECKLIST_DETAILED.md) | Detailed feature checklist | ⚠️ Superseded | 🟢 Low |
@@ -139,6 +140,7 @@ docs/
 ├── API_REFERENCE_FETCHERS.md          📘 Fetchers API reference
 ├── API_REFERENCE_REFINERIES.md        📘 Refineries API reference
 ├── API_REFERENCE_PORTERS.md           📘 Porters API reference
+├── MIGRATION_GUIDE_PYTHON_TO_NET.md   🔄 Migration guide from Python
 ├── ADVANCED_CHUNKERS.md                🔧 Advanced features
 ├── CSHARP14_IMPLEMENTATION_COMPLETE.md 🎯 C# 14 features
 ├── TENSORPRIMITIVES_PERFORMANCE_REPORT.md 📈 Performance
@@ -177,6 +179,9 @@ docs/archived/
 
 #### ...see current status
 👉 Read [STATUS_DASHBOARD.md](STATUS_DASHBOARD.md)
+
+#### ...migrate from Python Chonkie
+👉 Read [docs/MIGRATION_GUIDE_PYTHON_TO_NET.md](docs/MIGRATION_GUIDE_PYTHON_TO_NET.md)
 
 #### ...start implementing
 👉 Read [IMPLEMENTATION_QUICKSTART.md](IMPLEMENTATION_QUICKSTART.md)
