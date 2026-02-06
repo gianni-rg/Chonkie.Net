@@ -1,7 +1,7 @@
 # Chonkie.Net Master Roadmap
-**Last Updated:** February 5, 2026 (Afternoon)  
-**Version:** v2.4  
-**Current Status:** Phase 8 Complete, Phase 9 In Progress (82% overall progress)
+**Last Updated:** February 6, 2026 (Afternoon)  
+**Version:** v2.11  
+**Current Status:** Phase 11 In Progress, Phase 10 Complete (96% overall progress)
 
 ---
 
@@ -10,14 +10,14 @@
 Chonkie.Net is a high-performance C# port of the Python Chonkie library for text chunking in RAG applications. This document consolidates all implementation plans, checklists, and roadmaps into a single source of truth.
 
 ### Current Status
-- **Completed:** Phases 1-8 (Foundation through Genies)
-- **In Progress:** Phase 9 (Handshakes) - Vector Database Integrations
-- **Next:** Complete Handshakes, Optional Features
+- **Completed:** Phases 1-10 (Foundation through Optional Chunkers)
+- **In Progress:** Phase 11 (Polish & Release)
+- **Next:** Optional enhancements after release
 
 ### Key Metrics
-- **Progress:** 82% complete
-- **Tests:** 552 total (552 passing, 78 skipped, 2 pre-existing failures)
-- **Projects:** 10 of 11 planned (Handshakes in progress)
+- **Progress:** 96% complete
+- **Tests:** 739 passing, 105 skipped (integration)
+- **Projects:** 11 of 11 core projects complete
 - **Chunkers:** 10/10 complete ✅
 - **Embeddings:** 7/7 core providers complete ✅
 - **Genies:** 5/5 core complete ✅ (LiteLLM optional)
@@ -37,13 +37,13 @@ Chonkie.Net is a high-performance C# port of the Python Chonkie library for text
 | 6. Pipeline | ✅ Complete | 1 week | 100% | - |
 | 7. C# 14 Enhancements | ✅ Complete | 10 weeks | 100% | - |
 | **8. Genies** | ✅ Complete | 1 day | 100% | - |
-| **9. Handshakes** | 🔴 In Progress | 3 weeks | 36% | **CRITICAL** |
-| 10. Optional Chunkers | ⬜ Not Started | 2 weeks | 0% | **MEDIUM** |
-| 11. Polish & Release | ⬜ Not Started | 2 weeks | 0% | **LOW** |
+| **9. Handshakes** | ✅ Complete | 3 weeks | 100% | - |
+| **10. Optional Chunkers** | ✅ Complete | 2 weeks | 100% | - |
+| **11. Polish & Release** | 🟡 In Progress | 2 weeks | 5% | **HIGH** |
 
 **Total Timeline:** 24 weeks (estimated)  
-**Time Elapsed:** 17 weeks  
-**Remaining:** 7 weeks
+**Time Elapsed:** 19 weeks  
+**Remaining:** 1-2 weeks
 
 ---
 
@@ -388,7 +388,7 @@ public class FastChunker : BaseChunker
 | TableChunker | ✅ Complete | ✅ 15+ | ✅ Full | Good |
 | NeuralChunker | ✅ Complete | ✅ 10+ | ✅ Full | Good |
 | SlumberChunker | ✅ Complete | ✅ 10+ | ⚠️ Needs Update | Good |
-| FastChunker | ❌ Missing | ❌ 0 | ❌ None | - |
+| FastChunker | ✅ Complete | ✅ 20+ | ✅ Full | Excellent |
 
 ### Embeddings (7/7 Core ✅)
 

@@ -3,11 +3,11 @@
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
-[![Status](https://img.shields.io/badge/status-phase_2_in_progress-green)](STATUS_DASHBOARD.md)
-[![Tests](https://img.shields.io/badge/tests-50_passing-brightgreen)](tests/)
+[![Status](https://img.shields.io/badge/status-phase_11_in_progress-green)](STATUS_DASHBOARD.md)
+[![Tests](https://img.shields.io/badge/tests-739_passing-brightgreen)](tests/)
 
-> **Status:** ✅ Phase 1 Complete - Foundation Established | 🚀 Phase 2 In Progress - Core Chunkers  
-> **Latest:** 🔥 .NET 10 RTM & C# 14 enhancement plan ready - see [docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md)
+> **Status:** ✅ Core implementation complete | 🟡 Phase 11 in progress (docs + release)  
+> **Latest:** Optional chunkers, genies, and handshakes are complete with full test coverage
 
 A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie) - the no-nonsense, ultra-lightweight text chunking library for RAG applications.
 
@@ -15,58 +15,104 @@ A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie) - the no-nonsen
 
 Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
 
-- ✨ **Feature Parity** - All chunking strategies from the Python version
-- 🚀 **High Performance** - Leveraging .NET 10 & C# 14 (Span<T>, SIMD, extension members, stack allocation)
-- 🪶 **Lightweight** - Minimal dependencies, modular NuGet packages
-- 🔌 **32+ Integrations** - Vector databases, embedding providers, LLM services
-- 💪 **Strongly Typed** - Full C# 14 type safety and modern language features
-- ⚡ **Optimized** - Stack allocation, devirtualization, TensorPrimitives SIMD operations
+- ✨ **Feature Parity** - Chunkers, pipelines, and integrations aligned with Python behavior
+- 🚀 **High Performance** - .NET 10 + C# 14 (Span<T>, SIMD, extension members, stack allocation)
+- 🪶 **Lightweight** - Modular packages, minimal dependencies
+- 🔌 **32+ Integrations** - Vector DBs, embeddings, LLM providers
+- 💪 **Strongly Typed** - Idiomatic C# APIs and DI-friendly design
+- ⚡ **Optimized** - TensorPrimitives SIMD operations and low allocations
+
+## 🚀 Quick Start
+
+### Install
+
+**NuGet packages:** Coming in Phase 11.  
+For now, build from source and reference the projects you need.
+
+```powershell
+git clone https://github.com/gianni-rg/Chonkie.Net.git
+cd Chonkie.Net
+dotnet build Chonkie.Net.sln
+```
+
+### CHONK! 🦛✨
+
+This mirrors the Python quick-start: create a chunker, pass text, and read chunks.
+
+```csharp
+using Chonkie.Chunkers;
+using Chonkie.Tokenizers;
+
+var text = "Woah! Chonkie, the chunking library is so cool!";
+
+var tokenizer = new WordTokenizer();
+var chunker = new TokenChunker(tokenizer, chunkSize: 64, chunkOverlap: 8);
+
+var chunks = chunker.Chunk(text);
+foreach (var chunk in chunks)
+{
+    Console.WriteLine($"Chunk: {chunk.Text}");
+    Console.WriteLine($"Tokens: {chunk.TokenCount}");
+}
+```
+
+### Pipeline (Optional)
+
+```csharp
+using Chonkie.Chunkers;
+using Chonkie.Pipeline;
+using Chonkie.Refineries;
+using Chonkie.Tokenizers;
+
+var tokenizer = new WordTokenizer();
+
+var result = await FluentPipeline.Create()
+    .WithText("Chonkie is the goodest boi!")
+    .ChunkWith(new RecursiveChunker(tokenizer, chunkSize: 128))
+    .RefineWith(new OverlapRefinery(minOverlap: 8))
+    .RunAsync();
+```
+
+## 📚 Documentation
+
+- **[Status Dashboard](STATUS_DASHBOARD.md)** - Current status and sprint tracking
+- **[Master Roadmap](MASTER_ROADMAP.md)** - Consolidated roadmap and progress tracking
+- **[Implementation Quickstart](IMPLEMENTATION_QUICKSTART.md)** - Implementation guide
+- **[Changelog](CHANGELOG.md)** - Version history
+- **Original Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie) | [Docs](https://docs.chonkie.ai)
+
+## 🧩 Component Overview
+
+### Chunkers
+`TokenChunker`, `SentenceChunker`, `RecursiveChunker`, `SemanticChunker`, `LateChunker`,
+`CodeChunker`, `TableChunker`, `NeuralChunker`, `SlumberChunker`, `FastChunker`
+
+### Tokenizers
+Character, Word, HuggingFace (ML.NET), tiktoken (SharpToken)
+
+### Embeddings
+OpenAI, Azure OpenAI, Cohere, Gemini, Jina AI, Voyage AI, Sentence Transformers (ONNX)
+
+### Vector Databases
+ChromaDB, Qdrant, Pinecone, Weaviate, PostgreSQL (pgvector), MongoDB, Elasticsearch, Turbopuffer
+
+### LLM Providers
+OpenAI, Azure OpenAI, Gemini, Groq, Cerebras
 
 ## 🎯 Project Goals
 
-1. **Complete Feature Parity** with Python Chonkie
+1. **Feature Parity** with Python Chonkie
 2. **Native .NET Experience** - Idiomatic C# APIs, DI support, IOptions pattern
 3. **Performance** - Match or exceed Python performance
 4. **Excellent Documentation** - XML docs, samples, migration guides
 
-## 📚 Documentation
-
-- **[Master Roadmap](MASTER_ROADMAP.md)** - Consolidated migration plan and progress tracking
-- **[Status Dashboard](STATUS_DASHBOARD.md)** - Current status and sprint tracking
-- **[Historical Port Plan](docs/archived/PORT_PLAN.md)** - Archived original port plan
-- **[.NET 10 & C# 14 Enhancements](docs/DOTNET10_CSHARP14_ENHANCEMENT_PLAN.md)** - Modern .NET features & optimizations
-- **[Changelog](CHANGELOG.md)** - Project changes and version history
-- **Original Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie) | [Docs](https://docs.chonkie.ai)
-
-## 🚀 Planned Features
-
-### Core Chunkers
-- `TokenChunker` - Fixed-size token chunks
-- `SentenceChunker` - Sentence-boundary aware
-- `RecursiveChunker` - Hierarchical splitting
-- `SemanticChunker` - Similarity-based chunking
-- `LateChunker` - Embed-then-chunk
-- `CodeChunker` - Code-aware chunking
-- `NeuralChunker` - ML-based chunking
-- `SlumberChunker` - LLM-guided chunking
-
-### Integrations
-
-**Tokenizers:** Character, Word, HuggingFace (ML.NET), tiktoken (SharpToken)
-
-**Embeddings:** OpenAI, Azure OpenAI, Cohere, Gemini, Jina AI, Voyage AI, Sentence Transformers (ONNX)
-
-**Vector Databases:** ChromaDB, Qdrant, Pinecone, Weaviate, PostgreSQL (pgvector), MongoDB, Elasticsearch, Turbopuffer
-
-**LLM Providers:** OpenAI, Azure OpenAI, Gemini (+ OpenRouter compatible)
-
 ## 🗓️ Timeline
 
-**Current Phase:** Phase 2 - Core Chunkers (In Progress)  
-**Phase 1:** ✅ Complete - Foundation established with 50 passing tests  
-**Estimated v1.0 Release:** Week 18
+**Current Phase:** Phase 11 - Polish & Release (in progress)  
+**Core Implementation:** ✅ Complete (Phases 1-10)  
+**Release Target:** After documentation + packaging are finalized
 
-See [MASTER_ROADMAP.md](MASTER_ROADMAP.md) for the complete migration plan.
+See [MASTER_ROADMAP.md](MASTER_ROADMAP.md) for the complete plan.
 
 ## 🏗️ Project Structure
 
@@ -81,15 +127,15 @@ Chonkie.Net/
 ├── benchmarks/               # Performance benchmarks
 ├── samples/                  # Usage examples
 ├── docs/                     # Documentation
-└── MASTER_ROADMAP.md        # Consolidated port plan
+└── MASTER_ROADMAP.md         # Consolidated roadmap
 ```
 
 ## 🤝 Contributing
 
-This project is in the early planning phase. Contributions will be welcome once the foundation is established. 
+Contributions are welcome while we finalize Phase 11 (docs + release prep).
 
-If you're interested in helping with the port:
-1. Check the [STATUS_DASHBOARD.md](STATUS_DASHBOARD.md) for current status
+If you'd like to help:
+1. Check the [STATUS_DASHBOARD.md](STATUS_DASHBOARD.md) for current priorities
 2. Look for issues labeled `help-wanted` or `good-first-issue`
 3. Join the discussion in issues and pull requests
 
