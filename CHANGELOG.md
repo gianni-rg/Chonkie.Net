@@ -5,7 +5,28 @@ All notable changes to the Chonkie.NET project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.0] - 2026-02-06
+
+### Phase 11 Complete: Production Ready Release
+
+**Phase 11.3: NuGet Package Preparation**
+- Chonkie.Core v2.12.0 package created (22.7 KB)
+- Professional package README with feature matrix and tutorial links
+- Package metadata complete: Apache-2.0 license, tags, repository info
+- Package restoration and usage verified in test project
+
+**Phase 11.2: Tutorial & Migration Guides (3969 lines)**
+- 5 comprehensive tutorials covering all major features
+- Python to .NET migration guide with complete API mappings (1584 lines)
+- 100% coverage of all modules and use cases
+
+**Phase 11.1: XML Documentation (95%+ Coverage)**
+- All 7 extension members fully documented with examples
+- Configuration classes with security and performance guidance
+- 779 tests passing, 0 build warnings
+
 ## [Unreleased]
+
 
 ### Added - Phase 4: TensorPrimitives Migration Complete ✅ (2025-12-16)
 - **Hardware-Accelerated Embeddings**:
@@ -178,3 +199,4 @@ Target: Foundation milestone
 - `Removed` - Removed features
 - `Fixed` - Bug fixes
 - `Security` - Security improvements
+
