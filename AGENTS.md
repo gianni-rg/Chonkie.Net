@@ -230,4 +230,4 @@ Use always MCP tools for latest documentation and best practices:
 
 ## Tools
 
-When launching terminal commands, especially on Windows, always consider to use Powershell for scripting, unless specified otherwise.
+When launching terminal commands, you are currently running on Windows, always consider to use Powershell for scripting, unless specified otherwise.

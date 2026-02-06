@@ -200,18 +200,18 @@ public class FastChunkerTests
 
     #region Chunk Overlap Tests
 
-    // [Fact]
-    // public void Chunk_WithOverlap_CreatesOverlappingChunks()
-    // {
-    //     var chunker = new FastChunker(chunkSize: 20, chunkOverlap: 5);
-    //     var text = "Hello World this is a test document";
+    [Fact]
+    public void Chunk_WithOverlap_CreatesOverlappingChunks()
+    {
+        var chunker = new FastChunker(chunkSize: 20, chunkOverlap: 5);
+        var text = "Hello World this is a test document";
 
-    //     var result = chunker.Chunk(text);
+        var result = chunker.Chunk(text);
 
-    //     result.Count.ShouldBeGreaterThan(1);
-    //     var second = result[1];
-    //     second.StartIndex.ShouldBeLessThan(result[0].EndIndex);
-    // }
+        result.Count.ShouldBeGreaterThan(1);
+        var second = result[1];
+        second.StartIndex.ShouldBeLessThan(result[0].EndIndex);
+    }
 
     [Fact]
     public void Chunk_WithOverlap_CreatesChunks()
@@ -225,7 +225,7 @@ public class FastChunkerTests
 
         // Verify chunks are created and loop terminates (no infinite loop/memory exhaustion)
         result.Count.ShouldBeGreaterThan(0);
-        
+
         // Verify all chunks have valid boundaries
         foreach (var chunk in result)
         {
