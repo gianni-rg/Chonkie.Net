@@ -40,8 +40,8 @@ public class TokenClassificationResult
     /// Gets a value indicating whether this token represents a split point.
     /// A split point is a token with label "B-SPLIT" or similar.
     /// </summary>
-    public bool IsSplitPoint => Label.Contains("SPLIT", StringComparison.OrdinalIgnoreCase) && 
-                                (Label.StartsWith("B-", StringComparison.OrdinalIgnoreCase) || 
+    public bool IsSplitPoint => Label.Contains("SPLIT", StringComparison.OrdinalIgnoreCase) &&
+                                (Label.StartsWith("B-", StringComparison.OrdinalIgnoreCase) ||
                                  Label == "SPLIT");
 
     /// <summary>

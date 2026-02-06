@@ -104,7 +104,7 @@ public class UnifiedEmbeddingsTests
         var expectedVector = new float[] { 0.1f, 0.2f, 0.3f };
         var embedding = new Embedding<float>(expectedVector);
         var generatedEmbeddings = new GeneratedEmbeddings<Embedding<float>>([embedding]);
-        
+
         generator.GenerateAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<EmbeddingGenerationOptions>(), Arg.Any<CancellationToken>())
             .Returns(generatedEmbeddings);
 
@@ -141,7 +141,7 @@ public class UnifiedEmbeddingsTests
         var generator = Substitute.For<IEmbeddingGenerator<string, Embedding<float>>>();
         var embedding = new Embedding<float>(Array.Empty<float>());
         var generatedEmbeddings = new GeneratedEmbeddings<Embedding<float>>([embedding]);
-        
+
         generator.GenerateAsync(Arg.Any<IEnumerable<string>>(), Arg.Any<EmbeddingGenerationOptions>(), Arg.Any<CancellationToken>())
             .Returns(generatedEmbeddings);
 

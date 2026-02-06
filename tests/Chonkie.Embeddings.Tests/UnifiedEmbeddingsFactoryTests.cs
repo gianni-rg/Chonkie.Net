@@ -238,7 +238,7 @@ public class UnifiedEmbeddingsFactoryTests
         // Act & Assert
         var exception = Should.Throw<ArgumentException>(() =>
             UnifiedEmbeddingsFactory.CreateFromEnvironment("unsupported", "model", 768));
-        
+
         exception.Message.ShouldContain("Unsupported provider");
     }
 

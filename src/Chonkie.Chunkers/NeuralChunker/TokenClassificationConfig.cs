@@ -78,7 +78,7 @@ public class TokenClassificationConfig
             }
 
             var json = File.ReadAllText(configPath);
-            var config = JsonSerializer.Deserialize<TokenClassificationConfig>(json) 
+            var config = JsonSerializer.Deserialize<TokenClassificationConfig>(json)
                 ?? new TokenClassificationConfig();
 
             return config;

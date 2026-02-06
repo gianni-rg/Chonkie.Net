@@ -103,13 +103,13 @@ public class FastChunker : IChunker
 
             // Move position forward by chunk size minus overlap
             var nextPosition = chunkEnd - ChunkOverlap;
-            
+
             // Prevent infinite loop: if overlap calculation doesn't advance us, exit loop
             if (nextPosition <= position)
             {
                 break; // Can't maintain proper overlap at text end, exit chunking
             }
-            
+
             position = nextPosition;
             chunkIndex++;
         }

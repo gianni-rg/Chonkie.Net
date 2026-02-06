@@ -101,7 +101,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
 
         var tokenizer = new CharacterTokenizer();
         var modelPath = GetModelPath("distilbert");
-        
+
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         chunker.UseOnnx.ShouldBeTrue("ONNX model should be loaded");
@@ -113,7 +113,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
     {
         var tokenizer = new CharacterTokenizer();
         var invalidPath = Path.Combine(_modelsBasePath, "nonexistent-model");
-        
+
         var chunker = new NeuralChunker(tokenizer, invalidPath);
 
         chunker.UseOnnx.ShouldBeFalse("Should fall back to RecursiveChunker");
@@ -176,7 +176,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
         var chunks = chunker.Chunk(text);
 
         chunks.Count.ShouldBeGreaterThan(0, "Should produce at least one chunk");
-        
+
         // Verify reconstruction
         var reconstructed = string.Concat(chunks.Select(c => c.Text));
         reconstructed.ShouldBe(text, "Chunks should perfectly reconstruct original text");

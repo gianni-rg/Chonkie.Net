@@ -45,7 +45,7 @@ namespace Chonkie.Embeddings
             var client = new OpenAIClient(apiKey);
             var embeddingClient = client.GetEmbeddingClient(model);
             var generator = embeddingClient.AsIEmbeddingGenerator();
-            
+
             return new UnifiedEmbeddings(generator, "openai", dimension, logger);
         }
 
@@ -75,7 +75,7 @@ namespace Chonkie.Embeddings
             var client = new AzureOpenAIClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
             var embeddingClient = client.GetEmbeddingClient(deploymentName);
             var generator = embeddingClient.AsIEmbeddingGenerator();
-            
+
             return new UnifiedEmbeddings(generator, "azure-openai", dimension, logger);
         }
 
@@ -100,9 +100,9 @@ namespace Chonkie.Embeddings
 
             // OllamaApiClient implements IEmbeddingGenerator<string, Embedding<float>> directly
             var ollamaClient = new OllamaApiClient(new Uri(endpoint), model);
-            IEmbeddingGenerator<string, Embedding<float>> generator = 
+            IEmbeddingGenerator<string, Embedding<float>> generator =
                 (IEmbeddingGenerator<string, Embedding<float>>)ollamaClient;
-            
+
             return new UnifiedEmbeddings(generator, "ollama", dimension, logger);
         }
 
@@ -127,18 +127,18 @@ namespace Chonkie.Embeddings
             return providerName.ToLowerInvariant() switch
             {
                 "openai" => CreateOpenAI(
-                    Environment.GetEnvironmentVariable("OPENAI_API_KEY") 
+                    Environment.GetEnvironmentVariable("OPENAI_API_KEY")
                         ?? throw new InvalidOperationException("OPENAI_API_KEY environment variable not set"),
                     model,
                     dimension,
                     logger),
 
                 "azure" or "azure-openai" => CreateAzureOpenAI(
-                    Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") 
+                    Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")
                         ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT environment variable not set"),
-                    Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") 
+                    Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")
                         ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY environment variable not set"),
-                    Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT") 
+                    Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")
                         ?? throw new InvalidOperationException("AZURE_OPENAI_DEPLOYMENT environment variable not set"),
                     dimension,
                     logger),

@@ -126,7 +126,7 @@ public class NeuralChunkerTests
             chunk.StartIndex.ShouldBeGreaterThanOrEqualTo(0);
             chunk.EndIndex.ShouldBeLessThanOrEqualTo(text.Length);
             chunk.StartIndex.ShouldBeLessThan(chunk.EndIndex);
-            
+
             // Verify text matches the document slice
             var sliced = text.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
             sliced.ShouldBe(chunk.Text);
@@ -156,8 +156,8 @@ public class NeuralChunkerTests
     {
         var tokenizer = new CharacterTokenizer();
         var chunker = new NeuralChunker(tokenizer, chunkSize: 512);
-        var texts = new[] 
-        { 
+        var texts = new[]
+        {
             "First text here with some content",
             "Second text here with more content",
             "Third text here with additional content"
@@ -197,8 +197,8 @@ public class NeuralChunkerTests
     {
         var tokenizer = new CharacterTokenizer();
         var chunker = new NeuralChunker(tokenizer, chunkSize: 512);
-        var document = new Document 
-        { 
+        var document = new Document
+        {
             Content = "This is a document with substantial content that will be chunked into multiple pieces for testing purposes"
         };
 
@@ -229,8 +229,8 @@ public class NeuralChunkerTests
     {
         var tokenizer = new CharacterTokenizer();
         var chunker = new NeuralChunker(tokenizer, chunkSize: 512);
-        var document = new Document 
-        { 
+        var document = new Document
+        {
             Content = "Document with content for testing chunking functionality"
         };
         var originalDocument = document;
@@ -262,7 +262,7 @@ public class NeuralChunkerTests
     public void ToString_WithDifferentChunkSizes_IncludesChunkSize()
     {
         var tokenizer = new CharacterTokenizer();
-        
+
         var chunker2048 = new NeuralChunker(tokenizer, chunkSize: 2048);
         chunker2048.ToString().ShouldContain("2048");
 
@@ -328,11 +328,11 @@ public class NeuralChunkerTests
 
         // Verify that chunks are created and valid
         result.Count.ShouldBeGreaterThan(0);
-        
+
         // Verify reconstruction
         var reconstructed = string.Concat(result.Select(c => c.Text));
         reconstructed.ShouldBe(text);
-        
+
         // Verify each chunk has valid boundaries
         foreach (var chunk in result)
         {

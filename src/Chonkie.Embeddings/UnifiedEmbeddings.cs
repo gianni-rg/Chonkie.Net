@@ -49,10 +49,10 @@ namespace Chonkie.Embeddings
             ILogger? logger = null)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
-            
+
             if (string.IsNullOrWhiteSpace(providerName))
                 throw new ArgumentException("Provider name cannot be null or whitespace.", nameof(providerName));
-            
+
             if (dimension <= 0)
                 throw new ArgumentException("Dimension must be positive.", nameof(dimension));
 
@@ -73,12 +73,12 @@ namespace Chonkie.Embeddings
 
                 var input = new List<string>(1) { safeText };
                 var result = await _generator.GenerateAsync(input, cancellationToken: cancellationToken);
-                
+
                 if (result is null || result.Count == 0)
                     throw new EmbeddingInvalidResponseException("Embedding generation returned null or empty result.");
 
                 var embedding = result[0];
-                
+
                 if (embedding?.Vector is null || embedding.Vector.Length == 0)
                     throw new EmbeddingInvalidResponseException("Generated embedding vector is null or empty.");
 
@@ -113,7 +113,7 @@ namespace Chonkie.Embeddings
                 _logger?.LogError(ex, "Authentication failed");
                 throw new EmbeddingAuthenticationException($"Authentication failed: {ex.Message}", ex);
             }
-            catch (Exception ex) when (ex is HttpRequestException || 
+            catch (Exception ex) when (ex is HttpRequestException ||
                                       ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase))
             {
                 _logger?.LogError(ex, "Network error occurred");
@@ -128,20 +128,20 @@ namespace Chonkie.Embeddings
 
         /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(
-            IEnumerable<string> texts, 
+            IEnumerable<string> texts,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var textList = texts?.ToList() ?? throw new ArgumentNullException(nameof(texts));
-                
+
                 if (textList.Count == 0)
                     return Array.Empty<float[]>();
 
                 _logger?.LogDebug("Generating {Count} embeddings using {Provider}", textList.Count, _providerName);
 
                 var result = await _generator.GenerateAsync(textList, cancellationToken: cancellationToken);
-                
+
                 if (result is null)
                     throw new EmbeddingInvalidResponseException("Batch embedding generation returned null result.");
 
@@ -150,7 +150,7 @@ namespace Chonkie.Embeddings
                 {
                     if (embedding?.Vector is null || embedding.Vector.Length == 0)
                         throw new EmbeddingInvalidResponseException("Generated embedding vector is null or empty.");
-                    
+
                     embeddings.Add(embedding.Vector.ToArray());
                 }
 
@@ -185,7 +185,7 @@ namespace Chonkie.Embeddings
                 _logger?.LogError(ex, "Authentication failed during batch embedding");
                 throw new EmbeddingAuthenticationException($"Authentication failed during batch operation: {ex.Message}", ex);
             }
-            catch (Exception ex) when (ex is HttpRequestException || 
+            catch (Exception ex) when (ex is HttpRequestException ||
                                       ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase))
             {
                 _logger?.LogError(ex, "Network error occurred during batch embedding");
