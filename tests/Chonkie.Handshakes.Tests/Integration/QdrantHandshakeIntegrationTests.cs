@@ -195,7 +195,7 @@ public class QdrantHandshakeIntegrationTests
             var response = await httpClient.GetAsync($"{QdrantUrl}/healthz");
             if (!response.IsSuccessStatusCode)
                 return false;
-            
+
             // Additional check: Verify gRPC connectivity by attempting a simple check
             // This helps catch HTTP/2 protocol errors early
             try
