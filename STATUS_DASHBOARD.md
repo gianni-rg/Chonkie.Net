@@ -68,10 +68,11 @@
 - **SlumberChunker ExtractionMode** - JSON/Text/Auto extraction modes
   - 22 unit tests for all extraction scenarios
   - Safe fallback to default behavior
-- **NeuralChunker** - Placeholder with RecursiveChunker fallback
-  - 20 comprehensive unit tests covering all functionality
-  - UTF-8 multi-byte character support verified
-  - Ready for ONNX model integration in future
+- **NeuralChunker** - ONNX-ready with dual-mode support (ONNX + RecursiveChunker fallback)
+  - 20 unit tests covering all core functionality
+  - 20 integration tests with DistilBERT and ModernBERT models (100% pass rate)
+  - UTF-8, emoji, and multi-language support verified
+  - ONNX model loading and inference tested
 
 ---
 
