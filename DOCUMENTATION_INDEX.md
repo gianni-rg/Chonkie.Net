@@ -66,6 +66,7 @@
 
 | Document | Topic | Audience | Status |
 |----------|-------|----------|--------|
+| [docs/API_REFERENCE_INDEX.md](docs/API_REFERENCE_INDEX.md) | Complete public API reference (by component) | Developers | ✅ Current |
 | [AGENTS.md](AGENTS.md) | C# coding guidelines and best practices | Developers | ✅ Current |
 | [CSHARP14_IMPLEMENTATION_COMPLETE.md](docs/CSHARP14_IMPLEMENTATION_COMPLETE.md) | C# 14 features implementation | Developers | ✅ Complete |
 | [TENSORPRIMITIVES_PERFORMANCE_REPORT.md](docs/TENSORPRIMITIVES_PERFORMANCE_REPORT.md) | Performance analysis | Architects | ✅ Complete |
@@ -126,6 +127,18 @@ Chonkie.Net/
 docs/
 ├── 00_README.md                        📖 Docs index
 ├── INDEX.md                            📖 Alternative index
+├── API_REFERENCE_INDEX.md             📘 API reference hub
+├── API_REFERENCE_CORE.md              📘 Core API reference
+├── API_REFERENCE_TOKENIZERS.md        📘 Tokenizers API reference
+├── API_REFERENCE_CHUNKERS.md          📘 Chunkers API reference
+├── API_REFERENCE_EMBEDDINGS.md        📘 Embeddings API reference
+├── API_REFERENCE_GENIES.md            📘 Genies API reference
+├── API_REFERENCE_HANDSHAKES.md        📘 Handshakes API reference
+├── API_REFERENCE_PIPELINE.md          📘 Pipeline API reference
+├── API_REFERENCE_CHEFS.md             📘 Chefs API reference
+├── API_REFERENCE_FETCHERS.md          📘 Fetchers API reference
+├── API_REFERENCE_REFINERIES.md        📘 Refineries API reference
+├── API_REFERENCE_PORTERS.md           📘 Porters API reference
 ├── ADVANCED_CHUNKERS.md                🔧 Advanced features
 ├── CSHARP14_IMPLEMENTATION_COMPLETE.md 🎯 C# 14 features
 ├── TENSORPRIMITIVES_PERFORMANCE_REPORT.md 📈 Performance
