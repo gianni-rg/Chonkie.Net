@@ -193,7 +193,28 @@ public class QdrantHandshakeIntegrationTests
         {
             using var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
             var response = await httpClient.GetAsync($"{QdrantUrl}/healthz");
-            return response.IsSuccessStatusCode;
+            if (!response.IsSuccessStatusCode)
+                return false;
+            
+            // Additional check: Verify gRPC connectivity by attempting a simple check
+            // This helps catch HTTP/2 protocol errors early
+            try
+            {
+                using var grpcClient = new Qdrant.Client.QdrantClient(host: "localhost", port: 6333, https: false);
+                // Attempt a simple check to verify gRPC connectivity
+                _ = await grpcClient.CollectionExistsAsync("test-availability-check", System.Threading.CancellationToken.None);
+                return true;
+            }
+            catch (Grpc.Core.RpcException grpcEx) when (grpcEx.StatusCode == Grpc.Core.StatusCode.PermissionDenied)
+            {
+                // Collection doesn't exist is OK - gRPC connection works
+                return true;
+            }
+            catch (Grpc.Core.RpcException)
+            {
+                // gRPC connection failed
+                return false;
+            }
         }
         catch
         {

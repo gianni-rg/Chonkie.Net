@@ -66,14 +66,20 @@ public class QdrantHandshake : BaseHandshake
         _embeddingModel = embeddingModel;
         _dimension = (uint)embeddingModel.Dimension;
 
+        // Parse URL to extract host, port, and https flag
+        var uri = new Uri(url);
+        var host = uri.Host;
+        var port = uri.Port;
+        var https = uri.Scheme == "https";
+
         // Initialize Qdrant client
         if (!string.IsNullOrWhiteSpace(apiKey))
         {
-            _client = new QdrantClient(host: url, apiKey: apiKey);
+            _client = new QdrantClient(host: host, port: port, https: https, apiKey: apiKey);
         }
         else
         {
-            _client = new QdrantClient(host: url);
+            _client = new QdrantClient(host: host, port: port, https: https);
         }
 
         // Handle random collection name
@@ -217,6 +223,13 @@ public class QdrantHandshake : BaseHandshake
                 );
                 Logger.LogInformation("Created new Qdrant collection: {CollectionName}", _collectionName);
             }
+        }
+        catch (Grpc.Core.RpcException grpcEx) when (grpcEx.StatusCode == Grpc.Core.StatusCode.Unavailable || grpcEx.StatusCode == Grpc.Core.StatusCode.Internal)
+        {
+            Logger.LogError(grpcEx, "Qdrant gRPC service is unavailable or has connection issues for collection {CollectionName}", _collectionName);
+            throw new InvalidOperationException(
+                $"Qdrant service is unavailable. Please ensure Qdrant is running at the specified endpoint.",
+                grpcEx);
         }
         catch (Exception ex)
         {
