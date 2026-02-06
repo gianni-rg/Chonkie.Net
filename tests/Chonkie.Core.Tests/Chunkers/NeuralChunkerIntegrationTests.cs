@@ -1,0 +1,465 @@
+namespace Chonkie.Core.Tests.Chunkers;
+
+using System;
+using System.IO;
+using System.Linq;
+using Chonkie.Chunkers;
+using Chonkie.Core.Types;
+using Chonkie.Tokenizers;
+using Shouldly;
+using Xunit;
+
+/// <summary>
+/// Integration tests for NeuralChunker using ONNX models.
+/// 
+/// These tests verify that the NeuralChunker correctly loads and uses ONNX models
+/// for neural-based token classification chunk detection.
+/// 
+/// Prerequisites:
+/// - ONNX models must be present in the models/ directory
+/// - Supported models: distilbert, modernbert-base, modernbert-large
+/// </summary>
+public class NeuralChunkerIntegrationTests : IDisposable
+{
+    private readonly string _modelsBasePath;
+
+    public NeuralChunkerIntegrationTests()
+    {
+        // Calculate the models path relative to the solution root
+        // From test assembly: bin/Debug/net10.0 -> ../../../.. -> tests -> ../../ -> root/models
+        var testAssemblyDirectory = AppContext.BaseDirectory;
+        var solutionRoot = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", "..", "..", "..", ".."));
+        _modelsBasePath = Path.Combine(solutionRoot, "models");
+    }
+
+    /// <summary>
+    /// Gets the path to a model directory.
+    /// </summary>
+    private string GetModelPath(string modelName)
+    {
+        var path = Path.Combine(_modelsBasePath, modelName);
+        return path;
+    }
+
+    /// <summary>
+    /// Checks if a model exists and is properly configured.
+    /// </summary>
+    private bool ModelExists(string modelName)
+    {
+        var modelPath = GetModelPath(modelName);
+        if (!Directory.Exists(modelPath))
+        {
+            return false;
+        }
+
+        // Check for required files
+        var requiredFiles = new[] { "model.onnx", "config.json", "tokenizer.json" };
+        return requiredFiles.All(f => File.Exists(Path.Combine(modelPath, f)));
+    }
+
+    #region Model Availability Tests
+
+    [Fact]
+    public void ModelsDirectory_Exists()
+    {
+        Directory.Exists(_modelsBasePath).ShouldBeTrue(
+            $"Models directory not found at: {_modelsBasePath}");
+    }
+
+    [Fact]
+    public void DistilbertModel_Exists()
+    {
+        ModelExists("distilbert").ShouldBeTrue(
+            "DistilBERT model not found. Run model conversion script first.");
+    }
+
+    [Fact]
+    public void ModernbertBaseModel_Exists()
+    {
+        ModelExists("modernbert-base").ShouldBeTrue(
+            "ModernBERT-Base model not found. Run model conversion script first.");
+    }
+
+    [Fact]
+    public void ModernbertLargeModel_Exists()
+    {
+        ModelExists("modernbert-large").ShouldBeTrue(
+            "ModernBERT-Large model not found. Run model conversion script first.");
+    }
+
+    #endregion
+
+    #region ONNX Model Initialization Tests
+
+    [Fact]
+    public void Constructor_WithOnnxModelPath_InitializesSuccessfully()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        chunker.UseOnnx.ShouldBeTrue("ONNX model should be loaded");
+        chunker.ChunkSize.ShouldBe(2048);
+    }
+
+    [Fact]
+    public void Constructor_WithInvalidModelPath_FallsBackToRecursiveChunker()
+    {
+        var tokenizer = new CharacterTokenizer();
+        var invalidPath = Path.Combine(_modelsBasePath, "nonexistent-model");
+        
+        var chunker = new NeuralChunker(tokenizer, invalidPath);
+
+        chunker.UseOnnx.ShouldBeFalse("Should fall back to RecursiveChunker");
+    }
+
+    [Fact]
+    public void InitializeOnnxModel_WithValidPath_EnablesOnnx()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new NeuralChunker(tokenizer); // Start in fallback mode
+        chunker.UseOnnx.ShouldBeFalse();
+
+        var modelPath = GetModelPath("distilbert");
+        var result = chunker.InitializeOnnxModel(modelPath);
+
+        result.ShouldBeTrue("Initialization should succeed");
+        chunker.UseOnnx.ShouldBeTrue("ONNX should now be enabled");
+    }
+
+    [Fact]
+    public void InitializeOnnxModel_WithInvalidPath_ReturnsFalse()
+    {
+        var tokenizer = new CharacterTokenizer();
+        var chunker = new NeuralChunker(tokenizer);
+
+        var result = chunker.InitializeOnnxModel("/invalid/path/to/model");
+
+        result.ShouldBeFalse("Initialization should fail with invalid path");
+        chunker.UseOnnx.ShouldBeFalse("ONNX should remain disabled");
+    }
+
+    #endregion
+
+    #region Chunking with ONNX Tests
+
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    public void Chunk_WithOnnxModel_ProducesValidChunks(string modelName)
+    {
+        if (!ModelExists(modelName))
+        {
+            Assert.Skip($"{modelName} model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath(modelName);
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var text = "This is a test document. It contains multiple sentences. " +
+                   "Each sentence should be analyzed for chunk boundaries. " +
+                   "The neural model predicts split points based on token classification. " +
+                   "This helps create semantically meaningful chunks.";
+
+        var chunks = chunker.Chunk(text);
+
+        chunks.Count.ShouldBeGreaterThan(0, "Should produce at least one chunk");
+        
+        // Verify reconstruction
+        var reconstructed = string.Concat(chunks.Select(c => c.Text));
+        reconstructed.ShouldBe(text, "Chunks should perfectly reconstruct original text");
+
+        // Verify chunk properties
+        foreach (var chunk in chunks)
+        {
+            chunk.Text.ShouldNotBeNullOrEmpty("Each chunk must have text");
+            chunk.StartIndex.ShouldBeGreaterThanOrEqualTo(0);
+            chunk.EndIndex.ShouldBeLessThanOrEqualTo(text.Length);
+            chunk.StartIndex.ShouldBeLessThan(chunk.EndIndex);
+
+            var sliced = text.Substring(chunk.StartIndex, chunk.EndIndex - chunk.StartIndex);
+            sliced.ShouldBe(chunk.Text, "Chunk text should match original indices");
+        }
+    }
+
+    [Fact]
+    public void Chunk_WithShortText_ProducesSingleChunk()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 2048);
+
+        var text = "This is a short text.";
+        var chunks = chunker.Chunk(text);
+
+        chunks.Count.ShouldBe(1, "Short text should produce single chunk");
+        chunks[0].Text.ShouldBe(text);
+    }
+
+    [Fact]
+    public void Chunk_WithLongDocument_ProducesMultipleChunks()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 512);
+
+        var text = string.Join(" ", Enumerable.Range(1, 100)
+            .Select(i => $"This is sentence number {i}. It contains some content for testing. " +
+                        $"The neural chunker should identify appropriate split points."));
+
+        var chunks = chunker.Chunk(text);
+
+        chunks.Count.ShouldBeGreaterThan(1, "Long text should produce multiple chunks");
+        var reconstructed = string.Concat(chunks.Select(c => c.Text));
+        reconstructed.ShouldBe(text, "Reconstruction should be complete and accurate");
+    }
+
+    [Fact]
+    public void Chunk_WithUnicodeText_PreservesCharactersCorrectly()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var text = "Hello world! 你好世界！ مرحبا العالم Привет мир 🌍";
+
+        var chunks = chunker.Chunk(text);
+
+        var reconstructed = string.Concat(chunks.Select(c => c.Text));
+        reconstructed.ShouldBe(text, "Unicode characters should be preserved");
+    }
+
+    [Fact]
+    public void Chunk_WithEmojis_PreservesEmojisCorrectly()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var text = "Data science 📊 is awesome! Machine learning 🤖 rocks! " +
+                   "Neural networks 🧠 are powerful! 🚀 Let's go!";
+
+        var chunks = chunker.Chunk(text);
+
+        var reconstructed = string.Concat(chunks.Select(c => c.Text));
+        reconstructed.ShouldBe(text, "Emojis should be preserved");
+    }
+
+    #endregion
+
+    #region Batch Chunking with ONNX Tests
+
+    [Fact]
+    public void ChunkBatch_WithOnnxModel_ProcessesMultipleTexts()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 512);
+
+        var texts = new[]
+        {
+            "First document with some content. It contains multiple sentences.",
+            "Second document with different content. This is also a test.",
+            "Third document here. Contains valuable information for testing."
+        };
+
+        var results = chunker.ChunkBatch(texts);
+
+        results.Count.ShouldBe(3, "Should process all input texts");
+        foreach (var batch in results)
+        {
+            batch.Count.ShouldBeGreaterThan(0, "Each text should produce at least one chunk");
+        }
+    }
+
+    #endregion
+
+    #region Document Chunking with ONNX Tests
+
+    [Fact]
+    public void ChunkDocument_WithOnnxModel_PopulatesChunks()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var document = new Document
+        {
+            Content = "Document about machine learning. " +
+                     "Neural networks are powerful. " +
+                     "Deep learning has many applications. " +
+                     "Computer vision is one example. " +
+                     "Natural language processing is another."
+        };
+
+        var result = chunker.ChunkDocument(document);
+
+        result.ShouldBeSameAs(document, "Should return the same document instance");
+        result.Chunks.Count.ShouldBeGreaterThan(0, "Document should have chunks");
+        foreach (var chunk in result.Chunks)
+        {
+            chunk.Text.ShouldNotBeNullOrEmpty("Each chunk must have content");
+        }
+    }
+
+    #endregion
+
+    #region Model Comparison Tests
+
+    [Fact]
+    public void MultipleModels_ProduceSimilarChunking()
+    {
+        if (!ModelExists("distilbert") || !ModelExists("modernbert-base"))
+        {
+            Assert.Skip("Required models not available for comparison");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var text = "First sentence here. Second sentence there. " +
+                   "Third sentence elsewhere. Fourth sentence finally.";
+
+        var distilbertPath = GetModelPath("distilbert");
+        var modernbertPath = GetModelPath("modernbert-base");
+
+        var distilbertChunker = new NeuralChunker(tokenizer, distilbertPath, chunkSize: 512);
+        var modernbertChunker = new NeuralChunker(tokenizer, modernbertPath, chunkSize: 512);
+
+        var distilbertChunks = distilbertChunker.Chunk(text);
+        var modernbertChunks = modernbertChunker.Chunk(text);
+
+        // Both should successfully chunk the text
+        distilbertChunks.Count.ShouldBeGreaterThan(0);
+        modernbertChunks.Count.ShouldBeGreaterThan(0);
+
+        // Both should reconstruct perfectly
+        var distilbertReconstructed = string.Concat(distilbertChunks.Select(c => c.Text));
+        var modernbertReconstructed = string.Concat(modernbertChunks.Select(c => c.Text));
+
+        distilbertReconstructed.ShouldBe(text);
+        modernbertReconstructed.ShouldBe(text);
+
+        distilbertChunker.Dispose();
+        modernbertChunker.Dispose();
+    }
+
+    #endregion
+
+    #region Edge Cases Tests
+
+    [Fact]
+    public void Chunk_WithEmptyString_ReturnsEmptyList()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var chunks = chunker.Chunk("");
+
+        chunks.Count.ShouldBe(0, "Empty text should produce no chunks");
+        chunker.Dispose();
+    }
+
+    [Fact]
+    public void Chunk_WithWhitespaceOnly_ReturnsEmptyList()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath);
+
+        var chunks = chunker.Chunk("   \n\t   ");
+
+        chunks.Count.ShouldBe(0, "Whitespace-only text should produce no chunks");
+        chunker.Dispose();
+    }
+
+    [Fact]
+    public void Chunk_WithVeryLongText_CompletesSuccessfully()
+    {
+        if (!ModelExists("distilbert"))
+        {
+            Assert.Skip("DistilBERT model not available");
+        }
+
+        var tokenizer = new CharacterTokenizer();
+        var modelPath = GetModelPath("distilbert");
+        var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 256);
+
+        // Create a very long document
+        var sentences = Enumerable.Range(1, 500)
+            .Select(i => $"This is test sentence number {i}. ")
+            .ToArray();
+        var longText = string.Concat(sentences);
+
+        var chunks = chunker.Chunk(longText);
+
+        chunks.Count.ShouldBeGreaterThan(0, "Should handle long documents");
+        var reconstructed = string.Concat(chunks.Select(c => c.Text));
+        reconstructed.ShouldBe(longText, "Should reconstruct perfectly despite length");
+
+        chunker.Dispose();
+    }
+
+    #endregion
+
+    #region IDisposable Implementation
+
+    public void Dispose()
+    {
+        // Cleanup if needed
+        GC.SuppressFinalize(this);
+    }
+
+    #endregion
+}
