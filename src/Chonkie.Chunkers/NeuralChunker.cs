@@ -152,9 +152,45 @@ public sealed class NeuralChunker : BaseChunker, IDisposable
 
     /// <summary>
     /// Chunks the input text using neural methods (ONNX) or falls back to recursive chunking.
+    /// Automatically selects strategy based on ONNX model availability.
     /// </summary>
-    /// <param name="text">The text to chunk.</param>
-    /// <returns>A list of chunks.</returns>
+    /// <param name="text">The text to chunk. If null or empty, returns an empty list.</param>
+    /// <returns>A list of chunks with token counts and position information.</returns>
+    /// <remarks>
+    /// This chunker implements a hybrid approach:
+    /// 
+    /// **ONNX Mode (if available):**
+    /// - Uses pre-trained token classification model to detect optimal chunk boundaries
+    /// - Models are trained to recognize natural breaking points in text
+    /// - Results in more semantically coherent chunks than rule-based approaches
+    /// - Requires pre-converted ONNX model files (models/*.onnx)
+    /// 
+    /// **Fallback Mode (no ONNX model):**
+    /// - Automatically falls back to RecursiveChunker if ONNX unavailable
+    /// - No performance degradation, just less semantic intelligence
+    /// - Useful during development or when models aren't pre-downloaded
+    /// 
+    /// The neural approach works by:
+    /// 1. Tokenizing the input text
+    /// 2. Running ONNX token classifier to get split probabilities
+    /// 3. Identifying split points (tokens with score &gt; 0.5)
+    /// 4. Creating chunks honoring the chunk_size limit
+    /// 5. Falling back to recursive chunking if neural method fails
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// // With ONNX model
+    /// var chunker = new NeuralChunker(tokenizer, "models/modernbert", chunkSize: 2048);
+    /// if (chunker.UseOnnx)
+    ///     Console.WriteLine("Using neural chunking");
+    /// 
+    /// var chunks = chunker.Chunk(longDocument);
+    /// 
+    /// // Without ONNX model (uses fallback)
+    /// var chunker2 = new NeuralChunker(tokenizer, chunkSize: 2048);
+    /// // Automatically falls back to RecursiveChunker internally
+    /// </code>
+    /// </example>
     public override IReadOnlyList<Chunk> Chunk(string text)
     {
         if (string.IsNullOrEmpty(text))

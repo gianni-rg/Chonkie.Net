@@ -22,10 +22,30 @@ public static class RefineryExtensions
         /// Gets the refinery type name (type name without "Refinery" suffix).
         /// </summary>
         public string RefineryType => refinery.GetType().Name.Replace("Refinery", string.Empty);
+
+        /// <summary>
+        /// Refines chunks in batches to manage memory and processing time for large document sets.
+        /// </summary>
         /// <param name="chunks">The chunks to refine.</param>
-        /// <param name="batchSize">Number of chunks to process per batch.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="batchSize">Number of chunks to process per batch. Default is 100. Must be positive.</param>
+        /// <param name="cancellationToken">Cancellation token to cancel the operation.</param>
         /// <returns>A task representing the asynchronous operation with refined chunks.</returns>
+        /// <remarks>
+        /// This method processes chunks in batches to avoid overwhelming memory or rate limits when refining
+        /// large numbers of chunks. For example, when adding embeddings to 10,000 chunks via an API, batching
+        /// prevents timeouts and reduces peak memory usage.
+        /// If the total chunk count is less than or equal to batchSize, all chunks are processed in a single call.
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when batchSize is not positive.</exception>
+        /// <example>
+        /// <code>
+        /// var refinery = new EmbeddingsRefinery(embeddings);
+        /// var chunks = new List&lt;Chunk&gt; { /* 5000 chunks */ };
+        /// 
+        /// // Refine in batches of 100 to avoid memory spikes
+        /// var refined = await refinery.RefineInBatchesAsync(chunks, batchSize: 100);
+        /// </code>
+        /// </example>
         public async Task<IReadOnlyList<Chunk>> RefineInBatchesAsync(
             IReadOnlyList<Chunk> chunks,
             int batchSize = 100,

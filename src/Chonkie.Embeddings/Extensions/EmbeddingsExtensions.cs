@@ -97,9 +97,24 @@ public static class EmbeddingsExtensions
         /// Uses hardware-accelerated operations for each similarity calculation.
         /// Useful for semantic search and finding similar embeddings.
         /// </summary>
-        /// <param name="query">The query vector.</param>
-        /// <param name="candidates">Array of candidate vectors to compare against.</param>
-        /// <returns>Array of cosine similarities in [-1, 1] range.</returns>
+        /// <param name="query">The query vector to compare against candidates.</param>
+        /// <param name="candidates">Array of candidate vectors to compare against. All vectors must have the same dimension as the query.</param>
+        /// <returns>Array of cosine similarities in [-1, 1] range, ordered to match the candidates array.</returns>
+        /// <remarks>
+        /// This method uses TensorPrimitives for SIMD acceleration, providing significant performance improvements
+        /// over naive implementations. Useful for semantic search, document ranking, and similarity-based retrieval.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// var embeddings = new SentenceTransformerEmbeddings("all-MiniLM-L6-v2");
+        /// var queryVector = await embeddings.EmbedAsync("Find similar documents");
+        /// var docVectors = new[] { vectorA, vectorB, vectorC };
+        /// var similarities = embeddings.BatchCosineSimilarity(queryVector, docVectors);
+        /// 
+        /// for (int i = 0; i &lt; similarities.Length; i++)
+        ///     Console.WriteLine($"Document {i}: similarity = {similarities[i]:F4}");
+        /// </code>
+        /// </example>
         public float[] BatchCosineSimilarity(float[] query, float[][] candidates)
         {
             var similarities = new float[candidates.Length];

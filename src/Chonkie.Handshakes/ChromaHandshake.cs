@@ -173,12 +173,36 @@ public class ChromaHandshake : BaseHandshake
 
     /// <summary>
     /// Searches for similar chunks in the Chroma collection using vector similarity.
+    /// Returns results ranked by cosine similarity to the query text.
     /// </summary>
-    /// <param name="query">The query text to search for.</param>
-    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="query">The query text to search for. Will be embedded using the configured embedding model.</param>
+    /// <param name="limit">Maximum number of results to return. Default is 5. Must be positive.</param>
     /// <param name="cancellationToken">Token to cancel the operation.</param>
-    /// <returns>A list of search results with metadata and similarity scores.</returns>
+    /// <returns>A list of search results as dictionaries containing documents, embeddings, metadatas, and distances.</returns>
+    /// <remarks>
+    /// This method:
+    /// 1. Embeds the query text using the configured IEmbeddings provider
+    /// 2. Sends the query embedding to the Chroma collection
+    /// 3. Returns chunks ranked by cosine similarity (lower distance = higher similarity)
+    /// 
+    /// Results include all metadata stored during WriteAsync (start_index, end_index, token_count).
+    /// The "distances" field contains cosine distance (0 = identical, 1 = orthogonal, 2 = opposite).
+    /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when Chroma server returns an error or connection fails.</exception>
+    /// <example>
+    /// <code>
+    /// var handshake = new ChromaHandshake("my-collection", embeddings);
+    /// var results = await handshake.SearchAsync("Find documentation about API", limit: 5);
+    /// 
+    /// foreach (var result in results)
+    /// {
+    ///     var document = (result["documents"] as List&lt;string&gt;)?[0];
+    ///     var distance = ((List&lt;float&gt;?)result["distances"])?[0];
+    ///     Console.WriteLine($"Document: {document}, Similarity: {1 - distance:F3}");
+    /// }
+    /// </code>
+    /// </example>
     public async Task<IReadOnlyList<Dictionary<string, object?>>> SearchAsync(
         string query,
         int limit = 5,
