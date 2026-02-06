@@ -1,4 +1,4 @@
-# Chonkie.Net v2.12.0 - NuGet Publication Checklist
+# Chonkie.Net v0.4.0 - NuGet Publication Checklist
 
 **Date:** February 6, 2026  
 **Status:** ✅ READY FOR PUBLICATION
@@ -9,13 +9,13 @@
 
 ### Package Preparation
 - [x] **NuGet Package Created**
-  - File: `Chonkie.Core.2.12.0.nupkg`
+  - File: `Chonkie.Core.0.4.0.nupkg`
   - Location: `c:\Projects\Personal\Chonkie.Net\nupkg\`
   - Size: 22.7 KB
   - Contents verified: DLL + XML docs + README
 
 - [x] **Package Metadata**
-  - Version: 2.12.0
+  - Version: 0.4.0
   - Title: Chonkie.Core
   - Description: The lightweight ingestion library for fast, efficient and robust RAG pipelines
   - Authors: Gianni Rosa Gallina
@@ -65,11 +65,11 @@
   - Status: Phase 11 complete
 
 - [x] **CHANGELOG.md Updated**
-  - v2.12.0 section added
+  - v0.4.0 section added
   - Phase 11 accomplishments documented
   - Release date: February 6, 2026
 
-- [x] **RELEASE_NOTES_V2_12_0.md Created**
+- [x] **RELEASE_NOTES_V0_4.md Created**
   - Comprehensive release notes
   - Feature highlights
   - Installation instructions
@@ -83,9 +83,9 @@
 
 ### Version Control
 - [x] **Git Tag Created**
-  - Tag: v2.12.0
-  - Message: "Release v2.12.0: Phase 11 Complete"
-  - Use: `git checkout v2.12.0` to access release
+  - Tag: v0.4.0
+  - Message: "Release v0.4.0: Phase 11 Complete"
+  - Use: `git checkout v0.4.0` to access release
 
 - [x] **All Changes Committed**
   - Task 1: NuGet creation (commit hash: 7335b1c)
@@ -104,11 +104,11 @@
 
 - [ ] **Package Upload**
   - Use NuGet.org dashboard or `nuget push` command
-  - File: `nupkg/Chonkie.Core.2.12.0.nupkg`
+  - File: `nupkg/Chonkie.Core.0.4.0.nupkg`
   - API Key: [Already configured in nuget.config for publication]
 
 - [ ] **Verify Package on NuGet.org**
-  - URL: https://www.nuget.org/packages/Chonkie.Core/2.12.0
+  - URL: https://www.nuget.org/packages/Chonkie.Core/0.4.0
   - Check: All metadata visible
   - Check: README renders correctly
   - Check: License link works
@@ -117,8 +117,8 @@
 ### Post-Publication
 - [ ] **Update GitHub Release**
   - Go to: https://github.com/gianni-rg/Chonkie.Net/releases
-  - Create new release from tag `v2.12.0`
-  - Add release notes from `RELEASE_NOTES_V2_12_0.md`
+  - Create new release from tag `v0.4.0`
+  - Add release notes from `RELEASE_NOTES_V0_4.md`
   - Include download link to NuGet package
 
 - [ ] **Social Announcement** (optional)
@@ -132,7 +132,7 @@
 
 ### Core Files
 ```
-nupkg/Chonkie.Core.2.12.0.nupkg (22.7 KB)
+nupkg/Chonkie.Core.0.4.0.nupkg (22.7 KB)
 ├── lib/net10.0/Chonkie.Core.dll
 ├── lib/net10.0/Chonkie.Core.xml
 ├── PACKAGE_README.md
@@ -141,12 +141,12 @@ nupkg/Chonkie.Core.2.12.0.nupkg (22.7 KB)
 
 ### Installation Command
 ```bash
-dotnet add package Chonkie.Core --version 2.12.0
+dotnet add package Chonkie.Core --version 0.4.0
 ```
 
 ### NuGet.org URL
 ```
-https://www.nuget.org/packages/Chonkie.Core/2.12.0
+https://www.nuget.org/packages/Chonkie.Core/0.4.0
 ```
 
 ### Repository Information
@@ -160,8 +160,8 @@ https://www.nuget.org/packages/Chonkie.Core/2.12.0
 
 | Item | Value | Status |
 |------|-------|--------|
-| Version | 2.12.0 | ✅ Ready |
-| NuGet Package | Chonkie.Core.2.12.0.nupkg | ✅ Created |
+| Version | 0.4.0 | ✅ Ready |
+| NuGet Package | Chonkie.Core.0.4.0.nupkg | ✅ Created |
 | Package Size | 22.7 KB | ✅ Optimized |
 | Tests Passing | 782 | ✅ All pass |
 | Build Warnings | 0 | ✅ Clean |
@@ -174,11 +174,11 @@ https://www.nuget.org/packages/Chonkie.Core/2.12.0
 
 ## Files for Review
 
-- `README.md` - Updated with v2.12.0 info
-- `CHANGELOG.md` - v2.12.0 release notes
-- `RELEASE_NOTES_V2_12_0.md` - Comprehensive release documentation
+- `README.md` - Updated with v0.4.0 info
+- `CHANGELOG.md` - v0.4.0 release notes
+- `RELEASE_NOTES_V0_4.md` - Comprehensive release documentation
 - `STATUS_DASHBOARD.md` - Phase 11 completion tracking
-- `nupkg/Chonkie.Core.2.12.0.nupkg` - The package file
+- `nupkg/Chonkie.Core.0.4.0.nupkg` - The package file
 - `PACKAGE_README.md` - NuGet package description
 
 ---

@@ -1,19 +1,19 @@
-# Chonkie.Net v2.12.0 Release Notes
+# Chonkie.Net v0.4.0 Release Notes
 
 **Release Date:** February 6, 2026  
 **Status:** ✅ Production Ready  
-**NuGet Package:** [Chonkie.Core.2.12.0](https://www.nuget.org/packages/Chonkie.Core/)
+**NuGet Package:** [Chonkie.Core.0.4.0](https://www.nuget.org/packages/Chonkie.Core/)
 
 ---
 
 ## 🎉 Highlights: Phase 11 Complete
 
-Chonkie.Net v2.12.0 marks the completion of Phase 11, delivering a production-ready NuGet package with comprehensive documentation and full test coverage.
+Chonkie.Net v0.4.0 marks the completion of Phase 11, delivering a production-ready NuGet package with comprehensive documentation and full test coverage.
 
-### What's New in v2.12.0
+### What's New in v0.4.0
 
 #### 📦 NuGet Package Release
-- **Chonkie.Core v2.12.0** package created and verified
+- **Chonkie.Core v0.4.0** package created and verified
 - 22.7 KB optimized NuGet package
 - Comprehensive package README with feature matrix
 - All types and APIs accessible and functional

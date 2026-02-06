@@ -103,7 +103,7 @@ Comprehensive enhancement of XML documentation across public APIs to establish f
 | Chunkers | 603 | All 11 Chunker Types, Use Cases, Configuration, Performance, Decision Matrix | ✅ |
 | Vector DBs | 673 | 9 Databases, Setup, Data Patterns, Indexing, Query Optimization | ✅ |
 | Pipelines | 615 | CHOMP Architecture, Basic→Advanced Pipelines, Configuration Examples | ✅ |
-| Migration | 1584 | Python v1.5.3 → .NET v2.12+ Mappings, Code Examples, Differences | ✅ |
+| Migration | 1584 | Python v1.5.3 → .NET v0.4+ Mappings, Code Examples, Differences | ✅ |
 | **TOTAL** | **3969** | **Comprehensive Documentation Suite** | **✅** |
 
 **Quality Metrics:**
@@ -128,7 +128,7 @@ Comprehensive enhancement of XML documentation across public APIs to establish f
    
    - [ ] Create .csproj metadata:
      * Project name: Chonkie.Net
-     * Version: 2.12.0
+     * Version: 0.4.0
      * Description: "The lightweight ingestion library for fast, efficient and robust RAG pipelines"
      * Authors: Team
      * Tags: chunking, embeddings, rag, vector-database, nlp, nlp-library, llm
@@ -175,11 +175,11 @@ Comprehensive enhancement of XML documentation across public APIs to establish f
 #### 4. **Release Preparation**
    **Effort:** 1-1.5 hours
    
-   - [ ] Update CHANGELOG.md with v2.12.0 details
+   - [ ] Update CHANGELOG.md with v0.4.0 details
    - [ ] Update VERSION in solution
    - [ ] Create GitHub release draft
    - [ ] Prepare release notes
-   - [ ] Tag commit for release (git tag v2.12.0)
+   - [ ] Tag commit for release (git tag v0.4.0)
 
 ### Release Checklist (Master)
 
@@ -221,7 +221,7 @@ Comprehensive enhancement of XML documentation across public APIs to establish f
 **Release:** (Ready for approval)
 - [ ] GitHub release draft
 - [ ] Release notes finalized
-- [ ] Version tagged (v2.12.0)
+- [ ] Version tagged (v0.4.0)
 - [ ] Changelog updated
 
 ---

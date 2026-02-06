@@ -1,6 +1,6 @@
 # Chonkie.Net Status Dashboard
 **As of:** February 6, 2026 (Late Evening)  
-**Version:** v2.12  
+**Version:** v0.4  
 **Overall Progress:** 98% (Core Implementation 100% Complete)
 
 ---
@@ -44,7 +44,7 @@
    - CHOMP architecture, basic to advanced pipelines, configuration examples
 
 6. ✅ **Migration Guide** (MIGRATION_GUIDE_PYTHON_TO_NET.md - 1584 lines)
-   - Python v1.5.3 → Chonkie.Net v2.12+ API mappings, code examples, differences
+   - Python v1.5.3 → Chonkie.Net v0.4+ API mappings, code examples, differences
 
 **Documentation Summary:**
 - **Total Lines:** 3969 lines of comprehensive documentation
@@ -912,13 +912,13 @@ Successfully implemented SearchAsync for TurbopufferHandshake:
 ## PHASE 11.3 COMPLETION PROGRESS: 3/4 TASKS (75%)
 
 ### ✅ Task 1: NuGet Package Creation (COMPLETE)
-- Chonkie.Core.2.12.0.nupkg created (22.7 KB)
+- Chonkie.Core.0.4.0.nupkg created (22.7 KB)
 - Professional README and metadata
 - Package restoration verified
 
 ### ✅ Task 2: Final Documentation Review (COMPLETE)
 - README: 782 tests, NuGet status
-- CHANGELOG: v2.12.0 release notes
+- CHANGELOG: v0.4.0 release notes
 - Tutorials: 2270 lines verified
 - Migration: 1202 lines validated
 - API Docs: 12 guides confirmed

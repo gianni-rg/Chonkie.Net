@@ -5,12 +5,12 @@ All notable changes to the Chonkie.NET project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.12.0] - 2026-02-06
+## [0.4.0] - 2026-02-06
 
 ### Phase 11 Complete: Production Ready Release
 
 **Phase 11.3: NuGet Package Preparation**
-- Chonkie.Core v2.12.0 package created (22.7 KB)
+- Chonkie.Core v0.4.0 package created (22.7 KB)
 - Professional package README with feature matrix and tutorial links
 - Package metadata complete: Apache-2.0 license, tags, repository info
 - Package restoration and usage verified in test project

@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Target Python Version:** v1.5.3  
-**Target .NET Version:** Chonkie.Net v2.12+ (.NET 10, C# 14)  
+**Target .NET Version:** Chonkie.Net v0.4+ (.NET 10, C# 14)  
 **Last Updated:** February 6, 2026  
 
 ---
