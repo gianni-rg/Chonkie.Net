@@ -48,7 +48,7 @@ namespace Chonkie.Embeddings.Cohere
             {
                 // Cohere API rejects empty strings, so use a space instead
                 var textToEmbed = string.IsNullOrEmpty(text) ? " " : text;
-                
+
                 var requestBody = new
                 {
                     model = _model,
@@ -117,7 +117,7 @@ namespace Chonkie.Embeddings.Cohere
             {
                 // Cohere API rejects empty strings, so replace them with spaces
                 var textsToEmbed = texts.Select(t => string.IsNullOrEmpty(t) ? " " : t).ToList();
-                
+
                 // Cohere API limits batch size to 96 texts per request
                 const int maxBatchSize = 96;
                 var allResults = new List<float[]>();
@@ -126,7 +126,7 @@ namespace Chonkie.Embeddings.Cohere
                 for (int i = 0; i < textsToEmbed.Count; i += maxBatchSize)
                 {
                     var batch = textsToEmbed.Skip(i).Take(maxBatchSize).ToList();
-                    
+
                     var requestBody = new
                     {
                         model = _model,
@@ -154,7 +154,7 @@ namespace Chonkie.Embeddings.Cohere
                         allResults.Add(floats.ToArray());
                     }
                 }
-                
+
                 return allResults;
             }
             catch (HttpRequestException ex)
