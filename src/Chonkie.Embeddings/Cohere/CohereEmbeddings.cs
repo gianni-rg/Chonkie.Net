@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -45,17 +46,25 @@ namespace Chonkie.Embeddings.Cohere
         {
             try
             {
+                // Cohere API rejects empty strings, so use a space instead
+                var textToEmbed = string.IsNullOrEmpty(text) ? " " : text;
+                
                 var requestBody = new
                 {
-                    texts = new[] { text },
                     model = _model,
-                    input_type = "search_document"
+                    texts = new[] { textToEmbed },
+                    input_type = "search_document",
+                    truncate = "END"
                 };
                 var content = new StringContent(JsonSerializer.Serialize(requestBody));
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await _httpClient.PostAsync("https://api.cohere.ai/v1/embed", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
+                var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
+                }
                 var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
                 using var doc = JsonDocument.Parse(responseJson);
                 var embeddings = doc.RootElement.GetProperty("embeddings")[0];
@@ -106,29 +115,47 @@ namespace Chonkie.Embeddings.Cohere
         {
             try
             {
-                var requestBody = new
-                {
-                    texts = texts,
-                    model = _model,
-                    input_type = "search_document"
-                };
-                var content = new StringContent(JsonSerializer.Serialize(requestBody));
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                // Cohere API rejects empty strings, so replace them with spaces
+                var textsToEmbed = texts.Select(t => string.IsNullOrEmpty(t) ? " " : t).ToList();
+                
+                // Cohere API limits batch size to 96 texts per request
+                const int maxBatchSize = 96;
+                var allResults = new List<float[]>();
 
-                var response = await _httpClient.PostAsync("https://api.cohere.ai/v1/embed", content, cancellationToken);
-                response.EnsureSuccessStatusCode();
-                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-                using var doc = JsonDocument.Parse(responseJson);
-                var embeddingsArray = doc.RootElement.GetProperty("embeddings");
-                var results = new List<float[]>(embeddingsArray.GetArrayLength());
-                foreach (var embedding in embeddingsArray.EnumerateArray())
+                // Process texts in batches
+                for (int i = 0; i < textsToEmbed.Count; i += maxBatchSize)
                 {
-                    var floats = new List<float>(Dimension);
-                    foreach (var value in embedding.EnumerateArray())
-                        floats.Add(value.GetSingle());
-                    results.Add(floats.ToArray());
+                    var batch = textsToEmbed.Skip(i).Take(maxBatchSize).ToList();
+                    
+                    var requestBody = new
+                    {
+                        model = _model,
+                        texts = batch,
+                        input_type = "search_document",
+                        truncate = "END"
+                    };
+                    var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                        throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
+                    }
+                    var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                    using var doc = JsonDocument.Parse(responseJson);
+                    var embeddingsArray = doc.RootElement.GetProperty("embeddings");
+                    foreach (var embedding in embeddingsArray.EnumerateArray())
+                    {
+                        var floats = new List<float>(Dimension);
+                        foreach (var value in embedding.EnumerateArray())
+                            floats.Add(value.GetSingle());
+                        allResults.Add(floats.ToArray());
+                    }
                 }
-                return results;
+                
+                return allResults;
             }
             catch (HttpRequestException ex)
             {
