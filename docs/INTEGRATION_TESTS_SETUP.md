@@ -90,7 +90,7 @@ $env:VOYAGE_API_KEY = "your-voyage-key"
 
 ### Sentence Transformers
 ```powershell
-$env:SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
+$env:CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
 ```
 
 ## Running Integration Tests

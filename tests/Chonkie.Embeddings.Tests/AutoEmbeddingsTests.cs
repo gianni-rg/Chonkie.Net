@@ -209,7 +209,7 @@ namespace Chonkie.Embeddings.Tests
         public void GetProvider_SentenceTransformers_ReturnsType()
         {
             // Skip if model path is not set
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH")))
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH")))
             {
                 Assert.Skip("Sentence Transformers model path not configured");
             }

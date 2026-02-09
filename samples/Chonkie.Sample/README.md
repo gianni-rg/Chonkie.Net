@@ -1,15 +1,25 @@
 # Chonkie.Net Sample Application
 
-This sample application demonstrates the key features of the Chonkie.Net library for text chunking.
+This sample application walks through the Quick Start and Chunkers tutorials using the .NET APIs.
 
 ## What it demonstrates
 
 The sample includes examples of:
 
-1. **Token Chunker** - Splits text into chunks based on token count
-2. **Sentence Chunker** - Splits text based on sentence boundaries
-3. **Recursive Chunker** - Uses hierarchical splitting with multiple separators
-4. **Semantic Chunker** - Groups semantically similar sentences (requires embeddings configuration)
+1. **Quick Start CHONK** - First chunk + metadata
+2. **Tokenizers** - Word, character, and auto tokenizers
+3. **Token Chunker** - Fixed token windows with overlap
+4. **Sentence Chunker** - Sentence-aware chunking
+5. **Recursive Chunker** - Hierarchical splitting
+6. **Fast Chunker** - High-speed character chunking
+7. **Code Chunker** - Code-aware chunking
+8. **Table Chunker** - Markdown table chunking
+9. **Markdown Processing** - MarkdownChef + recursive chunking
+10. **Semantic Chunker** - Embeddings-driven semantic boundaries
+11. **Late Chunker** - Late interaction embeddings
+12. **Neural Chunker** - ONNX-backed chunking (fallback-aware)
+13. **Slumber Chunker** - LLM-guided chunking (fallback-aware)
+14. **MarkdownDocument** - Structured markdown metadata
 
 ## Running the sample
 
@@ -33,29 +43,43 @@ The application will demonstrate each chunker type using a sample text about Art
 - A preview of each chunk
 - Token counts for each chunk
 
-## Customizing the Sample
+## Embeddings Configuration
 
-You can modify the `Program.cs` file to:
-- Use your own text
-- Adjust chunker parameters (chunk size, overlap, etc.)
-- Configure the Semantic Chunker with your embeddings provider API key
+Semantic, late, and vector-aware demos require embeddings. Set one of these options:
 
-### Enabling Semantic Chunker
+### Option 1: Azure OpenAI
 
-To test the Semantic Chunker, uncomment the code in `DemoSemanticChunker` and provide your API key:
-
-```csharp
-var embeddings = new OpenAIEmbeddings(apiKey: "your-api-key-here");
+```text
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT=text-embedding-3-small
 ```
 
-Supported embedding providers:
-- OpenAI
-- Azure OpenAI
-- Cohere
-- Google Gemini
-- Jina AI
-- Voyage AI
-- Sentence Transformers (local ONNX models)
+### Option 2: OpenAI
+
+```text
+OPENAI_API_KEY=your-key
+OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
+OPENAI_EMBEDDINGS_DIMENSION=1536
+```
+
+### Option 3: Local Sentence Transformers (ONNX)
+
+```text
+CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
+```
+
+### Force Offline Demo Embeddings
+
+```text
+CHONKIE_SAMPLE_OFFLINE=1
+```
+
+### Optional: Neural Chunker ONNX Model
+
+```text
+CHONKIE_NEURAL_MODEL_PATH=./models/distilbert
+```
 
 ## Learn More
 

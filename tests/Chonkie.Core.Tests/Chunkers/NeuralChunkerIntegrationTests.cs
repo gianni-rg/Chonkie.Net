@@ -25,11 +25,17 @@ public class NeuralChunkerIntegrationTests : IDisposable
 
     public NeuralChunkerIntegrationTests()
     {
-        // Calculate the models path relative to the solution root
-        // From test assembly: bin/Debug/net10.0 -> ../../../.. -> tests -> ../../ -> root/models
-        var testAssemblyDirectory = AppContext.BaseDirectory;
-        var solutionRoot = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", "..", "..", "..", ".."));
-        _modelsBasePath = Path.Combine(solutionRoot, "models");
+        // Load models path from environment variable
+        var modelsPath = Environment.GetEnvironmentVariable("CHONKIE_NEURAL_MODEL_PATH");
+
+        if (string.IsNullOrWhiteSpace(modelsPath))
+        {
+            throw new InvalidOperationException(
+                "CHONKIE_NEURAL_MODEL_PATH environment variable is not set. " +
+                "Please set it to point to the directory containing ONNX models.");
+        }
+
+        _modelsBasePath = modelsPath;
     }
 
     /// <summary>

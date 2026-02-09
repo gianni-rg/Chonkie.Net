@@ -13,7 +13,7 @@ namespace Chonkie.Embeddings.Integration.Tests;
 /// </summary>
 public class SentenceTransformerEmbeddingsIntegrationTests
 {
-    private const string ModelPathEnvVar = "SENTENCE_TRANSFORMERS_MODEL_PATH";
+    private const string ModelPathEnvVar = "CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH";
 
     /// <summary>
     /// Tests embedding with real model returns a valid embedding.
@@ -394,7 +394,7 @@ public class SentenceTransformerEmbeddingsIntegrationTests
         // Act
         var singleEmbedding1 = await embeddings.EmbedAsync(text1);
         var singleEmbedding2 = await embeddings.EmbedAsync(text2);
-        var batchEmbeddings = await embeddings.EmbedBatchAsync(new[] { text1, text2 });
+        var batchEmbeddings = await embeddings.EmbedBatchAsync([text1, text2]);
 
         // Assert
         Assert.Equal(2, batchEmbeddings.Count);

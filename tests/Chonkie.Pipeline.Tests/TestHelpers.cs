@@ -10,12 +10,12 @@ internal static class TestHelpers
 {
     /// <summary>
     /// Gets the model path from environment variable.
-    /// Uses SENTENCE_TRANSFORMERS_MODEL_PATH only; no hard-coded fallback path.
+    /// Uses CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH only; no hard-coded fallback path.
     /// </summary>
     /// <returns>The model path to use for tests, or empty string if not set.</returns>
     public static string GetModelPath()
     {
-        var envPath = Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH");
+        var envPath = Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH");
         return envPath ?? string.Empty;
     }
 
@@ -40,6 +40,6 @@ internal static class TestHelpers
     public static void SkipIfModelNotAvailable()
     {
         if (!IsModelAvailable())
-            Assert.Skip("SENTENCE_TRANSFORMERS_MODEL_PATH not set or model.onnx not found. Skipping test that requires ONNX model.");
+            Assert.Skip("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH not set or model.onnx not found. Skipping test that requires ONNX model.");
     }
 }

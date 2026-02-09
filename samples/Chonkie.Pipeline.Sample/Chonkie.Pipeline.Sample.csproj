@@ -14,8 +14,11 @@
     <ProjectReference Include="..\..\src\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Fetchers\Chonkie.Fetchers.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Chefs\Chonkie.Chefs.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Pipeline\Chonkie.Pipeline.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Refineries\Chonkie.Refineries.csproj" />
     <ProjectReference Include="..\..\src\Chonkie.Porters\Chonkie.Porters.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Handshakes\Chonkie.Handshakes.csproj" />
+    <ProjectReference Include="..\..\src\Chonkie.Genies\Chonkie.Genies.csproj" />
   </ItemGroup>
 
 </Project>
