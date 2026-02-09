@@ -24,7 +24,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
     /// <summary>
     /// Gets the path to a model directory.
     /// </summary>
-    private string GetModelPath(string modelName)
+    private static string GetModelPath(string modelName)
     {
         // Load models base path from environment variable
         var modelsPath = Environment.GetEnvironmentVariable("CHONKIE_NEURAL_MODEL_PATH");
@@ -41,7 +41,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
     /// <summary>
     /// Checks if a model exists and is properly configured.
     /// </summary>
-    private bool ModelExists(string modelName)
+    private static bool ModelExists(string modelName)
     {
         var modelPath = GetModelPath(modelName);
         if (!Directory.Exists(modelPath))
@@ -54,52 +54,23 @@ public class NeuralChunkerIntegrationTests : IDisposable
         return requiredFiles.All(f => File.Exists(Path.Combine(modelPath, f)));
     }
 
-    #region Model Availability Tests
-
-    [Fact]
-    public void ModelsDirectory_Exists()
-    {
-        var modelsBasePath = GetModelPath(string.Empty);
-
-        Directory.Exists(modelsBasePath).ShouldBeTrue(
-            $"Models directory not found at: {modelsBasePath}");
-    }
-
-    [Fact]
-    public void DistilbertModel_Exists()
-    {
-        ModelExists("distilbert").ShouldBeTrue(
-            "DistilBERT model not found. Run model conversion script first.");
-    }
-
-    [Fact]
-    public void ModernbertBaseModel_Exists()
-    {
-        ModelExists("modernbert-base").ShouldBeTrue(
-            "ModernBERT-Base model not found. Run model conversion script first.");
-    }
-
-    [Fact]
-    public void ModernbertLargeModel_Exists()
-    {
-        ModelExists("modernbert-large").ShouldBeTrue(
-            "ModernBERT-Large model not found. Run model conversion script first.");
-    }
-
-    #endregion
+    // #endregion
 
     #region ONNX Model Initialization Tests
 
-    [Fact]
-    public void Constructor_WithOnnxModelPath_InitializesSuccessfully()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Constructor_WithOnnxModelPath_InitializesSuccessfully(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
 
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
@@ -118,19 +89,22 @@ public class NeuralChunkerIntegrationTests : IDisposable
         chunker.UseOnnx.ShouldBeFalse("Should fall back to RecursiveChunker");
     }
 
-    [Fact]
-    public void InitializeOnnxModel_WithValidPath_EnablesOnnx()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void InitializeOnnxModel_WithValidPath_EnablesOnnx(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
         var chunker = new NeuralChunker(tokenizer); // Start in fallback mode
         chunker.UseOnnx.ShouldBeFalse();
 
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var result = chunker.InitializeOnnxModel(modelPath);
 
         result.ShouldBeTrue("Initialization should succeed");
@@ -156,11 +130,12 @@ public class NeuralChunkerIntegrationTests : IDisposable
     [Theory]
     [InlineData("distilbert")]
     [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
     public void Chunk_WithOnnxModel_ProducesValidChunks(string modelName)
     {
         if (!ModelExists(modelName))
         {
-            Assert.Skip($"{modelName} model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
@@ -193,16 +168,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         }
     }
 
-    [Fact]
-    public void Chunk_WithShortText_ProducesSingleChunk()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithShortText_ProducesSingleChunk(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 2048);
 
         var text = "This is a short text.";
@@ -212,16 +190,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         chunks[0].Text.ShouldBe(text);
     }
 
-    [Fact]
-    public void Chunk_WithLongDocument_ProducesMultipleChunks()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithLongDocument_ProducesMultipleChunks(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 512);
 
         var text = string.Join(" ", Enumerable.Range(1, 100)
@@ -235,16 +216,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         reconstructed.ShouldBe(text, "Reconstruction should be complete and accurate");
     }
 
-    [Fact]
-    public void Chunk_WithUnicodeText_PreservesCharactersCorrectly()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithUnicodeText_PreservesCharactersCorrectly(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         var text = "Hello world! 你好世界！ مرحبا العالم Привет мир 🌍";
@@ -255,16 +239,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         reconstructed.ShouldBe(text, "Unicode characters should be preserved");
     }
 
-    [Fact]
-    public void Chunk_WithEmojis_PreservesEmojisCorrectly()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithEmojis_PreservesEmojisCorrectly(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         var text = "Data science 📊 is awesome! Machine learning 🤖 rocks! " +
@@ -280,16 +267,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
 
     #region Batch Chunking with ONNX Tests
 
-    [Fact]
-    public void ChunkBatch_WithOnnxModel_ProcessesMultipleTexts()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void ChunkBatch_WithOnnxModel_ProcessesMultipleTexts(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 512);
 
         var texts = new[]
@@ -312,16 +302,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
 
     #region Document Chunking with ONNX Tests
 
-    [Fact]
-    public void ChunkDocument_WithOnnxModel_PopulatesChunks()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void ChunkDocument_WithOnnxModel_PopulatesChunks(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         var document = new Document
@@ -352,7 +345,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
     {
         if (!ModelExists("distilbert") || !ModelExists("modernbert-base"))
         {
-            Assert.Skip("Required models not available for comparison");
+            Assert.Skip("Required models not available for comparison. Check model paths and/or run model conversion scripts first.");
         }
 
         var tokenizer = new CharacterTokenizer();
@@ -387,16 +380,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
 
     #region Edge Cases Tests
 
-    [Fact]
-    public void Chunk_WithEmptyString_ReturnsEmptyList()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithEmptyString_ReturnsEmptyList(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         var chunks = chunker.Chunk("");
@@ -405,16 +401,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         chunker.Dispose();
     }
 
-    [Fact]
-    public void Chunk_WithWhitespaceOnly_ReturnsEmptyList()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithWhitespaceOnly_ReturnsEmptyList(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath);
 
         var chunks = chunker.Chunk("   \n\t   ");
@@ -423,16 +422,19 @@ public class NeuralChunkerIntegrationTests : IDisposable
         chunker.Dispose();
     }
 
-    [Fact]
-    public void Chunk_WithVeryLongText_CompletesSuccessfully()
+    [Theory]
+    [InlineData("distilbert")]
+    [InlineData("modernbert-base")]
+    [InlineData("modernbert-large")]
+    public void Chunk_WithVeryLongText_CompletesSuccessfully(string modelName)
     {
-        if (!ModelExists("distilbert"))
+        if (!ModelExists(modelName))
         {
-            Assert.Skip("DistilBERT model not available");
+            Assert.Skip($"{modelName} model not available. Check model path and/or run model conversion script first.");
         }
 
         var tokenizer = new CharacterTokenizer();
-        var modelPath = GetModelPath("distilbert");
+        var modelPath = GetModelPath(modelName);
         var chunker = new NeuralChunker(tokenizer, modelPath, chunkSize: 256);
 
         // Create a very long document
