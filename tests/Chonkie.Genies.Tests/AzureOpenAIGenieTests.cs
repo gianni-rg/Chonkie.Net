@@ -42,7 +42,7 @@ public class AzureOpenAIGenieTests
         }
     }
 
-    private void SkipIfAzureNotAvailable()
+    private static void SkipIfAzureNotAvailable()
     {
         if (!CanCreateAzureOpenAIGenie())
         {
