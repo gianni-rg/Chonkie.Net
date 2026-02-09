@@ -144,7 +144,7 @@ set OPENAI_API_KEY=sk-...
 ```bash
 set AZURE_OPENAI_ENDPOINT=https://your-instance.openai.azure.com/
 set AZURE_OPENAI_API_KEY=your-key
-set AZURE_OPENAI_DEPLOYMENT=your-deployment-name
+set AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS=your-deployment-name
 ```
 
 ## Output Files

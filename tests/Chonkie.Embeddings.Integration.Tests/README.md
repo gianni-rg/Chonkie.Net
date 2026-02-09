@@ -26,7 +26,7 @@ $env:OPENAI_API_KEY = "your-openai-api-key"
 ```powershell
 $env:AZURE_OPENAI_API_KEY = "your-azure-openai-api-key"
 $env:AZURE_OPENAI_ENDPOINT = "https://your-resource.openai.azure.com/"
-$env:AZURE_OPENAI_DEPLOYMENT = "your-deployment-name"
+$env:AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS = "your-deployment-name"
 ```
 
 #### Cohere

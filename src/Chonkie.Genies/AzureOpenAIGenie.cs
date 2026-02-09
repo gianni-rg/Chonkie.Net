@@ -74,7 +74,7 @@ public class AzureOpenAIGenie : BaseGenie
 
     /// <summary>
     /// Creates an AzureOpenAIGenie instance from environment variables.
-    /// Requires AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, and AZURE_OPENAI_DEPLOYMENT.
+    /// Requires AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, and AZURE_OPENAI_DEPLOYMENT_LLM.
     /// </summary>
     /// <param name="logger">Optional logger for diagnostics.</param>
     /// <returns>A configured AzureOpenAIGenie instance.</returns>
@@ -83,7 +83,7 @@ public class AzureOpenAIGenie : BaseGenie
     {
         var endpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
         var apiKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY");
-        var deployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT");
+        var deployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM");
 
         if (string.IsNullOrWhiteSpace(endpoint))
         {
@@ -102,7 +102,7 @@ public class AzureOpenAIGenie : BaseGenie
         if (string.IsNullOrWhiteSpace(deployment))
         {
             throw new InvalidOperationException(
-                "AZURE_OPENAI_DEPLOYMENT environment variable is not set. " +
+                "AZURE_OPENAI_DEPLOYMENT_LLM environment variable is not set. " +
                 "Please set it or use the constructor with an explicit deployment name.");
         }
 

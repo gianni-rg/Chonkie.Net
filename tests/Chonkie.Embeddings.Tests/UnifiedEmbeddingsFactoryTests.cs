@@ -259,7 +259,7 @@ public class UnifiedEmbeddingsFactoryTests
         // Arrange
         Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", null);
         Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", "test-key");
-        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", "test-deployment");
+        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS", "test-deployment");
 
         // Act & Assert
         Should.Throw<InvalidOperationException>(() =>

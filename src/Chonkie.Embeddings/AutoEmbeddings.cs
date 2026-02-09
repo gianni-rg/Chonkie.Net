@@ -19,7 +19,7 @@ namespace Chonkie.Embeddings
             { "azure-openai", () => new Azure.AzureOpenAIEmbeddings(
                 Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? "",
                 Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") ?? "",
-                Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT") ?? ""
+                Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS") ?? ""
             ) },
             { "sentence-transformers", () => new SentenceTransformers.SentenceTransformerEmbeddings(
                 Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH") ?? ""

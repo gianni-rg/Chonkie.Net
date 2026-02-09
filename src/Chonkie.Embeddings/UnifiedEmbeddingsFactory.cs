@@ -138,8 +138,8 @@ namespace Chonkie.Embeddings
                         ?? throw new InvalidOperationException("AZURE_OPENAI_ENDPOINT environment variable not set"),
                     Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")
                         ?? throw new InvalidOperationException("AZURE_OPENAI_API_KEY environment variable not set"),
-                    Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")
-                        ?? throw new InvalidOperationException("AZURE_OPENAI_DEPLOYMENT environment variable not set"),
+                    Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS")
+                        ?? throw new InvalidOperationException("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS environment variable not set"),
                     dimension,
                     logger),
 

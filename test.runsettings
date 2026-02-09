@@ -5,7 +5,7 @@
       <!-- Azure OpenAI Integration Test Settings -->
       <!-- <AZURE_OPENAI_ENDPOINT>your-openai-endpoint-here</AZURE_OPENAI_ENDPOINT> -->
       <!-- <AZURE_OPENAI_API_KEY>your-openai-api-key-here</AZURE_OPENAI_API_KEY> -->
-      <!-- <AZURE_OPENAI_DEPLOYMENT>your-azure-openai-deployment-here</AZURE_OPENAI_DEPLOYMENT> -->
+      <!-- <AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS>your-azure-openai-deployment-here</AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS> -->
 
       <!-- Sentence Transformer Model Path (change to test different models) -->
       <!-- <CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH>your-sentence-transformer-model-path-here</CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH> -->

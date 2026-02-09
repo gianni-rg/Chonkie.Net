@@ -133,7 +133,7 @@ namespace Chonkie.Embeddings.Tests
             // Skip if Azure credentials are not set
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")) ||
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")) ||
-                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")))
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS")))
             {
                 Assert.Skip("Azure OpenAI credentials not configured");
             }

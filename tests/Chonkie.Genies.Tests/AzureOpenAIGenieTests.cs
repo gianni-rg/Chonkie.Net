@@ -168,7 +168,7 @@ public class AzureOpenAIGenieTests
         // Arrange
         Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", null);
         Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", TestApiKey);
-        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", TestDeployment);
+        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM", TestDeployment);
 
         // Act & Assert
         var exception = Should.Throw<InvalidOperationException>(() => AzureOpenAIGenie.FromEnvironment());
@@ -181,7 +181,7 @@ public class AzureOpenAIGenieTests
         // Arrange
         Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", TestEndpoint);
         Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", null);
-        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", TestDeployment);
+        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM", TestDeployment);
 
         // Act & Assert
         var exception = Should.Throw<InvalidOperationException>(() => AzureOpenAIGenie.FromEnvironment());
@@ -194,11 +194,11 @@ public class AzureOpenAIGenieTests
         // Arrange
         Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", TestEndpoint);
         Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", TestApiKey);
-        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", null);
+        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM", null);
 
         // Act & Assert
         var exception = Should.Throw<InvalidOperationException>(() => AzureOpenAIGenie.FromEnvironment());
-        exception.Message.ShouldContain("AZURE_OPENAI_DEPLOYMENT");
+        exception.Message.ShouldContain("AZURE_OPENAI_DEPLOYMENT_LLM");
     }
 
     [Fact]
@@ -209,7 +209,7 @@ public class AzureOpenAIGenieTests
         // Arrange
         Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", TestEndpoint);
         Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", TestApiKey);
-        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", TestDeployment);
+        Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM", TestDeployment);
 
         try
         {
@@ -224,7 +224,7 @@ public class AzureOpenAIGenieTests
             // Cleanup
             Environment.SetEnvironmentVariable("AZURE_OPENAI_ENDPOINT", null);
             Environment.SetEnvironmentVariable("AZURE_OPENAI_API_KEY", null);
-            Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT", null);
+            Environment.SetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM", null);
         }
     }
 

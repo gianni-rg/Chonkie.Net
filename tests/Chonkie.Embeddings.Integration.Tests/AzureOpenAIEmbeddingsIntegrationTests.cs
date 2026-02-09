@@ -13,7 +13,7 @@ public class AzureOpenAIEmbeddingsIntegrationTests
 {
     private const string ApiKeyEnvVar = "AZURE_OPENAI_API_KEY";
     private const string EndpointEnvVar = "AZURE_OPENAI_ENDPOINT";
-    private const string DeploymentEnvVar = "AZURE_OPENAI_DEPLOYMENT";
+    private const string DeploymentEnvVar = "AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS";
 
     /// <summary>
     /// Tests embedding with real API returns a valid embedding.
