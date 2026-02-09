@@ -11,40 +11,31 @@ using Xunit;
 
 /// <summary>
 /// Integration tests for NeuralChunker using ONNX models.
-/// 
+///
 /// These tests verify that the NeuralChunker correctly loads and uses ONNX models
 /// for neural-based token classification chunk detection.
-/// 
+///
 /// Prerequisites:
 /// - ONNX models must be present in the models/ directory
 /// - Supported models: distilbert, modernbert-base, modernbert-large
 /// </summary>
 public class NeuralChunkerIntegrationTests : IDisposable
 {
-    private readonly string _modelsBasePath;
-
-    public NeuralChunkerIntegrationTests()
-    {
-        // Load models path from environment variable
-        var modelsPath = Environment.GetEnvironmentVariable("CHONKIE_NEURAL_MODEL_PATH");
-
-        if (string.IsNullOrWhiteSpace(modelsPath))
-        {
-            throw new InvalidOperationException(
-                "CHONKIE_NEURAL_MODEL_PATH environment variable is not set. " +
-                "Please set it to point to the directory containing ONNX models.");
-        }
-
-        _modelsBasePath = modelsPath;
-    }
-
     /// <summary>
     /// Gets the path to a model directory.
     /// </summary>
     private string GetModelPath(string modelName)
     {
-        var path = Path.Combine(_modelsBasePath, modelName);
-        return path;
+        // Load models base path from environment variable
+        var modelsPath = Environment.GetEnvironmentVariable("CHONKIE_NEURAL_MODEL_PATH");
+        if (!string.IsNullOrWhiteSpace(modelsPath))
+        {
+            return Path.Combine(modelsPath, modelName);
+        }
+        else
+        {
+            return string.Empty;
+        }
     }
 
     /// <summary>
@@ -68,8 +59,10 @@ public class NeuralChunkerIntegrationTests : IDisposable
     [Fact]
     public void ModelsDirectory_Exists()
     {
-        Directory.Exists(_modelsBasePath).ShouldBeTrue(
-            $"Models directory not found at: {_modelsBasePath}");
+        var modelsBasePath = GetModelPath(string.Empty);
+
+        Directory.Exists(modelsBasePath).ShouldBeTrue(
+            $"Models directory not found at: {modelsBasePath}");
     }
 
     [Fact]
