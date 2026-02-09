@@ -111,7 +111,7 @@ public class NeuralChunkerIntegrationTests : IDisposable
     public void Constructor_WithInvalidModelPath_FallsBackToRecursiveChunker()
     {
         var tokenizer = new CharacterTokenizer();
-        var invalidPath = Path.Combine(_modelsBasePath, "nonexistent-model");
+        var invalidPath = Path.Combine("nonexistent-model");
 
         var chunker = new NeuralChunker(tokenizer, invalidPath);
 
