@@ -97,7 +97,7 @@ public class AzureOpenAIGenieIntegrationTests
 
         var genie = new AzureOpenAIGenie(endpoint!, apiKey!, deployment!, null, null);
         var prompt = @"Generate a project with name, status (use 'Active'), 
-                       and list of 3 team members in JSON format";
+                       and list of 3 team member names (as strings) in JSON format";
 
         // Act
         var response = await genie.GenerateJsonAsync<ProjectData>(prompt);
