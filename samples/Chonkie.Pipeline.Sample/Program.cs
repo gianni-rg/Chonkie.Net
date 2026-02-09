@@ -451,7 +451,7 @@ public static class Program
                 Console.WriteLine($"✓ Step 4: (Generation skipped - no LLM configured)\n");
                 Console.WriteLine("To enable generation, configure:");
                 Console.WriteLine("  - OPENAI_API_KEY or");
-                Console.WriteLine("  - AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_API_KEY + AZURE_OPENAI_DEPLOYMENT\n");
+                Console.WriteLine("  - AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_API_KEY + AZURE_OPENAI_DEPLOYMENT_LLM\n");
             }
 
             Console.WriteLine("✓ Semantic RAG pipeline complete");
@@ -697,7 +697,7 @@ public static class Program
         {
             var azureEndpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT");
             var azureKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY");
-            var azureDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT");
+            var azureDeployment = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_LLM");
 
             if (!string.IsNullOrWhiteSpace(azureEndpoint) &&
                 !string.IsNullOrWhiteSpace(azureKey) &&
