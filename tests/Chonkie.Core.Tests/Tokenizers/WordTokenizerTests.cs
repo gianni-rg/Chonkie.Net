@@ -342,4 +342,129 @@ public class WordTokenizerTests
         // Splitting on space will create empty strings for consecutive spaces
         Assert.Equal(text.Split(' ').Length, tokens.Count);
     }
+
+    #region C# 14 Span Overload Tests
+
+    [Fact]
+    public void CountTokens_WithSpan_ReturnsWordCount()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+
+        // Act & Assert
+        Assert.Equal(0, tokenizer.CountTokens(ReadOnlySpan<char>.Empty));
+        Assert.Equal(0, tokenizer.CountTokens("".AsSpan()));
+        Assert.Equal(1, tokenizer.CountTokens("word".AsSpan()));
+        Assert.Equal(2, tokenizer.CountTokens("two words".AsSpan()));
+        Assert.Equal(4, tokenizer.CountTokens("the quick brown fox".AsSpan()));
+    }
+
+    [Fact]
+    public void CountTokens_SpanOverload_MatchesStringOverload()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var testCases = new[]
+        {
+            "",
+            "word",
+            "two words",
+            "the quick brown fox",
+            "text with numbers 123",
+            "word  double  space",
+            "special chars !@# test",
+            "Unicode: 你好 世界 test"
+        };
+
+        foreach (var text in testCases)
+        {
+            // Act
+            var countFromString = tokenizer.CountTokens(text);
+            var countFromSpan = tokenizer.CountTokens(text.AsSpan());
+
+            // Assert
+            Assert.Equal(countFromString, countFromSpan);
+        }
+    }
+
+    [Fact]
+    public void CountTokens_WithSpanSlice_ReturnsCorrectCount()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "Hello World Test";
+        var span = text.AsSpan();
+
+        // Act - count only "World Test" (2 words)
+        var sliceCount = tokenizer.CountTokens(span.Slice(6));
+
+        // Assert
+        Assert.Equal(2, sliceCount);
+    }
+
+    [Fact]
+    public void CountTokens_WithStackAllocatedSpan_Works()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        Span<char> buffer = stackalloc char[15];
+        "one two three".AsSpan().CopyTo(buffer);
+
+        // Act
+        var count = tokenizer.CountTokens(buffer.Slice(0, 13));
+
+        // Assert
+        Assert.Equal(3, count);
+    }
+
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("word", 1)]
+    [InlineData("one two", 2)]
+    [InlineData("a b c", 3)]
+    [InlineData("Hello World Test String", 4)]
+    public void CountTokens_SpanOverload_VariousWordCounts(string text, int expectedCount)
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+
+        // Act
+        var count = tokenizer.CountTokens(text.AsSpan());
+
+        // Assert
+        Assert.Equal(expectedCount, count);
+    }
+
+    [Fact]
+    public void CountTokens_SpanWithMultipleSpaces_CountsCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+        var text = "word  double  space";
+
+        // Act
+        var countFromSpan = tokenizer.CountTokens(text.AsSpan());
+
+        // Assert
+        // Should count spaces: "word", "", "double", "", "space" = 5
+        Assert.Equal(5, countFromSpan);
+    }
+
+    [Fact]
+    public void CountTokens_SpanWithTrailingSpace_CountsCorrectly()
+    {
+        // Arrange
+        var tokenizer = new WordTokenizer();
+
+        // Act
+        var countWithTrailing = tokenizer.CountTokens("word ".AsSpan());
+        var countWithLeading = tokenizer.CountTokens(" word".AsSpan());
+
+        // Assert
+        Assert.Equal(2, countWithTrailing); // "word" + ""
+        Assert.Equal(2, countWithLeading); // "" + "word"
+    }
+
+    #endregion
 }
+

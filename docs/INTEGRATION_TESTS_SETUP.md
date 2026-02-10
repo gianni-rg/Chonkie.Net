@@ -47,10 +47,9 @@ Each provider's integration tests cover:
 
 ## Skip Mechanism
 
-Tests automatically skip when required credentials are not available, using xUnit's `[SkippableFact]` attribute with `Xunit.SkipException`:
+Tests automatically skip when required credentials are not available, using xUnit's Assert.Skip method. This allows the test suite to be run in any environment without failing due to missing API keys or services.
 
-- **SkippableFact Attribute**: Tests use `[SkippableFact]` instead of `[Fact]` to enable proper skip reporting
-- **Xunit.SkipException**: Thrown when prerequisites missing to signal test should be skipped
+- **Skippable**: Tests use Assert.Skip to enable proper skip reporting
 - **Helper Method**: `TestHelpers.GetEnvironmentVariableOrSkip()` checks environment variables
 - **Graceful Degradation**: Tests report as "skipped" (not "failed") when credentials aren't configured
 - **Aligned with Python**: Behavior matches Python's `@pytest.mark.skipif` - tests show as skipped, not failed
@@ -66,7 +65,7 @@ $env:OPENAI_API_KEY = "your-openai-api-key"
 ```powershell
 $env:AZURE_OPENAI_API_KEY = "your-azure-key"
 $env:AZURE_OPENAI_ENDPOINT = "https://your-resource.openai.azure.com/"
-$env:AZURE_OPENAI_DEPLOYMENT = "your-deployment-name"
+$env:AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS = "your-deployment-name"
 ```
 
 ### Cohere
@@ -91,7 +90,7 @@ $env:VOYAGE_API_KEY = "your-voyage-key"
 
 ### Sentence Transformers
 ```powershell
-$env:SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
+$env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH = "C:\path\to\model.onnx"
 ```
 
 ## Running Integration Tests
@@ -138,7 +137,7 @@ When credentials are set and tests pass:
 Test summary: total: 35, failed: 0, succeeded: 35, skipped: 0
 ```
 
-**Note**: The `[SkippableFact]` attribute with `Xunit.SkipException` properly reports tests as "skipped" rather than "failed", matching Python's `@pytest.mark.skipif` behavior. Tests don't actually fail - they're intentionally skipped when prerequisites aren't met.
+**Note**: The `Assert.Skip` method properly reports tests as "skipped" rather than "failed", matching Python's `@pytest.mark.skipif` behavior. Tests don't actually fail - they're intentionally skipped when prerequisites aren't met.
 
 ## Helper Utilities
 
@@ -149,9 +148,8 @@ Test summary: total: 35, failed: 0, succeeded: 35, skipped: 0
 - `CosineSimilarity(float[], float[])` - Calculate similarity between vectors
 
 ### Skip Support
-- Uses `Xunit.SkippableFact` package version 1.5.23
-- `[SkippableFact]` attribute enables proper skip reporting
-- `Xunit.SkipException` gracefully skips tests when prerequisites aren't met
+- Uses `Xunit.v3` package
+- `Assert.Skip` method enables proper skip reporting
 - Provides clear messaging about why test was skipped
 
 ## Integration with CI/CD

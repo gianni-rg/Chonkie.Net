@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Chonkie.Embeddings.Interfaces;
-using Chonkie.Embeddings.Base;
 
 namespace Chonkie.Embeddings
 {
@@ -19,10 +13,10 @@ namespace Chonkie.Embeddings
             { "azure-openai", () => new Azure.AzureOpenAIEmbeddings(
                 Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? "",
                 Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY") ?? "",
-                Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT") ?? ""
+                Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS") ?? ""
             ) },
             { "sentence-transformers", () => new SentenceTransformers.SentenceTransformerEmbeddings(
-                Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH") ?? ""
+                Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH") ?? ""
             ) },
             { "cohere", () => new Cohere.CohereEmbeddings(Environment.GetEnvironmentVariable("COHERE_API_KEY") ?? "") },
             { "gemini", () => new Gemini.GeminiEmbeddings(Environment.GetEnvironmentVariable("GEMINI_API_KEY") ?? "") },

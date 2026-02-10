@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
+    <PackageReference Include="Npgsql" Version="10.0.1" />
+    <PackageReference Include="Pgvector" Version="0.3.2" />
+    <PackageReference Include="Pinecone.Client" Version="4.0.2" />
+    <PackageReference Include="Qdrant.Client" Version="1.16.1" />
+    <PackageReference Include="Weaviate.Client" Version="1.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.6.0" />
+    <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chonkie.Core\Chonkie.Core.csproj" />
+    <ProjectReference Include="..\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
+  </ItemGroup>
+
+</Project>

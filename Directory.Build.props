@@ -8,19 +8,26 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Gianni Rosa Gallina</Authors>
     <Company>Gianni Rosa Gallina</Company>
-    <Copyright>Copyright © 2025 Gianni Rosa Gallina</Copyright>
+    <Copyright>Copyright © 2025-2026 Gianni Rosa Gallina</Copyright>
     <PackageProjectUrl>https://github.com/gianni-rg/Chonkie.Net</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/gianni-rg/Chonkie.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>chunking;rag;ai;nlp;text-processing;embeddings;vector-database</PackageTags>
+    <PackageTags>chunking;rag;ai;nlp;text-processing;embeddings;vector-database;llm;document-processing</PackageTags>
     <Version>0.1.0</Version>
+    <Description>The lightweight ingestion library for fast, efficient and robust RAG pipelines. Chonkie.Net provides production-ready chunkers, embeddings, vector database integrations, and complete RAG system support.</Description>
+    <PackageReadmeFile>PACKAGE_README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <!-- Code analysis -->
   <PropertyGroup>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Tests'))">
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591;xUnit3003;xUnit1051</NoWarn>
   </PropertyGroup>
 
 </Project>

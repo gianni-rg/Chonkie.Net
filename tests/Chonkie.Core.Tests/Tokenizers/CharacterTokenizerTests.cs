@@ -328,4 +328,98 @@ public class CharacterTokenizerTests
             Assert.True(tokenMapping.ContainsKey(charStr));
         }
     }
+
+    #region C# 14 Span Overload Tests
+
+    [Fact]
+    public void CountTokens_WithSpan_ReturnsCharacterCount()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+
+        // Act & Assert
+        Assert.Equal(0, tokenizer.CountTokens(ReadOnlySpan<char>.Empty));
+        Assert.Equal(0, tokenizer.CountTokens("".AsSpan()));
+        Assert.Equal(1, tokenizer.CountTokens("a".AsSpan()));
+        Assert.Equal(5, tokenizer.CountTokens("Hello".AsSpan()));
+        Assert.Equal(12, tokenizer.CountTokens("Hello World!".AsSpan()));
+    }
+
+    [Fact]
+    public void CountTokens_SpanOverload_MatchesStringOverload()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var testCases = new[]
+        {
+            "",
+            "a",
+            "Hello",
+            "Hello World!",
+            "The quick brown fox jumps over the lazy dog.",
+            "Unicode: 你好世界 🚀",
+            "Special chars: @#$%^&*()"
+        };
+
+        foreach (var text in testCases)
+        {
+            // Act
+            var countFromString = tokenizer.CountTokens(text);
+            var countFromSpan = tokenizer.CountTokens(text.AsSpan());
+
+            // Assert
+            Assert.Equal(countFromString, countFromSpan);
+        }
+    }
+
+    [Fact]
+    public void CountTokens_WithSpanSlice_ReturnsCorrectCount()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        var text = "Hello World!";
+        var span = text.AsSpan();
+
+        // Act - count only "World"
+        var worldCount = tokenizer.CountTokens(span.Slice(6, 5));
+
+        // Assert
+        Assert.Equal(5, worldCount);
+    }
+
+    [Fact]
+    public void CountTokens_WithStackAllocatedSpan_Works()
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+        Span<char> buffer = stackalloc char[10];
+        "TestValue!".AsSpan().CopyTo(buffer);
+
+        // Act
+        var count = tokenizer.CountTokens(buffer);
+
+        // Assert
+        Assert.Equal(10, count);
+    }
+
+    [Theory]
+    [InlineData("", 0)]
+    [InlineData("x", 1)]
+    [InlineData("ab", 2)]
+    [InlineData("Hello", 5)]
+    [InlineData("你好", 2)]
+    public void CountTokens_SpanOverload_VariousLengths(string text, int expectedCount)
+    {
+        // Arrange
+        var tokenizer = new CharacterTokenizer();
+
+        // Act
+        var count = tokenizer.CountTokens(text.AsSpan());
+
+        // Assert
+        Assert.Equal(expectedCount, count);
+    }
+
+    #endregion
 }
+

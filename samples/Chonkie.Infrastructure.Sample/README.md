@@ -6,7 +6,7 @@ This sample demonstrates the complete text processing pipeline using Chonkie.Net
 
 The sample showcases a **5-stage pipeline** for processing text documents:
 
-```
+```text
 Fetch → Preprocess → Chunk → Refine → Export
 ```
 
@@ -51,6 +51,87 @@ Or from the sample directory:
 ```bash
 cd samples/Chonkie.Infrastructure.Sample
 dotnet run
+```
+
+## Vector Database Demo (Optional)
+
+Run the vector database tutorial demo with:
+
+```bash
+dotnet run --project samples/Chonkie.Infrastructure.Sample/Chonkie.Infrastructure.Sample.csproj -- --vector-db --provider qdrant
+```
+
+Optional flags:
+
+- `--provider` (qdrant, pinecone, weaviate, chroma, mongodb, pgvector, elasticsearch, milvus, turbopuffer)
+- `--query` (custom search query)
+- `--topk` (result count, default 3)
+
+### Provider Configuration
+
+Set the environment variables for your chosen provider:
+
+```text
+# Qdrant
+CHONKIE_QDRANT_URL=http://localhost:6333
+CHONKIE_QDRANT_COLLECTION=chonkie_samples
+
+# Pinecone
+PINECONE_API_KEY=your-key
+PINECONE_INDEX=your-index
+PINECONE_NAMESPACE=default
+
+# Weaviate (cloud)
+WEAVIATE_URL=https://your-instance.weaviate.network
+WEAVIATE_API_KEY=your-key
+WEAVIATE_CLASS=ChonkieChunks
+
+# Chroma
+CHONKIE_CHROMA_URL=http://localhost:8000
+CHONKIE_CHROMA_COLLECTION=chonkie_samples
+
+# MongoDB
+CHONKIE_MONGODB_URI=mongodb://localhost:27017
+CHONKIE_MONGODB_DB=chonkie_db
+CHONKIE_MONGODB_COLLECTION=chonkie_collection
+
+# pgvector
+CHONKIE_PGVECTOR_CONNECTION_STRING=Host=localhost;Database=postgres;Username=postgres;Password=postgres
+CHONKIE_PGVECTOR_COLLECTION=chonkie_chunks
+CHONKIE_PGVECTOR_DIMENSIONS=1536
+
+# Elasticsearch
+CHONKIE_ELASTICSEARCH_URL=http://localhost:9200
+CHONKIE_ELASTICSEARCH_INDEX=chonkie_samples
+CHONKIE_ELASTICSEARCH_API_KEY=your-key
+
+# Milvus
+CHONKIE_MILVUS_URL=http://localhost:19530
+CHONKIE_MILVUS_COLLECTION=chonkie_samples
+
+# Turbopuffer
+TURBOPUFFER_API_KEY=your-key
+TURBOPUFFER_API_URL=https://api.turbopuffer.com
+TURBOPUFFER_NAMESPACE=chonkie_samples
+```
+
+### Embeddings Configuration
+
+Use one of these options for embeddings:
+
+```text
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT=text-embedding-3-small
+```
+
+```text
+OPENAI_API_KEY=your-key
+OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
+```
+
+```text
+CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
 ## What It Does

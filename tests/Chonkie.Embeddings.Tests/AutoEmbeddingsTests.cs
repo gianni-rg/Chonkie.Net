@@ -133,9 +133,9 @@ namespace Chonkie.Embeddings.Tests
             // Skip if Azure credentials are not set
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT")) ||
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_API_KEY")) ||
-                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT")))
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS")))
             {
-                return; // Skip test
+                Assert.Skip("Azure OpenAI credentials not configured");
             }
 
             // Act
@@ -209,9 +209,9 @@ namespace Chonkie.Embeddings.Tests
         public void GetProvider_SentenceTransformers_ReturnsType()
         {
             // Skip if model path is not set
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SENTENCE_TRANSFORMERS_MODEL_PATH")))
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH")))
             {
-                return; // Skip test - model file not available
+                Assert.Skip("Sentence Transformers model path not configured");
             }
 
             // Act

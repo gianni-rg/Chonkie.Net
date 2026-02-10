@@ -190,12 +190,12 @@ The `AutoEmbeddings` factory automatically reads API keys from environment varia
 $env:OPENAI_API_KEY="your-key"
 $env:AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
 $env:AZURE_OPENAI_API_KEY="your-key"
-$env:AZURE_OPENAI_DEPLOYMENT="your-deployment"
+$env:AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS="your-deployment"
 $env:COHERE_API_KEY="your-key"
 $env:GEMINI_API_KEY="your-key"
 $env:JINA_API_KEY="your-key"
 $env:VOYAGE_API_KEY="your-key"
-$env:SENTENCE_TRANSFORMERS_MODEL_PATH="path/to/model.onnx"
+$env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH="path/to/model.onnx"
 ```
 
 ### Using Dependency Injection

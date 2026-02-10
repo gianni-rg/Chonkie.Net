@@ -1,6 +1,0 @@
-# Dev Container files - local environment configuration
-.env
-*.log
-
-# Squid cache and logs
-squid-cache/

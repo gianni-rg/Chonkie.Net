@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Chonkie.Embeddings.Base;
+using Chonkie.Embeddings.Exceptions;
 
 namespace Chonkie.Embeddings.Cohere
 {
@@ -42,52 +44,154 @@ namespace Chonkie.Embeddings.Cohere
         /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
-            var requestBody = new
+            try
             {
-                texts = new[] { text },
-                model = _model,
-                input_type = "search_document"
-            };
-            var content = new StringContent(JsonSerializer.Serialize(requestBody));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                // Cohere API rejects empty strings, so use a space instead
+                var textToEmbed = string.IsNullOrEmpty(text) ? " " : text;
 
-            var response = await _httpClient.PostAsync("https://api.cohere.ai/v1/embed", content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseJson);
-            var embeddings = doc.RootElement.GetProperty("embeddings")[0];
-            var floats = new List<float>(Dimension);
-            foreach (var value in embeddings.EnumerateArray())
-                floats.Add(value.GetSingle());
-            return floats.ToArray();
+                var requestBody = new
+                {
+                    model = _model,
+                    texts = new[] { textToEmbed },
+                    input_type = "search_document",
+                    truncate = "END"
+                };
+                var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
+                }
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var doc = JsonDocument.Parse(responseJson);
+                var embeddings = doc.RootElement.GetProperty("embeddings")[0];
+                var floats = new List<float>(Dimension);
+                foreach (var value in embeddings.EnumerateArray())
+                    floats.Add(value.GetSingle());
+                return floats.ToArray();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    $"Network error occurred while calling Cohere embeddings API: {ex.Message}",
+                    ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    "Request to Cohere embeddings API timed out",
+                    ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    $"Failed to parse Cohere API response: {ex.Message}",
+                    ex);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    "Cohere API response missing expected 'embeddings' property",
+                    ex);
+            }
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Cohere embedding: {ex.Message}",
+                    ex);
+            }
         }
 
         /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
-            var requestBody = new
+            try
             {
-                texts = texts,
-                model = _model,
-                input_type = "search_document"
-            };
-            var content = new StringContent(JsonSerializer.Serialize(requestBody));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                // Cohere API rejects empty strings, so replace them with spaces
+                var textsToEmbed = texts.Select(t => string.IsNullOrEmpty(t) ? " " : t).ToList();
 
-            var response = await _httpClient.PostAsync("https://api.cohere.ai/v1/embed", content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseJson);
-            var embeddingsArray = doc.RootElement.GetProperty("embeddings");
-            var results = new List<float[]>(embeddingsArray.GetArrayLength());
-            foreach (var embedding in embeddingsArray.EnumerateArray())
-            {
-                var floats = new List<float>(Dimension);
-                foreach (var value in embedding.EnumerateArray())
-                    floats.Add(value.GetSingle());
-                results.Add(floats.ToArray());
+                // Cohere API limits batch size to 96 texts per request
+                const int maxBatchSize = 96;
+                var allResults = new List<float[]>();
+
+                // Process texts in batches
+                for (int i = 0; i < textsToEmbed.Count; i += maxBatchSize)
+                {
+                    var batch = textsToEmbed.Skip(i).Take(maxBatchSize).ToList();
+
+                    var requestBody = new
+                    {
+                        model = _model,
+                        texts = batch,
+                        input_type = "search_document",
+                        truncate = "END"
+                    };
+                    var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                        throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
+                    }
+                    var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                    using var doc = JsonDocument.Parse(responseJson);
+                    var embeddingsArray = doc.RootElement.GetProperty("embeddings");
+                    foreach (var embedding in embeddingsArray.EnumerateArray())
+                    {
+                        var floats = new List<float>(Dimension);
+                        foreach (var value in embedding.EnumerateArray())
+                            floats.Add(value.GetSingle());
+                        allResults.Add(floats.ToArray());
+                    }
+                }
+
+                return allResults;
             }
-            return results;
+            catch (HttpRequestException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    $"Network error occurred while calling Cohere embeddings API: {ex.Message}",
+                    ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    "Request to Cohere embeddings API timed out",
+                    ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    $"Failed to parse Cohere API response: {ex.Message}",
+                    ex);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    "Cohere API response missing expected 'embeddings' property",
+                    ex);
+            }
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Cohere batch embedding: {ex.Message}",
+                    ex);
+            }
         }
     }
 }

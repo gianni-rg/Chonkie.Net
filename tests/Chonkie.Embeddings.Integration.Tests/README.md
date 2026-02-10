@@ -26,7 +26,7 @@ $env:OPENAI_API_KEY = "your-openai-api-key"
 ```powershell
 $env:AZURE_OPENAI_API_KEY = "your-azure-openai-api-key"
 $env:AZURE_OPENAI_ENDPOINT = "https://your-resource.openai.azure.com/"
-$env:AZURE_OPENAI_DEPLOYMENT = "your-deployment-name"
+$env:AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS = "your-deployment-name"
 ```
 
 #### Cohere
@@ -51,7 +51,7 @@ $env:VOYAGE_API_KEY = "your-voyage-api-key"
 
 #### Sentence Transformers (ONNX)
 ```powershell
-$env:SENTENCE_TRANSFORMERS_MODEL_PATH = "C:\path\to\model.onnx"
+$env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH = "C:\path\to\model.onnx"
 ```
 
 ### Running All Tests

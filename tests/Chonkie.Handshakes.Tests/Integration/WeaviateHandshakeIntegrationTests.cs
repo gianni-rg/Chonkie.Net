@@ -1,0 +1,208 @@
+using Chonkie.Core.Types;
+using Chonkie.Embeddings.SentenceTransformers;
+using Chonkie.Handshakes;
+using Shouldly;
+using Xunit;
+
+namespace Chonkie.Handshakes.Tests.Integration;
+
+/// <summary>
+/// Integration tests for WeaviateHandshake.
+/// These tests require a running Weaviate instance and will be skipped if not available.
+/// </summary>
+public class WeaviateHandshakeIntegrationTests
+{
+    private const string WeaviateUrl = "http://localhost:8080";
+    private const string ClassName = "ChonkieIntegrationTest";
+
+    [Fact]
+    public async Task WriteAsync_WithRealWeaviateAndSentenceTransformers_WritesSuccessfully()
+    {
+        // Skip if Weaviate is not available
+        var isWeaviateAvailable = await IsWeaviateAvailableAsync();
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
+
+        // Check if model directory exists
+        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
+
+        // Arrange
+        var embeddings = new SentenceTransformerEmbeddings(modelPath);
+        var handshake = await WeaviateHandshake.CreateCloudAsync(
+            url: WeaviateUrl,
+            apiKey: "demo-key",
+            className: ClassName,
+            embeddingModel: embeddings
+        );
+
+        var chunks = new[]
+        {
+            new Chunk { Text = "The quick brown fox jumps over the lazy dog", StartIndex = 0, EndIndex = 44, TokenCount = 9 },
+            new Chunk { Text = "Lorem ipsum dolor sit amet", StartIndex = 45, EndIndex = 71, TokenCount = 5 }
+        };
+
+        try
+        {
+            // Act
+            var result = await handshake.WriteAsync(chunks);
+
+            // Assert
+            result.ShouldNotBeNull();
+            dynamic resultObj = result;
+            ((int)resultObj.Count).ShouldBeGreaterThanOrEqualTo(2);
+        }
+        finally
+        {
+            // Cleanup: Delete the class
+            await CleanupClassAsync();
+        }
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithRealWeaviate_FindsSimilarChunks()
+    {
+        // Skip if Weaviate is not available
+        var isWeaviateAvailable = await IsWeaviateAvailableAsync();
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
+
+        // Check if model directory exists
+        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
+
+        // Arrange
+        var embeddings = new SentenceTransformerEmbeddings(modelPath);
+        var handshake = await WeaviateHandshake.CreateCloudAsync(
+            url: WeaviateUrl,
+            apiKey: "demo-key",
+            className: ClassName,
+            embeddingModel: embeddings
+        );
+
+        var chunks = new[]
+        {
+            new Chunk { Text = "Hello world", StartIndex = 0, EndIndex = 11, TokenCount = 2 },
+            new Chunk { Text = "Test chunk", StartIndex = 12, EndIndex = 22, TokenCount = 2 }
+        };
+
+        try
+        {
+            // Insert chunks
+            await handshake.WriteAsync(chunks);
+
+            // Act
+            var results = await handshake.SearchAsync("hello", limit: 5);
+
+            // Assert
+            results.ShouldNotBeNull();
+            dynamic resultObj = results;
+            var count = (int)resultObj.Count;
+            count.ShouldBeGreaterThan(0);
+            count.ShouldBeLessThanOrEqualTo(5);
+
+            // Check result structure
+            foreach (var result in resultObj.Objects)
+            {
+                result.ShouldNotBeNull();
+
+                if (result is IDictionary<string, object> props)
+                {
+                    props.ShouldContainKey("text");
+                    props.ShouldContainKey("start_index");
+                    props.ShouldContainKey("end_index");
+                    props.ShouldContainKey("token_count");
+                }
+            }
+        }
+        finally
+        {
+            // Cleanup
+            await CleanupClassAsync();
+        }
+    }
+
+    [Fact]
+    public async Task WriteAsync_WithRandomClassName_CreatesUniqueClasses()
+    {
+        // Skip if Weaviate is not available
+        var isWeaviateAvailable = await IsWeaviateAvailableAsync();
+        if (!isWeaviateAvailable)
+            Assert.Skip("Weaviate server not available at " + WeaviateUrl);
+
+        // Check if model directory exists
+        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "..", "models", "all-MiniLM-L12-v2");
+        if (!Directory.Exists(modelPath))
+            Assert.Skip($"Model directory not found at {modelPath}");
+
+        // Arrange
+        var embeddings = new SentenceTransformerEmbeddings(modelPath);
+        var handshake1 = await WeaviateHandshake.CreateCloudAsync(
+            url: WeaviateUrl,
+            apiKey: "demo-key",
+            className: "random",
+            embeddingModel: embeddings
+        );
+
+        var handshake2 = await WeaviateHandshake.CreateCloudAsync(
+            url: WeaviateUrl,
+            apiKey: "demo-key",
+            className: "random",
+            embeddingModel: embeddings
+        );
+
+        var chunks = new[] { new Chunk { Text = "Test", StartIndex = 0, EndIndex = 4, TokenCount = 1 } };
+
+        try
+        {
+            // Act & Assert
+            var result1 = await handshake1.WriteAsync(chunks);
+            var result2 = await handshake2.WriteAsync(chunks);
+
+            result1.ShouldNotBeNull();
+            result2.ShouldNotBeNull();
+
+            // Class names should be different
+            handshake1.ToString().ShouldNotBe(handshake2.ToString());
+        }
+        finally
+        {
+            // Cleanup would happen here
+        }
+    }
+
+    /// <summary>
+    /// Checks if Weaviate server is available.
+    /// </summary>
+    private static async Task<bool> IsWeaviateAvailableAsync()
+    {
+        try
+        {
+            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(2) };
+            var response = await client.GetAsync($"{WeaviateUrl}/v1/.well-known/ready");
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Cleans up test class from Weaviate.
+    /// </summary>
+    private static async Task CleanupClassAsync()
+    {
+        try
+        {
+            using var client = new HttpClient();
+            await client.DeleteAsync($"{WeaviateUrl}/v1/schema/{ClassName}");
+        }
+        catch
+        {
+            // Cleanup errors are non-fatal
+        }
+    }
+}

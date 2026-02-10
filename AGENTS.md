@@ -177,7 +177,7 @@ Try to respect the following structure as a guideline:
 
 ### Unit Test Best Practices
 
-- **Test framework**: Use xUnit (preferred) or check what test framework is used by the project (do not introduce new frameworks).
+- **Test framework**: Use xUnit v3 (preferred) or check what test framework is used by the project (do not introduce new frameworks).
 - **Naming**: `MethodName_Scenario_ExpectedBehavior` (e.g., `Add_SingleNumber_ReturnsSameNumber`)
 - **Organization**: Separate test projects per application/library project; use folders to mirror namespace structure
 - Place test projects in a dedicated `tests/` folder from the root of the repository.
@@ -192,7 +192,7 @@ Try to respect the following structure as a guideline:
 - Use test fixtures for shared setup/teardown logic
 - Ensure tests are independent and can run in any order
 - **Integration Tests**: if tests require specific environment variables, infrastructure or configurations, document them clearly in the technical documentation. Consider them integration tests instead of unit tests.
-  - Adopt [SkippableFacts](https://github.com/AArnott/Xunit.SkippableFact) for handling dynamically running tests to verify conditions (and skip those that cannot run in certain environments and/or if runtime conditions are not fulfilled).
+  - Use Assert.Skip to handle dynamically running tests, verify conditions, and skip those that cannot run in certain environments and/or if runtime conditions are not fulfilled.
 
 ### Testing Guidelines
 
@@ -227,3 +227,7 @@ Use always MCP tools for latest documentation and best practices:
 - Querying Microsoft Documentation
   - #microsoftdocs/mcp  
     You have access to MCP tools called `microsoft_docs_search`, `microsoft_docs_fetch`, and `microsoft_code_sample_search` - these tools allow you to search through and fetch Microsoft's latest official documentation and code samples, and that information might be more detailed or newer than what's in your training data set. When handling questions around how to work with native Microsoft technologies, such as C#, F#, ASP.NET Core, Microsoft.Extensions, NuGet, Entity Framework, the `dotnet` runtime - please use these tools for research purposes when dealing with specific / narrowly defined questions that may occur.
+
+## Tools
+
+When launching terminal commands, you are currently running on Windows, always consider to use Powershell for scripting, unless specified otherwise.

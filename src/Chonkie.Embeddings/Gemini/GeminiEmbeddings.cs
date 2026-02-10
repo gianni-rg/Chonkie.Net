@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Chonkie.Embeddings.Base;
+using Chonkie.Embeddings.Exceptions;
 
 namespace Chonkie.Embeddings.Gemini
 {
@@ -41,35 +42,87 @@ namespace Chonkie.Embeddings.Gemini
         /// <inheritdoc />
         public override async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
         {
-            var requestBody = new
+            try
             {
-                content = new { parts = new[] { new { text } } }
-            };
-            var content = new StringContent(JsonSerializer.Serialize(requestBody));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var requestBody = new
+                {
+                    content = new { parts = new[] { new { text } } }
+                };
+                var content = new StringContent(JsonSerializer.Serialize(requestBody));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:embedContent?key={_apiKey}";
-            var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-            using var doc = JsonDocument.Parse(responseJson);
-            var embedding = doc.RootElement.GetProperty("embedding").GetProperty("values");
-            var floats = new List<float>(Dimension);
-            foreach (var value in embedding.EnumerateArray())
-                floats.Add(value.GetSingle());
-            return floats.ToArray();
+                var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:embedContent?key={_apiKey}";
+                var response = await _httpClient.PostAsync(url, content, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var doc = JsonDocument.Parse(responseJson);
+                var embedding = doc.RootElement.GetProperty("embedding").GetProperty("values");
+                var floats = new List<float>(Dimension);
+                foreach (var value in embedding.EnumerateArray())
+                    floats.Add(value.GetSingle());
+                return floats.ToArray();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    $"Network error occurred while calling Gemini embeddings API: {ex.Message}",
+                    ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new EmbeddingNetworkException(
+                    "Request to Gemini embeddings API timed out",
+                    ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    $"Failed to parse Gemini API response: {ex.Message}",
+                    ex);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new EmbeddingInvalidResponseException(
+                    "Gemini API response missing expected 'embedding' or 'values' property",
+                    ex);
+            }
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Gemini embedding: {ex.Message}",
+                    ex);
+            }
         }
 
         /// <inheritdoc />
         public override async Task<IReadOnlyList<float[]>> EmbedBatchAsync(IEnumerable<string> texts, CancellationToken cancellationToken = default)
         {
-            var results = new List<float[]>();
-            foreach (var text in texts)
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                results.Add(await EmbedAsync(text, cancellationToken));
+                var results = new List<float[]>();
+                foreach (var text in texts)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    results.Add(await EmbedAsync(text, cancellationToken));
+                }
+                return results;
             }
-            return results;
+            catch (EmbeddingException)
+            {
+                // Re-throw our own exceptions
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EmbeddingException(
+                    $"Unexpected error during Gemini batch embedding: {ex.Message}",
+                    ex);
+            }
         }
     }
 }

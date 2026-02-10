@@ -132,6 +132,64 @@ var result = await FluentPipeline.Create()
 
 **Use Case**: Semantic search, similarity-based chunking, content clustering
 
+### Demo 5: CHOMP Pipeline (String-Based API)
+
+Demonstrates the built-in `Chonkie.Pipeline.Pipeline` API with string aliases:
+
+```csharp
+var result = await new Pipeline()
+    .FetchFrom("file", new { path = "doc.txt" })
+    .ProcessWith("text")
+    .ChunkWith("recursive", new { chunk_size = 40 })
+    .RefineWith("overlap", new { context_size = 8 })
+    .ExportWith("json", new { path = "chomp_output.json" })
+    .RunAsync();
+```
+
+**Use Case**: Configuration-driven pipelines, parity with Python CHOMP examples
+
+### Demo 6: RAG Tutorial Walkthrough (Optional)
+
+Run with `--rag` to enable the end-to-end RAG flow:
+
+```bash
+dotnet run --project samples/Chonkie.Pipeline.Sample/Chonkie.Pipeline.Sample.csproj -- --rag
+```
+
+The RAG demo covers:
+
+- Chunking documents with `RecursiveChunker`
+- Generating embeddings
+- Writing to Qdrant
+- Retrieving top-k context
+- Generating an answer with OpenAI/Azure OpenAI Genies (optional)
+
+### Embeddings Configuration
+
+Configure one of the following:
+
+```text
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT=text-embedding-3-small
+```
+
+```text
+OPENAI_API_KEY=your-key
+OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
+```
+
+```text
+CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
+```
+
+### Qdrant Configuration (RAG Demo)
+
+```text
+CHONKIE_QDRANT_URL=http://localhost:6333
+CHONKIE_QDRANT_COLLECTION=rag_tutorial
+```
+
 ## Benefits of Fluent API
 
 ### ✅ Readable Code

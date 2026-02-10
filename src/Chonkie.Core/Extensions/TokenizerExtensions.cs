@@ -9,7 +9,8 @@ using Chonkie.Core.Interfaces;
 public static class TokenizerExtensions
 {
     /// <summary>
-    /// Extension members for ITokenizer instances.
+    /// Instance extension members for ITokenizer - extends instances of tokenizers.
+    /// These members can be called on any ITokenizer instance.
     /// </summary>
     extension(ITokenizer tokenizer)
     {
@@ -30,6 +31,7 @@ public static class TokenizerExtensions
 
         /// <summary>
         /// Encodes text asynchronously using Task.Run for background processing.
+        /// Useful for offloading CPU-intensive tokenization to a background thread.
         /// </summary>
         /// <param name="text">The text to encode.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
@@ -43,6 +45,7 @@ public static class TokenizerExtensions
 
         /// <summary>
         /// Decodes tokens asynchronously using Task.Run for background processing.
+        /// Useful for offloading CPU-intensive decoding to a background thread.
         /// </summary>
         /// <param name="tokens">The tokens to decode.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
@@ -56,12 +59,14 @@ public static class TokenizerExtensions
     }
 
     /// <summary>
-    /// Static extension members for ITokenizer type.
+    /// Static extension members for ITokenizer type - extends the type itself.
+    /// These members can be called on the ITokenizer type.
     /// </summary>
     extension(ITokenizer)
     {
         /// <summary>
         /// Gets the maximum recommended token length for processing.
+        /// This represents the maximum number of tokens that should be processed in a single operation.
         /// </summary>
         public static int MaxTokenLength => 1024 * 1024; // 1M tokens
     }
