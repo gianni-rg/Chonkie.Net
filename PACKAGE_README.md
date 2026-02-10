@@ -1,26 +1,26 @@
-# 🦛 Chonkie.Net - The Lightweight RAG Ingestion Library
+# Chonkie.NET - The Lightweight RAG Ingestion Library
 
 [![GitHub](https://img.shields.io/badge/GitHub-gianni--rg%2FChonkie.Net-blue?logo=github)](https://github.com/gianni-rg/Chonkie.Net)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue)](LICENSE)
 [![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=.net)](https://dotnet.microsoft.com)
-[![C# 14](https://img.shields.io/badge/C%23-14-239120?logo=csharp)](https://docs.microsoft.com/en-us/csharp)
+[![C# 14](https://img.shields.io/badge/C%23-14-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp)
 
-**Chonkie.Net** is a production-ready C# port of Python Chonkie, providing fast, efficient, and robust text chunking for Retrieval-Augmented Generation (RAG) systems.
+**Chonkie.NET** is an experimental .NET/C# port of Python Chonkie, providing fast, efficient, and robust text chunking for Retrieval-Augmented Generation (RAG) systems. This is an independent port and is not officially affiliated with the original Chonkie project.
 
-## ✨ Key Features
+## Key Features
 
-- 🚀 **Fast & Efficient** - 10-100x faster than Python implementations
-- 🔀 **11 Specialized Chunkers** - Choose the right chunker for your data type
-- 🧠 **7+ Embedding Providers** - OpenAI, Azure, Gemini, Cohere, VoyageAI, Jina, and more
-- 🗄️ **9 Vector Database Integrations** - Pinecone, Qdrant, Chroma, Weaviate, MongoDB, Pgvector, Elasticsearch, Milvus, Turbopuffer
-- 🤖 **5 LLM Providers** - OpenAI, Azure, Groq, Cerebras, Gemini
-- ⚡ **ONNX Support** - Local embeddings with SentenceTransformers
-- 🔗 **Complete RAG Pipeline** - End-to-end document processing for RAG
-- 📦 **No Dependencies Bloat** - Minimal, modular architecture
-- 🎯 **Type-Safe** - Full C# 14 nullable reference types support
-- ✅ **779+ Tests** - Comprehensive unit and integration test suite
+- **Fast & Efficient** - 10-100x faster than Python implementations
+- **11 Specialized Chunkers** - Choose the right chunker for your data type
+- **7 Embedding Providers** - OpenAI, Azure, Gemini, Cohere, VoyageAI, Jina, and ONNX local models
+- **9 Vector Database Integrations** - Pinecone, Qdrant, Chroma, Weaviate, MongoDB, Pgvector, Elasticsearch, Milvus, Turbopuffer
+- **5 LLM Providers** - OpenAI, Azure, Groq, Cerebras, Gemini
+- **ONNX Support** - Local embeddings with SentenceTransformers
+- **Complete RAG Pipeline** - End-to-end document processing for RAG
+- **No Dependencies Bloat** - Minimal, modular architecture
+- **Type-Safe** - Full C# 14 nullable reference types support
+- **900+ Tests** - Comprehensive unit and integration test suite
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -76,7 +76,7 @@ var embeddedChunks = await embeddings.EmbedBatchAsync(chunks);
 await vectorDb.WriteAsync(embeddedChunks);
 ```
 
-## 📚 Documentation
+## Documentation
 
 - **[Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)** - Get started in 5 minutes
 - **[RAG System Tutorial](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md)** - Build a complete RAG system
@@ -85,7 +85,7 @@ await vectorDb.WriteAsync(embeddedChunks);
 - **[Python Migration Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md)** - Coming from Python Chonkie?
 - **[Full Documentation](https://github.com/gianni-rg/Chonkie.Net)** - Complete API reference and guides
 
-## 🔀 Chunkers (11 Types)
+## Chunkers (11 Types)
 
 | Chunker | Best For | Speed |
 |---------|----------|-------|
@@ -101,9 +101,9 @@ await vectorDb.WriteAsync(embeddedChunks);
 | **SlumberChunker** | Complex documents | ⚡ |
 | **FastChunker** | High-speed splitting | ⚡⚡⚡ |
 
-## 🧠 Embeddings (7+ Providers)
+## Embeddings (7 Providers)
 
-- OpenAI (text-embedding-3-small, text-embedding-3-large)
+- OpenAI
 - Azure OpenAI
 - Google Gemini
 - Cohere
@@ -111,15 +111,15 @@ await vectorDb.WriteAsync(embeddedChunks);
 - Jina
 - Local ONNX (SentenceTransformers)
 
-## 🤖 LLM Providers (5 Types)
+## LLM Providers (5 Types)
 
-- OpenAI (GPT-4, GPT-3.5-turbo)
+- OpenAI
 - Azure OpenAI
 - Groq (fast inference)
 - Cerebras (ultra-fast)
 - Google Gemini
 
-## 🗄️ Vector Databases (9 Integrations)
+## Vector Databases (9 Integrations)
 
 - **Pinecone** - Fully managed serverless
 - **Qdrant** - Open-source vector search
@@ -131,9 +131,10 @@ await vectorDb.WriteAsync(embeddedChunks);
 - **Milvus** - High-performance distributed
 - **Turbopuffer** - Real-time, edge-optimized
 
-## 💡 Common Use Cases
+## Common Use Cases
 
 ### 1. Document Ingestion for RAG
+
 ```csharp
 // Chunk documents, embed, and store in vector DB
 var chunks = chunker.Chunk(document);
@@ -141,12 +142,14 @@ await vectorDb.WriteAsync(chunks);
 ```
 
 ### 2. Code Analysis
+
 ```csharp
 var codeChunker = new CodeChunker(language: "csharp", chunkSize: 1024);
 var chunks = codeChunker.Chunk(sourceCode);
 ```
 
 ### 3. Semantic Search
+
 ```csharp
 var semanticChunker = new SemanticChunker(embeddings, threshold: 0.5f);
 var chunks = semanticChunker.Chunk(text);
@@ -154,6 +157,7 @@ var chunks = semanticChunker.Chunk(text);
 ```
 
 ### 4. RAG Pipeline
+
 ```csharp
 var pipeline = new Pipeline()
     .ProcessWith("text")
@@ -161,31 +165,29 @@ var pipeline = new Pipeline()
     .RunAsync(texts: documentText);
 ```
 
-## 🎯 Why Chonkie.Net?
+## Why Chonkie.NET?
 
-✅ **Performance** - 10-100x faster than Python alternatives  
-✅ **Type Safety** - Full C# 14 nullable reference support  
-✅ **Dependency Minimal** - Modular, only install what you need  
-✅ **Production Ready** - 779+ tests, zero warnings  
-✅ **Well Documented** - 3969 lines of tutorials and guides  
+✅ **Performance** - On-par or better than Python alternatives  
+✅ **Type Safety** - Full C# 14 support  
+✅ **Almost Production Ready** - 900+ tests, zero warnings  
+✅ **Extensively Documented** - Tutorials and guides  
 ✅ **Complete Features** - All major RAG components included  
-✅ **Active Development** - Continuously updated with new features  
 
-## 📋 Minimum Requirements
+## Minimum Requirements
 
 - **.NET 10.0** or higher
 - **C# 14** features enabled
 - Windows, Linux, or macOS
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please visit [GitHub Repository](https://github.com/gianni-rg/Chonkie.Net).
 
-## 📄 License
+## License
 
 Licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
 
-## 🎓 Learn More
+## Learn More
 
 - **Official Repo:** https://github.com/gianni-rg/Chonkie.Net
 - **Python Chonkie:** https://github.com/chonkie-inc/chonkie
@@ -193,4 +195,4 @@ Licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ---
 
-**Ready to build amazing RAG systems?** Start with the [Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)! 🚀
+**Ready to build amazing RAG systems?** Start with the [Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)!

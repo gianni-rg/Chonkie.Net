@@ -1,43 +1,83 @@
-# 🦛 Chonkie.NET ✨
+# 🦛 Chonkie.NET
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
-[![Status](https://img.shields.io/badge/status-phase_11_in_progress-green)](STATUS_DASHBOARD.md)
-[![Tests](https://img.shields.io/badge/tests-739_passing-brightgreen)](tests/)
+[![Status](https://img.shields.io/badge/status-experimental-green)](STATUS_DASHBOARD.md)
+[![Tests](https://img.shields.io/badge/tests-932_passing-brightgreen)](tests/)
 
-> **Status:** ✅ Core implementation complete | 🟡 Phase 11 in progress (docs + release)  
-> **Latest:** Optional chunkers, genies, and handshakes are complete with full test coverage
+A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie), the lightweight ingestion Python library for fast, efficient and robust RAG pipelines.
 
-A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie) - the no-nonsense, ultra-lightweight text chunking library for RAG applications.
+> *This is an independent port and is not officially affiliated with the original Chonkie project.  
+All credit for the original design and implementation goes to the Chonkie team.*
 
-## 📋 About This Port
+Chonkie.NET is a somewhat faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
 
-Chonkie.NET is a faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
+- **Feature Parity**: Chunkers, Tokenizers, Embeddings, Chefs, Genies, Pipelines, Porters, Handshakes, and integrations aligned with Python version as of v1.5.4 ([commit cd8bd64](https://github.com/chonkie-inc/chonkie/commit/cd8bd643bd7045686f0a8b73a64f1c9296c0dae2))
+- **High Performance**: .NET 10, C# 14 features, and optimizations to possibly match or even exceed Python performance
+- **Lightweight**: Modular packages, minimal dependencies
+- **Strongly Typed**: Idiomatic C# APIs and DI-friendly design, with parts of the API designed to leverage the .NET AI ecosystem ([Microsoft.Extensions.AI](https://github.com/dotnet/extensions/tree/main/src/Libraries/Microsoft.Extensions.AI), [Semantic Kernel](https://github.com/microsoft/semantic-kernel), and [ONNX Runtime](https://github.com/microsoft/onnxruntime))
+- **Local-First**: Support for local models and on-device processing with ONNX Runtime
+- **Documentation**: Comprehensive documentation with examples, usage patterns, and best practices
 
-- ✨ **Feature Parity** - Chunkers, pipelines, and integrations aligned with Python behavior
-- 🚀 **High Performance** - .NET 10 + C# 14 (Span<T>, SIMD, extension members, stack allocation)
-- 🪶 **Lightweight** - Modular packages, minimal dependencies
-- 🔌 **32+ Integrations** - Vector DBs, embeddings, LLM providers
-- 💪 **Strongly Typed** - Idiomatic C# APIs and DI-friendly design
-- ⚡ **Optimized** - TensorPrimitives SIMD operations and low allocations
+## About this project
 
-## 🚀 Quick Start
+The project is part of an *experimental* journey with [GitHub Copilot](https://github.com/features/copilot) and coding agents in Visual Studio, Visual Studio Code and CLI, in order to evaluate the feasibility in terms of quality, efforts, and resources for translating a quite complex Python codebase into C#, with careful attention to maintain the same behavior, and explore the capabilities of (semi)autonomous AI-assisted coding.
 
-### Install
+**It is a work in progress, built in my spare time for fun and learning.**
 
-**NuGet packages:** Coming in Phase 11.  
-For now, build from source and reference the projects you need.
+The project initially *was* not intended for production use, but rather as a demonstration of the capabilities of AI-assisted coding. The results have been *very promising*, with a high degree of feature parity achieved, and the project has evolved into a fully functional .NET port of the original library, that might eventually be used in production scenarios.
+
+> *Please keep in mind that the project should be still considered in early stages and experimental, and while the core implementation is complete, it still needs deep testing, optimizations and polishing here and there, before considering it stable*.
+
+## Getting Started
+
+### Project Organization
+
+The project is organized in a monorepo structure, with multiple projects for different components of the library.
+
+```text
+Chonkie.Net/
+├── .github/                  # CI/CD pipelines
+├── src/                      # Source code
+│   ├── Chonkie.Core/         # Core types and interfaces
+│   ├── Chonkie.Tokenizers/   # Tokenizer implementations
+│   ├── Chonkie.Chunkers/     # Chunker implementations
+│   ├── Chonkie.Embeddings/   # Embedding providers
+│   ├── Chonkie.Chefs/        # Content processing specialization
+│   ├── Chonkie.Refineries/   # Post-chunking refinement
+│   ├── Chonkie.Genies/       # Intelligent text generation
+│   ├── Chonkie.Pipeline/     # Fluent pipeline API
+│   ├── Chonkie.Porters/      # Content conversion and export
+│   ├── Chonkie.Fetchers/     # Content retrieval
+│   └── Chonkie.Handshakes/   # Handshake protocols
+├── tests/                    # Unit and integration tests
+├── samples/                  # Usage examples
+├── benchmarks/               # Performance benchmarks
+├── docs/                     # Technical documentation
+├── models/                   # AI models (ONNX, etc.)
+├── scripts/                  # Automation scripts
+├── .editorconfig             # Code style configuration
+├── Directory.Build.props     # Shared MSBuild properties
+├── Chonkie.Net.sln           # Visual Studio solution
+└── test.runsettings          # Test execution settings
+```
+
+### Setup a local copy
+
+Clone the repository and build. You should be able to generate the library and use it in your own projects.
 
 ```powershell
 git clone https://github.com/gianni-rg/Chonkie.Net.git
 cd Chonkie.Net
-dotnet build Chonkie.Net.sln
+dotnet build
 ```
 
-### CHONK! 🦛✨
+As alternative, you can get a pre-compiled binary version of the library on [NuGet](https://www.nuget.org/packages/Chonkie.NET/). Remember to thick 'Include prerelease' when looking for the `Chonkie.NET` library.
 
-This mirrors the Python quick-start: create a chunker, pass text, and read chunks.
+### Let's chunk
+
+If you are familiar with the Python library, this mirrors the Python quick-start: create a new console application, create a chunker, pass some text, and read chunks.
 
 ```csharp
 using Chonkie.Chunkers;
@@ -67,103 +107,41 @@ using Chonkie.Tokenizers;
 var tokenizer = new WordTokenizer();
 
 var result = await FluentPipeline.Create()
-    .WithText("Chonkie is the goodest boi!")
+    .WithText("Chonkie is the best tool!")
     .ChunkWith(new RecursiveChunker(tokenizer, chunkSize: 128))
     .RefineWith(new OverlapRefinery(minOverlap: 8))
     .RunAsync();
 ```
 
-## 📚 Documentation
+## Documentation
 
-### 🎓 **[Complete Tutorial Guide](docs/TUTORIALS_INDEX.md)** ← Start Here!
-Learn Chonkie.Net step-by-step with interactive tutorials:
-- [Quick-Start Guide](docs/TUTORIALS_01_QUICK_START.md) (10 min) - Your first chunks
-- [RAG Tutorial](docs/TUTORIALS_02_RAG.md) (45 min) - Build a complete RAG system
-- [Chunkers Deep Dive](docs/TUTORIALS_03_CHUNKERS.md) (30 min) - Master all 10 chunkers
-- [Vector Database Guide](docs/TUTORIALS_04_VECTORDB.md) (30 min) - Store & search embeddings
-- [Pipeline Configuration](docs/TUTORIALS_05_PIPELINES.md) (60 min) - Advanced workflows
+You can find all the technical documentation in the [docs/](docs/) folder. There are some getting started guides, and in the [samples/](/samples) folder you can find more complete examples of how to use the library and its features.
 
-### 📊 Project Documentation
-- **[Status Dashboard](STATUS_DASHBOARD.md)** - Current status and sprint tracking
-- **[Master Roadmap](MASTER_ROADMAP.md)** - Consolidated roadmap and progress tracking
-- **[Implementation Quickstart](IMPLEMENTATION_QUICKSTART.md)** - Implementation guide
-- **[Changelog](CHANGELOG.md)** - Version history
-- **Original Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie) | [Docs](https://docs.chonkie.ai)
+If you want to have a look at the original Chonkie and its documentation, you can find it here:
 
-## 🧩 Component Overview
+- [https://github.com/chonkie-inc/chonkie](https://github.com/chonkie-inc/chonkie)
+- [https://docs.chonkie.ai](https://docs.chonkie.ai)
 
-### Chunkers
-`TokenChunker`, `SentenceChunker`, `RecursiveChunker`, `SemanticChunker`, `LateChunker`,
-`CodeChunker`, `TableChunker`, `NeuralChunker`, `SlumberChunker`, `FastChunker`
+## Contribution
 
-### Tokenizers
-Character, Word, HuggingFace (ML.NET), tiktoken (SharpToken)
+The project is constantly evolving and contributions are warmly welcomed.
 
-### Embeddings
-OpenAI, Azure OpenAI, Cohere, Gemini, Jina AI, Voyage AI, Sentence Transformers (ONNX)
+I'm more than happy to receive any kind of contribution to this experimental project: from helpful feedbacks to bug reports, documentation, usage examples, feature requests, or directly code contribution for bug fixes and new and/or improved features.
 
-### Vector Databases
-ChromaDB, Qdrant, Pinecone, Weaviate, PostgreSQL (pgvector), MongoDB, Elasticsearch, Turbopuffer
+Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*.
 
-### LLM Providers
-OpenAI, Azure OpenAI, Gemini, Groq, Cerebras
+> Development is mainly done on Windows, so other platforms are not directly developed, tested or supported (but the CI/CD pipeline builds and tests for macOS and Linux as well).  
+> An help is kindly appreciated in make the application work on other platforms as well.
 
-## 🎯 Project Goals
+Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started!
 
-1. **Feature Parity** with Python Chonkie
-2. **Native .NET Experience** - Idiomatic C# APIs, DI support, IOptions pattern
-3. **Performance** - Match or exceed Python performance
-4. **Excellent Documentation** - XML docs, samples, migration guides
+## Acknowledgements
 
-## 🗓️ Timeline
+Inspired by the amazing Python community and the need for a .NET equivalent, this project could not have been possible without their work: the original Chonkie has been created by [Bhavnick Minhas](https://github.com/bhavnicksm) and [Shreyash Nigam](https://github.com/Primus). Please check out the original project for more details and to support their work on [GitHub](https://github.com/chonkie-inc/chonkie).
 
-**Current Phase:** Phase 11 - Polish & Release (in progress)  
-**Core Implementation:** ✅ Complete (Phases 1-10)  
-**Release Target:** After documentation + packaging are finalized
+## License
 
-See [MASTER_ROADMAP.md](MASTER_ROADMAP.md) for the complete plan.
+You may find specific license information for third party software in the [third-party-programs.txt](./third-party-programs.txt) file.  
+Where not otherwise specified, everything is licensed under the [APACHE 2.0 License](./LICENSE).
 
-## 🏗️ Project Structure
-
-```
-Chonkie.Net/
-├── src/                      # Source code
-│   ├── Chonkie.Core/         # Core types and interfaces
-│   ├── Chonkie.Chunkers/     # Chunker implementations
-│   ├── Chonkie.Embeddings/   # Embedding providers
-│   └── ...
-├── tests/                    # Unit and integration tests
-├── benchmarks/               # Performance benchmarks
-├── samples/                  # Usage examples
-├── docs/                     # Documentation
-└── MASTER_ROADMAP.md         # Consolidated roadmap
-```
-
-## 🤝 Contributing
-
-Contributions are welcome while we finalize Phase 11 (docs + release prep).
-
-If you'd like to help:
-1. Check the [STATUS_DASHBOARD.md](STATUS_DASHBOARD.md) for current priorities
-2. Look for issues labeled `help-wanted` or `good-first-issue`
-3. Join the discussion in issues and pull requests
-
-## 📄 License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgements
-
-- **Original Chonkie** - Created by [Bhavnick Minhas](https://github.com/bhavnicksm) and [Shreyash Nigam](https://github.com/Primus)
-- **Python Chonkie** - [GitHub](https://github.com/chonkie-inc/chonkie)
-- Inspired by the amazing Python community and the need for a .NET equivalent
-
-## 📞 Contact
-
-- **Repository:** [github.com/gianni-rg/Chonkie.Net](https://github.com/gianni-rg/Chonkie.Net)
-- **Issues:** [GitHub Issues](https://github.com/gianni-rg/Chonkie.Net/issues)
-- **Original Chonkie Discord:** [Join](https://discord.gg/vH3SkRqmUz)
-
----
-
-**Note:** This is an independent port and is not officially affiliated with the original Chonkie project. All credit for the original design and implementation goes to the Chonkie team.
+Copyright (C) 2025-2026 Gianni Rosa Gallina.
