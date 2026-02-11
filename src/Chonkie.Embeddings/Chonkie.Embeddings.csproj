@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Chonkie.Embeddings</RootNamespace>
+    <VersionSuffix Condition="'$(VersionSuffix)' == ''">preview.local</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <VersionSuffix Condition="'$(VersionSuffix)' == ''">preview.local</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
