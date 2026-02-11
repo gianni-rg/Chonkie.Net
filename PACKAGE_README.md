@@ -96,11 +96,11 @@ await vectorDb.WriteAsync(embeddedChunks);
 - **[Full Documentation][full-docs]** -
     Complete API reference and guides
 
-[quick-start]: docs/TUTORIALS_01_QUICK_START.md
-[rag-tutorial]: docs/TUTORIALS_02_RAG.md
-[chunker-guide]: docs/TUTORIALS_03_CHUNKERS.md
-[vector-db]: docs/TUTORIALS_04_VECTORDB.md
-[migration-guide]: docs/MIGRATION_GUIDE_PYTHON_TO_NET.md
+[quick-start]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md
+[rag-tutorial]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md
+[chunker-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_03_CHUNKERS.md
+[vector-db]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_04_VECTORDB.md
+[migration-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md
 [full-docs]: https://github.com/gianni-rg/Chonkie.Net
 
 ## Chunkers (11 Types)
