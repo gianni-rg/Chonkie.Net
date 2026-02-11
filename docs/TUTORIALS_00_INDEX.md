@@ -102,6 +102,7 @@ Build production-ready data processing pipelines:
    └─ Learn basic chunking
 2. Chunkers Tutorial (20 min)
    └─ Choose the right chunker
+```
 
 **Result:** You can chunk documents effectively.
 
@@ -268,20 +269,6 @@ Notice: Same logic, similar API, C# benefits (types, compiled, faster).
 - [Vector Databases](TUTORIALS_04_VECTORDB.md) - All 9 databases (30 min)
 - [Pipelines](TUTORIALS_05_PIPELINES.md) - Advanced workflows (60 min)
 
-### Additional Resources (Coming Soon)
-
-- Migration Guide (Python → C#)
-- Production Deployment Guide
-- Performance Tuning Guide
-- Troubleshooting FAQ
-
-### API References (Coming Soon)
-
-- Chunkers API Reference
-- Tokenizers API Reference
-- Embeddings API Reference
-- Vector Databases API Reference
-
 ---
 
 ## ❓ Frequently Asked Questions
@@ -374,7 +361,7 @@ Once you've completed the tutorials:
 - [Chunkers Deep Dive](TUTORIALS_03_CHUNKERS.md)
 - [RAG: Choosing Chunking Strategy](TUTORIALS_02_RAG.md#-configuration-tuning)
 
-### Vectorization  
+### Vectorization
 
 - [Quick-Start: Tokenizers](TUTORIALS_01_QUICK_START.md#-tokenizers-explained)
 - [RAG: Embedding Generation](TUTORIALS_02_RAG.md#step-2-embedding-generation)
