@@ -73,7 +73,7 @@ cd Chonkie.Net
 dotnet build
 ```
 
-As alternative, you can get a pre-compiled binary version of the library on [NuGet](https://www.nuget.org/packages/Chonkie.Net/). Remember to thick 'Include prerelease' when looking for the `Chonkie.Net` library.
+As alternative, you can get a pre-compiled binary version of the library on [NuGet](https://www.nuget.org/packages/Chonkie.Net/). Remember to tick 'Include prerelease' when looking for the `Chonkie.Net` library.
 
 ### Let's chunk
 
