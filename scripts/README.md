@@ -90,7 +90,7 @@ Usage:
 uv run scripts/convert_neural_models.py --model <model_name_or_path> --output [output_dir]
 
 # Show built-in or commonly used neural chunker models
-uv run scripts/convert_neural_models.py --list
+uv run scripts/convert_neural_models.py --list-models
 ```
 
 Examples:
@@ -99,7 +99,7 @@ Examples:
 # Convert a pretrained neural chunker from the hub
 uv run scripts/convert_neural_models.py --model neural-chunker/some-model-name --output ./models/neural-chunker
 
-# Convert one of the available models (distilber, modernbert-base, or modernbert-large)
+# Convert one of the available models (distilbert, modernbert-base, or modernbert-large)
 uv run scripts/convert_neural_models.py --model mirth/chonky_distilbert_base_uncased_1 --output ./models/distilbert
 ```
 
