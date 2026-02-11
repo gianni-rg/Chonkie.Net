@@ -2,7 +2,7 @@
 
 ## Overview
 
-A comprehensive integration test suite has been created for the Chonkie.NET embeddings providers. The suite contains **35 integration tests** across 7 embedding providers.
+A comprehensive integration test suite has been created for the Chonkie.Net embeddings providers. The suite contains **35 integration tests** across 7 embedding providers.
 
 ## Test Structure
 

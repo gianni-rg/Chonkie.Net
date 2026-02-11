@@ -1,11 +1,11 @@
-# Chonkie.NET - The Lightweight RAG Ingestion Library
+# Chonkie.Net - The Lightweight RAG Ingestion Library
 
 [![GitHub](https://img.shields.io/badge/GitHub-gianni--rg%2FChonkie.Net-blue?logo=github)](https://github.com/gianni-rg/Chonkie.Net)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue)](LICENSE)
 [![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=.net)](https://dotnet.microsoft.com)
 [![C# 14](https://img.shields.io/badge/C%23-14-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp)
 
-**Chonkie.NET** is an experimental .NET/C# port of Python Chonkie, providing fast, efficient, and robust text chunking for Retrieval-Augmented Generation (RAG) systems. This is an independent port and is not officially affiliated with the original Chonkie project.
+**Chonkie.Net** is an experimental .NET/C# port of Python Chonkie, providing fast, efficient, and robust text chunking for Retrieval-Augmented Generation (RAG) systems. This is an independent port and is not officially affiliated with the original Chonkie project.
 
 ## Key Features
 
@@ -165,7 +165,7 @@ var pipeline = new Pipeline()
     .RunAsync(texts: documentText);
 ```
 
-## Why Chonkie.NET?
+## Why Chonkie.Net?
 
 ✅ **Performance** - On-par or better than Python alternatives  
 ✅ **Type Safety** - Full C# 14 support  

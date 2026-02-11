@@ -1,4 +1,4 @@
-# 🦛 Chonkie.NET
+# 🦛 Chonkie.Net
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
@@ -11,7 +11,7 @@ A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie), the lightweigh
 > *This is an independent port and is not officially affiliated with the original Chonkie project.  
 All credit for the original design and implementation goes to the Chonkie team.*
 
-Chonkie.NET is a somewhat faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
+Chonkie.Net is a somewhat faithful port of the Python Chonkie library to .NET/C#, bringing powerful text chunking capabilities to the .NET ecosystem with:
 
 - **Feature Parity**: Chunkers, Tokenizers, Embeddings, Chefs, Genies, Pipelines, Porters, Handshakes, and integrations aligned with Python version as of v1.5.4 ([commit cd8bd64](https://github.com/chonkie-inc/chonkie/commit/cd8bd643bd7045686f0a8b73a64f1c9296c0dae2))
 - **High Performance**: .NET 10, C# 14 features, and optimizations to possibly match or even exceed Python performance
@@ -73,7 +73,7 @@ cd Chonkie.Net
 dotnet build
 ```
 
-As alternative, you can get a pre-compiled binary version of the library on [NuGet](https://www.nuget.org/packages/Chonkie.NET/). Remember to thick 'Include prerelease' when looking for the `Chonkie.NET` library.
+As alternative, you can get a pre-compiled binary version of the library on [NuGet](https://www.nuget.org/packages/Chonkie.Net/). Remember to tick 'Include prerelease' when looking for the `Chonkie.Net` library.
 
 ### Let's chunk
 
