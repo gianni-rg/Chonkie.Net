@@ -51,7 +51,7 @@ foreach (var chunk in result.Chunks)
 {
     Console.WriteLine(chunk.Text);
 }
-```text
+```
 
 ---
 
@@ -64,7 +64,7 @@ var result = await FluentPipeline.Create()
     .FetchFrom("file.txt")
     .ChunkWith(new RecursiveChunker(new WordTokenizer(), 512))
     .RunAsync();
-```text
+```
 
 ### Pattern 2: Multiple Files
 
