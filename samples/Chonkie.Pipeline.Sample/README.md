@@ -180,7 +180,7 @@ OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
 ```
 
 ```text
-CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
+CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
 ### Qdrant Configuration (RAG Demo)

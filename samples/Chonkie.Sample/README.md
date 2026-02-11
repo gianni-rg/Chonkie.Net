@@ -66,7 +66,7 @@ OPENAI_EMBEDDINGS_DIMENSION=1536
 ### Option 3: Local Sentence Transformers (ONNX)
 
 ```text
-CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
+CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
 ### Force Offline Demo Embeddings

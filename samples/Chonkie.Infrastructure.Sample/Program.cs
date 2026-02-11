@@ -440,7 +440,7 @@ class Program
     /// <returns>True if a provider was created.</returns>
     static bool TryCreateSentenceTransformerEmbeddings(out EmbeddingsHandle handle, out string source)
     {
-        var modelPath = Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH");
+        var modelPath = Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH");
         if (string.IsNullOrWhiteSpace(modelPath))
         {
             handle = null!;

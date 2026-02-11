@@ -16,7 +16,7 @@ namespace Chonkie.Embeddings
                 Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_EMBEDDINGS") ?? ""
             ) },
             { "sentence-transformers", () => new SentenceTransformers.SentenceTransformerEmbeddings(
-                Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH") ?? ""
+                Environment.GetEnvironmentVariable("CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH") ?? ""
             ) },
             { "cohere", () => new Cohere.CohereEmbeddings(Environment.GetEnvironmentVariable("COHERE_API_KEY") ?? "") },
             { "gemini", () => new Gemini.GeminiEmbeddings(Environment.GetEnvironmentVariable("GEMINI_API_KEY") ?? "") },
