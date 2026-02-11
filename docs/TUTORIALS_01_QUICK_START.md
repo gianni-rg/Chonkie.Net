@@ -59,7 +59,7 @@ foreach (var chunk in chunks)
 **Output:**
 
 ```text
-Chunk: Chonkie is the no-nonsense chunking library for RAG applications.
+Chunk: Chonkie is the no-nonsense chunking library for RAG.
 It's lightweight, fast, and incredibly easy to use!
 Tokens: 24
 ```
