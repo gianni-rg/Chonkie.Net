@@ -43,7 +43,7 @@ var chunker = new TokenChunker(
 );
 
 // 3. Chunk your text
-var text = "Chonkie is the no-nonsense chunking library for RAG." +
+var text = "Chonkie is the no-nonsense chunking library for RAG applications." +
            " It's lightweight, fast, and incredibly easy to use!";
 
 var chunks = chunker.Chunk(text);
