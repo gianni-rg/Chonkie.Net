@@ -12,7 +12,6 @@ namespace Chonkie.Embeddings.SentenceTransformers
     /// </summary>
     public static class ModelManager
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
         private static readonly string _defaultCacheDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".cache", "chonkie", "models"
@@ -172,8 +171,8 @@ namespace Chonkie.Embeddings.SentenceTransformers
                 return modelPath;
             }
 
-            // TODO: Implement HuggingFace Hub download
-            // For now, throw an informative error
+            // Note: Automatic HuggingFace Hub download not yet implemented.
+            // Users must manually convert and place the model at the cache directory.
             throw new NotImplementedException(
                 $"Automatic model download is not yet implemented. " +
                 $"Please manually convert and place the model at: {modelPath}\n\n" +

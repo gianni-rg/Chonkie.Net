@@ -131,15 +131,15 @@ namespace Chonkie.Embeddings
             IEnumerable<string> texts,
             CancellationToken cancellationToken = default)
         {
+            var textList = texts?.ToList() ?? throw new ArgumentNullException(nameof(texts));
+
+            if (textList.Count == 0)
+                return Array.Empty<float[]>();
+
+            _logger?.LogDebug("Generating {Count} embeddings using {Provider}", textList.Count, _providerName);
+
             try
             {
-                var textList = texts?.ToList() ?? throw new ArgumentNullException(nameof(texts));
-
-                if (textList.Count == 0)
-                    return Array.Empty<float[]>();
-
-                _logger?.LogDebug("Generating {Count} embeddings using {Provider}", textList.Count, _providerName);
-
                 var result = await _generator.GenerateAsync(textList, cancellationToken: cancellationToken);
 
                 if (result is null)
@@ -156,47 +156,67 @@ namespace Chonkie.Embeddings
 
                 return embeddings;
             }
-            catch (EmbeddingException)
+            catch (Exception ex)
+            {
+                HandleBatchEmbeddingException(ex);
+                throw; // unreachable, but required by compiler
+            }
+        }
+
+        private void HandleBatchEmbeddingException(Exception ex)
+        {
+            if (ex is EmbeddingException)
             {
                 // Re-throw our own exceptions
-                throw;
+                throw ex;
             }
-            catch (OperationCanceledException ex)
+
+            if (ex is OperationCanceledException)
             {
                 _logger?.LogWarning(ex, "Batch embedding operation was cancelled");
                 throw new EmbeddingException($"Batch embedding operation was cancelled: {ex.Message}", ex);
             }
-            catch (TimeoutException ex)
+
+            if (ex is TimeoutException)
             {
                 _logger?.LogError(ex, "Batch embedding operation timed out");
                 throw new EmbeddingNetworkException($"Batch embedding operation timed out: {ex.Message}", ex);
             }
-            catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase) ||
-                                      ex.Message.Contains("429", StringComparison.OrdinalIgnoreCase))
+
+            if (IsRateLimitException(ex))
             {
                 _logger?.LogWarning(ex, "Rate limit encountered during batch embedding");
                 throw new EmbeddingRateLimitException($"Rate limit exceeded during batch operation: {ex.Message}", ex);
             }
-            catch (Exception ex) when (ex.Message.Contains("authentication", StringComparison.OrdinalIgnoreCase) ||
-                                      ex.Message.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) ||
-                                      ex.Message.Contains("401", StringComparison.OrdinalIgnoreCase) ||
-                                      ex.Message.Contains("403", StringComparison.OrdinalIgnoreCase))
+
+            if (IsAuthenticationException(ex))
             {
                 _logger?.LogError(ex, "Authentication failed during batch embedding");
                 throw new EmbeddingAuthenticationException($"Authentication failed during batch operation: {ex.Message}", ex);
             }
-            catch (Exception ex) when (ex is HttpRequestException ||
-                                      ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase))
+
+            if (ex is HttpRequestException || IsNetworkException(ex))
             {
                 _logger?.LogError(ex, "Network error occurred during batch embedding");
                 throw new EmbeddingNetworkException($"Network error occurred during batch operation: {ex.Message}", ex);
             }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "Unexpected error during batch embedding generation");
-                throw new EmbeddingException($"Unexpected error during batch embedding: {ex.Message}", ex);
-            }
+
+            _logger?.LogError(ex, "Unexpected error during batch embedding generation");
+            throw new EmbeddingException($"Unexpected error during batch embedding: {ex.Message}", ex);
         }
+
+        private static bool IsRateLimitException(Exception ex)
+            => ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase) ||
+               ex.Message.Contains("429", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsAuthenticationException(Exception ex)
+            => ex.Message.Contains("authentication", StringComparison.OrdinalIgnoreCase) ||
+               ex.Message.Contains("unauthorized", StringComparison.OrdinalIgnoreCase) ||
+               ex.Message.Contains("401", StringComparison.OrdinalIgnoreCase) ||
+               ex.Message.Contains("403", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsNetworkException(Exception ex)
+            => ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Returns a string representation of the unified embeddings provider.

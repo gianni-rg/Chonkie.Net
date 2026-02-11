@@ -8,7 +8,7 @@ namespace Chonkie.Examples
     /// <summary>
     /// Example demonstrating the use of ONNX Sentence Transformer embeddings.
     /// </summary>
-    class Program
+    static class Program
     {
         static async Task Main(string[] args)
         {

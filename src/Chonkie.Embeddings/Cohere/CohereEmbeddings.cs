@@ -16,7 +16,7 @@ namespace Chonkie.Embeddings.Cohere
     /// </summary>
     public class CohereEmbeddings : BaseEmbeddings
     {
-        private readonly string _apiKey;
+        private readonly string _apiUrl;
         private readonly string _model;
         private readonly HttpClient _httpClient;
 
@@ -32,13 +32,23 @@ namespace Chonkie.Embeddings.Cohere
         /// <param name="apiKey">The Cohere API key.</param>
         /// <param name="model">The model name to use.</param>
         /// <param name="dimension">The dimension of the embedding vectors.</param>
-        public CohereEmbeddings(string apiKey, string model = "embed-english-v3.0", int dimension = 1024)
+        /// <param name="apiUrl">The Cohere API endpoint URL (optional, defaults to official Cohere endpoint).</param>
+        public CohereEmbeddings(string apiKey, string model = "embed-english-v3.0", int dimension = 1024, string? apiUrl = null)
         {
-            _apiKey = apiKey ?? throw new ArgumentNullException(nameof(apiKey));
+            if (string.IsNullOrEmpty(apiKey))
+                throw new ArgumentNullException(nameof(apiKey));
+            
             _model = model;
             Dimension = dimension;
+            _apiUrl = apiUrl ?? GetDefaultApiUrl();
             _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+        }
+
+        private static string GetDefaultApiUrl()
+        {
+            // Use environment variable if available, otherwise use default endpoint
+            return Environment.GetEnvironmentVariable("COHERE_API_URL") ?? "https://api.cohere.com/v1/embed";
         }
 
         /// <inheritdoc />
@@ -59,7 +69,7 @@ namespace Chonkie.Embeddings.Cohere
                 var content = new StringContent(JsonSerializer.Serialize(requestBody));
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
+                    var response = await _httpClient.PostAsync(_apiUrl, content, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -126,33 +136,8 @@ namespace Chonkie.Embeddings.Cohere
                 for (int i = 0; i < textsToEmbed.Count; i += maxBatchSize)
                 {
                     var batch = textsToEmbed.Skip(i).Take(maxBatchSize).ToList();
-
-                    var requestBody = new
-                    {
-                        model = _model,
-                        texts = batch,
-                        input_type = "search_document",
-                        truncate = "END"
-                    };
-                    var content = new StringContent(JsonSerializer.Serialize(requestBody));
-                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                    var response = await _httpClient.PostAsync("https://api.cohere.com/v1/embed", content, cancellationToken);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-                        throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
-                    }
-                    var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-                    using var doc = JsonDocument.Parse(responseJson);
-                    var embeddingsArray = doc.RootElement.GetProperty("embeddings");
-                    foreach (var embedding in embeddingsArray.EnumerateArray())
-                    {
-                        var floats = new List<float>(Dimension);
-                        foreach (var value in embedding.EnumerateArray())
-                            floats.Add(value.GetSingle());
-                        allResults.Add(floats.ToArray());
-                    }
+                    var batchResults = await ProcessBatchAsync(batch, cancellationToken);
+                    allResults.AddRange(batchResults);
                 }
 
                 return allResults;
@@ -192,6 +177,38 @@ namespace Chonkie.Embeddings.Cohere
                     $"Unexpected error during Cohere batch embedding: {ex.Message}",
                     ex);
             }
+        }
+
+        private async Task<IReadOnlyList<float[]>> ProcessBatchAsync(List<string> batch, CancellationToken cancellationToken)
+        {
+            var requestBody = new
+            {
+                model = _model,
+                texts = batch,
+                input_type = "search_document",
+                truncate = "END"
+            };
+            var content = new StringContent(JsonSerializer.Serialize(requestBody));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await _httpClient.PostAsync(_apiUrl, content, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Response status code does not indicate success: {(int)response.StatusCode} ({response.StatusCode}). Error: {errorBody}");
+            }
+            var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+            using var doc = JsonDocument.Parse(responseJson);
+            var embeddingsArray = doc.RootElement.GetProperty("embeddings");
+            var results = new List<float[]>();
+            foreach (var embedding in embeddingsArray.EnumerateArray())
+            {
+                var floats = new List<float>(Dimension);
+                foreach (var value in embedding.EnumerateArray())
+                    floats.Add(value.GetSingle());
+                results.Add(floats.ToArray());
+            }
+            return results;
         }
     }
 }
