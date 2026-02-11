@@ -15,7 +15,7 @@ public sealed class NeuralChunker : BaseChunker, IDisposable
 {
     private readonly RecursiveChunker _fallback;
     private OnnxTokenClassifier? _classifier;
-    private int _minCharactersPerChunk;
+    private readonly int _minCharactersPerChunk;
     private bool _useOnnx;
 
     /// <summary>
@@ -319,21 +319,21 @@ public sealed class NeuralChunker : BaseChunker, IDisposable
 /// </summary>
 internal class OnnxLoggerAdapter : ILogger<OnnxTokenClassifier>
 {
-    private readonly ILogger _innerLogger;
+    private readonly ILogger _logger;
 
     public OnnxLoggerAdapter(ILogger innerLogger)
     {
-        _innerLogger = innerLogger ?? throw new ArgumentNullException(nameof(innerLogger));
+        _logger = innerLogger ?? throw new ArgumentNullException(nameof(innerLogger));
     }
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull
     {
-        return _innerLogger.BeginScope(state);
+        return _logger.BeginScope(state);
     }
 
     public bool IsEnabled(LogLevel logLevel)
     {
-        return _innerLogger.IsEnabled(logLevel);
+        return _logger.IsEnabled(logLevel);
     }
 
     public void Log<TState>(
@@ -343,6 +343,6 @@ internal class OnnxLoggerAdapter : ILogger<OnnxTokenClassifier>
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        _innerLogger.Log(logLevel, eventId, state, exception, formatter);
+        _logger.Log(logLevel, eventId, state, exception, formatter);
     }
 }

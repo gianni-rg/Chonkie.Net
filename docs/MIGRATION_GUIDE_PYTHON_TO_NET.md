@@ -1,11 +1,8 @@
 # Migration Guide: Python Chonkie → Chonkie.Net
 
-**Version:** 1.0  
-**Target Python Version:** v1.5.3  
-**Target .NET Version:** Chonkie.Net v0.4+ (.NET 10, C# 14)  
-**Last Updated:** February 6, 2026  
-
----
+**Version:** 0.1  
+**Target Python Version:** v1.5.4  
+**Target .NET Version:** Chonkie.Net v0.1+ (.NET 10, C# 14)
 
 ## 📋 Table of Contents
 
@@ -22,7 +19,10 @@
 
 ## Introduction
 
-Chonkie.Net is a **direct port** of Python Chonkie (v1.5.3) to C# (.NET 10), maintaining API parity while leveraging .NET's type system and performance characteristics. This guide helps Python developers migrate their code to Chonkie.Net.
+Chonkie.Net is a **direct port** of Python Chonkie (v1.5.4) to C# (.NET 10),
+maintaining API parity while leveraging .NET's type system and performance
+characteristics. This guide helps Python developers migrate their code to
+Chonkie.Net.
 
 ### When to Migrate?
 
@@ -81,6 +81,7 @@ nuget install Chonkie.Net
 #### Basic Setup
 
 **Python:**
+
 ```python
 from chonkie import RecursiveChunker
 
@@ -88,6 +89,7 @@ chunker = RecursiveChunker()
 ```
 
 **C# (.NET):**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -99,16 +101,22 @@ var chunker = new RecursiveChunker();
 ## Quick Comparison
 
 | Aspect | Python Chonkie | Chonkie.Net |
-|--------|---|---|
+| -------- | ---------------- | ------------- |
 | **Installation** | `pip install chonkie` | NuGet package |
-| **Import Style** | `from chonkie import RecursiveChunker` | `using Chonkie.Chunkers;` |
-| **Async/Await** | `await chunker.chunk_async()` | `await chunker.ChunkAsync()` |
+| **Import Style** | `from chonkie import` | `using` |
+| | `RecursiveChunker` | `Chonkie.Chunkers;` |
+| **Async/Await** | `await chunker.` | `await chunker.` |
+| | `chunk_async()` | `ChunkAsync()` |
 | **Naming** | snake_case | PascalCase |
-| **Error Handling** | Exceptions | Exceptions + Optional pattern |
-| **Configuration** | Constructor params + kwargs | DependencyInjection or constructor |
+| **Error Handling** | Exceptions | Exceptions + |
+| | | Optional pattern |
+| **Configuration** | Constructor params | DependencyInjection |
+| | + kwargs | or constructor |
 | **Type System** | Dynamic (duck typing) | Static (sealed types) |
 | **Performance** | Baseline | 10-100x faster |
-| **ONNX Support** | Limited | Full (ONNX Runtime for embeddings/chunking) |
+| **ONNX Support** | Limited | Full (ONNX Runtime |
+| | | for embeddings/ |
+| | | chunking) |
 
 ---
 
@@ -119,7 +127,7 @@ var chunker = new RecursiveChunker();
 Python uses `snake_case` for methods and parameters; C# uses `PascalCase`.
 
 | Python | C# |
-|--------|---|
+| -------- | ---- |
 | `chunk()`, `chunk_async()` | `Chunk()`, `ChunkAsync()` |
 | `generate()`, `generate_async()` | `Generate()`, `GenerateAsync()` |
 | `embed()`, `embed_async()` | `Embed()`, `EmbedAsync()` |
@@ -130,7 +138,7 @@ Python uses `snake_case` for methods and parameters; C# uses `PascalCase`.
 ### Core Classes
 
 | Python | C# | Location |
-|--------|---|----------|
+| -------- | ---- | -------------------------- |
 | `Chunk` | `Chunk` | `Chonkie.Types` |
 | `Document` | `Document` | `Chonkie.Types` |
 | `BaseChunker` | `BaseChunker` | `Chonkie.Chunkers` |
@@ -143,13 +151,14 @@ Python uses `snake_case` for methods and parameters; C# uses `PascalCase`.
 
 ## Module-by-Module Migration
 
-### 1. CHUNKERS 
+### 1. CHUNKERS
 
 All 11 chunkers from Python are available in Chonkie.Net.
 
 #### TokenChunker
 
 **Python:**
+
 ```python
 from chonkie import TokenChunker, AutoTokenizer
 
@@ -161,6 +170,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Tokenizers;
@@ -175,6 +185,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### RecursiveChunker
 
 **Python:**
+
 ```python
 from chonkie import RecursiveChunker
 
@@ -186,6 +197,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -199,6 +211,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### SemanticChunker
 
 **Python:**
+
 ```python
 from chonkie import SemanticChunker, OpenAIEmbeddings
 
@@ -211,6 +224,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Embeddings;
@@ -229,6 +243,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### NeuralChunker
 
 **Python:**
+
 ```python
 from chonkie import NeuralChunker, RecursiveChunker
 from chonkie.tokenizer import AutoTokenizer
@@ -245,6 +260,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Tokenizers;
@@ -263,6 +279,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### SlumberChunker
 
 **Python:**
+
 ```python
 from chonkie import SlumberChunker, OpenAIGenie
 
@@ -275,6 +292,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Genies;
@@ -293,6 +311,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### CodeChunker
 
 **Python:**
+
 ```python
 from chonkie import CodeChunker
 
@@ -304,6 +323,7 @@ chunks = chunker("def hello():\n    print('Hello')")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -317,6 +337,7 @@ var chunks = chunker.Chunk("def hello():\n    print('Hello')");
 #### SentenceChunker
 
 **Python:**
+
 ```python
 from chonkie import SentenceChunker
 
@@ -328,6 +349,7 @@ chunks = chunker("First sentence. Second sentence. Third sentence.")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -341,6 +363,7 @@ var chunks = chunker.Chunk("First sentence. Second sentence. Third sentence.");
 #### TableChunker
 
 **Python:**
+
 ```python
 from chonkie import TableChunker
 
@@ -351,6 +374,7 @@ chunks = chunker(markdown_text_with_tables)
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -363,6 +387,7 @@ var chunks = chunker.Chunk(markdownTextWithTables);
 #### LateChunker
 
 **Python:**
+
 ```python
 from chonkie import LateChunker, OpenAIEmbeddings
 
@@ -375,6 +400,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Embeddings;
@@ -392,6 +418,7 @@ var chunks = chunker.Chunk("Your text here...");
 #### FastChunker
 
 **Python:**
+
 ```python
 from chonkie import FastChunker
 
@@ -402,6 +429,7 @@ chunks = chunker("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -418,6 +446,7 @@ All embeddings providers from Python Chonkie are available in Chonkie.Net.
 #### OpenAIEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import OpenAIEmbeddings
 
@@ -426,6 +455,7 @@ vector = embeddings.embed("Hello, world!")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 using Microsoft.Extensions.Logging;
@@ -440,6 +470,7 @@ var vector = await embeddings.EmbedAsync("Hello, world!");
 #### AzureOpenAIEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import AzureOpenAIEmbeddings
 
@@ -452,6 +483,7 @@ embeddings = AzureOpenAIEmbeddings(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -466,6 +498,7 @@ var embeddings = new AzureOpenAIEmbeddings(
 #### GeminiEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import GeminiEmbeddings
 
@@ -473,6 +506,7 @@ embeddings = GeminiEmbeddings(model="embedding-001")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -485,6 +519,7 @@ var embeddings = new GeminiEmbeddings(
 #### CohereEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import CohereEmbeddings
 
@@ -492,6 +527,7 @@ embeddings = CohereEmbeddings(model="embed-english-v3.0")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -504,6 +540,7 @@ var embeddings = new CohereEmbeddings(
 #### VoyageAIEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import VoyageAIEmbeddings
 
@@ -511,6 +548,7 @@ embeddings = VoyageAIEmbeddings(model="voyage-3")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -523,6 +561,7 @@ var embeddings = new VoyageAIEmbeddings(
 #### JinaEmbeddings
 
 **Python:**
+
 ```python
 from chonkie import JinaEmbeddings
 
@@ -530,6 +569,7 @@ embeddings = JinaEmbeddings(model="jina-embeddings-v3")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -542,6 +582,7 @@ var embeddings = new JinaEmbeddings(
 #### SentenceTransformerEmbeddings (ONNX)
 
 **Python:**
+
 ```python
 from chonkie import SentenceTransformerEmbeddings
 
@@ -551,6 +592,7 @@ embeddings = SentenceTransformerEmbeddings(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Embeddings;
 
@@ -564,6 +606,7 @@ var embeddings = new SentenceTransformerEmbeddings(
 #### OpenAIGenie
 
 **Python:**
+
 ```python
 from chonkie import OpenAIGenie
 
@@ -572,6 +615,7 @@ response = genie.generate("What is RAG?")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Genies;
 
@@ -585,6 +629,7 @@ var response = await genie.GenerateAsync("What is RAG?");
 #### AzureOpenAIGenie
 
 **Python:**
+
 ```python
 from chonkie import AzureOpenAIGenie
 
@@ -597,6 +642,7 @@ genie = AzureOpenAIGenie(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Genies;
 
@@ -611,6 +657,7 @@ var genie = new AzureOpenAIGenie(
 #### GroqGenie
 
 **Python:**
+
 ```python
 from chonkie import GroqGenie
 
@@ -619,6 +666,7 @@ response = genie.generate("What is chunking?")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Genies;
 
@@ -632,6 +680,7 @@ var response = await genie.GenerateAsync("What is chunking?");
 #### CerebrasGenie
 
 **Python:**
+
 ```python
 from chonkie import CerebrasGenie
 
@@ -639,6 +688,7 @@ genie = CerebrasGenie(model="llama-3.3-70b")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Genies;
 
@@ -651,6 +701,7 @@ var genie = new CerebrasGenie(
 #### GeminiGenie
 
 **Python:**
+
 ```python
 from chonkie import GeminiGenie
 
@@ -658,6 +709,7 @@ genie = GeminiGenie(model="gemini-1.5-pro")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Genies;
 
@@ -672,6 +724,7 @@ var genie = new GeminiGenie(
 #### ChromaHandshake
 
 **Python:**
+
 ```python
 from chonkie import ChromaHandshake
 
@@ -683,6 +736,7 @@ handshake = ChromaHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -695,11 +749,13 @@ var handshake = new ChromaHandshake(
 );
 ```
 
-**Key Difference:** Chonkie.Net requires an EmbeddingModel (IEmbeddings) to generate vectors from chunk text.
+**Key Difference:** Chonkie.Net requires an EmbeddingModel (IEmbeddings) to
+generate vectors from chunk text.
 
 #### ElasticsearchHandshake
 
 **Python:**
+
 ```python
 from chonkie import ElasticHandshake
 
@@ -710,6 +766,7 @@ handshake = ElasticHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -725,6 +782,7 @@ var handshake = new ElasticsearchHandshake(
 #### PineconeHandshake
 
 **Python:**
+
 ```python
 from chonkie import PineconeHandshake
 
@@ -735,6 +793,7 @@ handshake = PineconeHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -750,6 +809,7 @@ var handshake = new PineconeHandshake(
 #### PgvectorHandshake
 
 **Python:**
+
 ```python
 from chonkie import PgvectorHandshake
 
@@ -759,6 +819,7 @@ handshake = PgvectorHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -781,11 +842,13 @@ var handshake = new PgvectorHandshake(
 );
 ```
 
-**Key Difference:** Uses PgvectorHandshakeOptions for configuration instead of connection string.
+**Key Difference:** Uses PgvectorHandshakeOptions for configuration instead
+of connection string.
 
 #### MongoDBHandshake
 
 **Python:**
+
 ```python
 from chonkie import MongoDBHandshake
 
@@ -795,6 +858,7 @@ handshake = MongoDBHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -811,6 +875,7 @@ var handshake = new MongoDBHandshake(
 #### QdrantHandshake
 
 **Python:**
+
 ```python
 from chonkie import QdrantHandshake
 
@@ -822,6 +887,7 @@ handshake = QdrantHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -838,6 +904,7 @@ var handshake = new QdrantHandshake(
 #### MilvusHandshake
 
 **Python:**
+
 ```python
 from chonkie import MilvusHandshake
 
@@ -847,6 +914,7 @@ handshake = MilvusHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -862,6 +930,7 @@ var handshake = new MilvusHandshake(
 #### WeaviateHandshake
 
 **Python:**
+
 ```python
 from chonkie import WeaviateHandshake
 
@@ -871,6 +940,7 @@ handshake = WeaviateHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -885,6 +955,7 @@ var handshake = new WeaviateHandshake(
 #### TurbopufferHandshake
 
 **Python:**
+
 ```python
 from chonkie import TurbopufferHandshake
 
@@ -895,6 +966,7 @@ handshake = TurbopufferHandshake(
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Handshakes;
 using Chonkie.Embeddings;
@@ -912,6 +984,7 @@ var handshake = new TurbopufferHandshake(
 #### TextChef
 
 **Python:**
+
 ```python
 from chonkie import TextChef
 
@@ -920,6 +993,7 @@ chunks = chef.chunk(document)
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chefs;
 
@@ -930,6 +1004,7 @@ var chunks = chef.Chunk(document);
 #### MarkdownChef
 
 **Python:**
+
 ```python
 from chonkie import MarkdownChef
 
@@ -938,6 +1013,7 @@ chunks = chef.chunk(markdown_document)
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chefs;
 
@@ -948,6 +1024,7 @@ var chunks = chef.Chunk(markdownDocument);
 #### TableChef
 
 **Python:**
+
 ```python
 from chonkie import TableChef
 
@@ -956,6 +1033,7 @@ chunks = chef.chunk(document)
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chefs;
 
@@ -968,6 +1046,7 @@ var chunks = chef.Chunk(document);
 #### Creating a Pipeline
 
 **Python:**
+
 ```python
 from chonkie import Pipeline, RecursiveChunker, OpenAIEmbeddings, PineconeHandshake
 
@@ -982,6 +1061,7 @@ chunks = pipeline.run("Your text here...")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Pipeline;
 
@@ -992,7 +1072,7 @@ var result = await new Pipeline()
     .RunAsync(texts: "Your text here...");
 ```
 
-**Alternative: Configuration-based Pipeline**
+#### Alternative: Configuration-based Pipeline
 
 ```csharp
 // From JSON configuration
@@ -1001,6 +1081,7 @@ var result = await pipeline.RunAsync(texts: "Your text here...");
 ```
 
 **Pipeline Configuration (pipeline-config.json):**
+
 ```json
 [
   {
@@ -1026,9 +1107,12 @@ var result = await pipeline.RunAsync(texts: "Your text here...");
 ```
 
 **Key Differences:**
+
 1. Python Pipeline: Constructor-based with type-safe components
-2. C# Pipeline: Fluent builder pattern with string-based component registration
-3. C# is more flexible - components are registered and can be configured via JSON or fluent API
+2. C# Pipeline: Fluent builder pattern with string-based component
+registration
+3. C# is more flexible - components are registered and can be configured via
+JSON or fluent API
 4. More complex pipelines use configuration files rather than inline construction
 
 ---
@@ -1038,6 +1122,7 @@ var result = await pipeline.RunAsync(texts: "Your text here...");
 ### Example 1: Basic Chunking
 
 **Python:**
+
 ```python
 from chonkie import RecursiveChunker
 
@@ -1054,6 +1139,7 @@ for chunk in chunks:
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -1074,6 +1160,7 @@ foreach (var chunk in chunks)
 ### Example 2: Semantic Chunks with Embeddings
 
 **Python:**
+
 ```python
 from chonkie import SemanticChunker, OpenAIEmbeddings
 
@@ -1088,6 +1175,7 @@ for chunk in chunks:
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 using Chonkie.Embeddings;
@@ -1110,6 +1198,7 @@ foreach (var chunk in chunks)
 ### Example 3: Full RAG Pipeline
 
 **Python:**
+
 ```python
 from chonkie import (
     Pipeline,
@@ -1143,6 +1232,7 @@ print(f"Ingested {len(chunks)} chunks")
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Pipeline;
 
@@ -1193,6 +1283,7 @@ Console.WriteLine($"Ingested {chunks.Count} chunks");
 ### Example 4: Large Document Processing
 
 **Python:**
+
 ```python
 from chonkie import RecursiveChunker
 import asyncio
@@ -1212,6 +1303,7 @@ for doc in documents:
 ```
 
 **C#:**
+
 ```csharp
 using Chonkie.Chunkers;
 
@@ -1245,7 +1337,8 @@ foreach (var doc in documents)
 
 ### 1. Async/Await Pattern
 
-**Python:** All operations are synchronous by default; async versions available with `_async()` suffix.
+**Python:** All operations are synchronous by default; async versions
+available with `_async()` suffix.
 
 ```python
 # Synchronous (default)
@@ -1358,7 +1451,7 @@ services.AddRecursiveChunker(options =>
 ### 6. Performance Characteristics
 
 | Operation | Python | C# | Speedup |
-|-----------|---|---|---|
+| --------------------------- | -------- | -------- | ----------- |
 | Basic Chunking | 1.0x | 10-20x | 10-20x |
 | Semantic Embedding | 1.0x | 5-10x | 5-10x |
 | NeuralChunker | 1.0x | 15-50x | 15-50x |
@@ -1545,39 +1638,11 @@ if (chunk.Embeddings.Length > 0)  // Throws if null
 if (chunk.Embeddings?.Length > 0)  // Safe navigation
 ```
 
----
-
-## Summary
-
-| Aspect | Python | C# | Migration Effort |
-|--------|--------|---|---|
-| **Chunking APIs** | Direct match | Direct match | Easy ✅ |
-| **Embedding APIs** | Direct match | Async required | Easy ✅ |
-| **Genie APIs** | Direct match | Async required | Easy ✅ |
-| **Handshake APIs** | Direct match | Async required | Easy ✅ |
-| **Type System** | Dynamic | Static | Medium 🟡 |
-| **Async/Await** | Optional | Required | Medium 🟡 |
-| **Configuration** | Constructor | DI support | Easy ✅ |
-| **Overall** | Feature parity | ~95% | Low-Medium |
-
----
-
-## Additional Resources
-
-- **Official Docs:** [Chonkie.Net Documentation](../docs/INDEX.md)
-- **API Reference:** [API Reference Index](API_REFERENCE_INDEX.md)
-- **Quick Start:** [Quick Start Guide](TUTORIALS_01_QUICK_START.md)
-- **Python Chonkie:** [https://docs.chonkie.ai](https://docs.chonkie.ai)
-- **GitHub:** [https://github.com/chonkie-inc/chonkie](https://github.com/chonkie-inc/chonkie)
-
----
-
 ## Contributing Feedback
 
 Found an issue with the migration guide? Please open an issue with:
+
 - Your Python code snippet
 - Your C# translation attempt
 - Expected behavior
 - Actual behavior
-
-**Version:** 1.0 | **Last Updated:** February 6, 2026

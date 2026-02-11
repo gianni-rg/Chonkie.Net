@@ -11,7 +11,7 @@
 Chonkie.Net provides **10 specialized chunkers**. Each has different strengths:
 
 | Chunker | Best For | Speed | Code Quality |
-|---------|----------|-------|--------------|
+| --- | --- | --- | --- |
 | TokenChunker | Simple, fast splitting | ⚡⚡⚡ | Varies |
 | SentenceChunker | Sentence boundaries | ⚡⚡ | Better |
 | RecursiveChunker | Natural documents | ⚡⚡ | Best |
@@ -46,21 +46,28 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens per chunk
 - `chunkOverlap` (int) - Overlapping tokens between chunks
 
 **Output Characteristics:**
+
 - Exact token boundaries
 - Consistent chunk sizes
 - May split sentences awkwardly
 
 **Example:**
+
 ```csharp
 var text = @"Artificial intelligence revolutionizes everything. 
 Machine learning is the future.
 Deep learning powers modern AI.";
 
-var chunker = new TokenChunker(new WordTokenizer(), chunkSize: 10, chunkOverlap: 2);
+var chunker = new TokenChunker(
+    new WordTokenizer(),
+    chunkSize: 10,
+    chunkOverlap: 2
+);
 var chunks = chunker.Chunk(text);
 
 // Output: May split like:
@@ -86,21 +93,28 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens per chunk
 - `chunkOverlap` (int) - Overlapping tokens
 
 **Output Characteristics:**
+
 - Respects sentence boundaries
 - Chunks may vary in size
 - Natural reading flow
 
 **Example:**
+
 ```csharp
 var text = @"Artificial intelligence revolutionizes everything. 
 Machine learning is the future. 
 Deep learning powers modern AI.";
 
-var chunker = new SentenceChunker(new WordTokenizer(), chunkSize: 20, chunkOverlap: 5);
+var chunker = new SentenceChunker(
+    new WordTokenizer(),
+    chunkSize: 20,
+    chunkOverlap: 5
+);
 var chunks = chunker.Chunk(text);
 
 // Output: One sentence per chunk
@@ -128,11 +142,13 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens per chunk
 - `chunkOverlap` (int) - Overlapping tokens
 - `separators` (string[]) - Split hierarchy (tries each in order)
 
 **Default Separators:**
+
 ```csharp
 new string[]
 {
@@ -144,11 +160,13 @@ new string[]
 ```
 
 **Output Characteristics:**
+
 - Respects document structure
 - Good balance of readability and consistency
 - Most natural for mixed-content documents
 
 **Example:**
+
 ```csharp
 var text = @"# Introduction
 Artificial intelligence is transforming industries.
@@ -191,6 +209,7 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `embeddingModel` (IEmbeddingsModel) - Embedding provider
 - `chunk_size` (int) - Maximum tokens per chunk
 - `threshold` (float, 0-1) - Similarity cutoff
@@ -199,12 +218,14 @@ var chunks = chunker.Chunk(text);
 - `similarity_window` (int, default=3) - Sentences to compare
 
 **Output Characteristics:**
+
 - Groups conceptually similar sentences
 - Chunk sizes vary based on content
 - Best preservation of meaning
 - **Higher cost** (API calls per text)
 
 **Example:**
+
 ```csharp
 var text = @"Quantum computers use quantum bits. 
 They perform calculations in superposition.
@@ -241,15 +262,18 @@ var chunks = chunker.Chunk(sourceCode);
 ```
 
 **Parameters:**
+
 - `language` (string) - "csharp", "python", "javascript", "java", etc.
 - `chunkSize` (int) - Target tokens per chunk
 
 **Output Characteristics:**
+
 - Respects code structure (methods, functions)
 - Never splits in middle of function
 - Syntax-aware delimiters
 
 **Example:**
+
 ```csharp
 var sourceCode = @"
 public class Calculator 
@@ -293,14 +317,17 @@ var chunks = chunker.Chunk(csvContent);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens per chunk
 
 **Output Characteristics:**
+
 - Keeps table rows intact
 - Preserves headers
 - Good for CSV/TSV data
 
 **Example:**
+
 ```csharp
 var csvData = @"Product,Price,Stock
 Laptop,999.99,5
@@ -336,16 +363,19 @@ var chunks = chunker.Chunk(markdownContent);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens per chunk
 - `chunkOverlap` (int) - Overlapping tokens
 
 **Output Characteristics:**
+
 - Respects hierarchy (# → ## → ### sections)
 - Preserves code blocks
 - Intelligent heading relationships
 
 **Example:**
-```csharp
+
+````csharp
 var markdown = @"# Main Topic
 Content here.
 
@@ -356,7 +386,7 @@ More content.
 code here
 ```
 
-## Subtopic 2  
+## Subtopic 2
 Even more content.";
 
 var chunker = new MarkdownChunker(new WordTokenizer(), chunkSize: 50);
@@ -365,7 +395,7 @@ var chunks = chunker.Chunk(markdown);
 // Output: Respects structure
 // Chunk 1: Main Topic + Subtopic 1 content
 // Chunk 2: Subtopic 2 content
-```
+````
 
 ---
 
@@ -387,6 +417,7 @@ var chunks = chunker.Chunk(processedText);
 ```
 
 **Why "Late"?**
+
 - Token-based (like TokenChunker)
 - Typically used as final stage in pipelines
 - Works well after refinement steps
@@ -414,17 +445,20 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `embeddingModel` - Local ONNX-based embeddings
 - `threshold` (0-1) - Semantic similarity threshold
 - `chunkSize` - Maximum tokens
 
 **Output Characteristics:**
+
 - Semantic grouping (like SemanticChunker)
 - No API costs (local processing)
 - Fast for repeated use
 
 **Cost Comparison:**
-```
+
+```text
 SemanticChunker: $0.10-0.20 per 1M tokens (API)
 NeuralChunker:   FREE (one-time model download)
 ```
@@ -449,11 +483,13 @@ var chunks = chunker.Chunk(complexDocument);
 ```
 
 **Parameters:**
+
 - `chunkSize` (int) - Target tokens
 - `chunkOverlap` (int) - Overlap between chunks
 - Various extraction modes for special handling
 
 **Output Characteristics:**
+
 - Intelligent edge case handling
 - Good for real-world messy documents
 - More computation than simpler chunkers
@@ -478,11 +514,13 @@ var chunks = chunker.Chunk(text);
 ```
 
 **Parameters:**
+
 - `chunkSize` - Target tokens
 - `chunkOverlap` - Overlapping tokens
 - UTF-8 optimized for speed
 
 **Performance:**
+
 - **3-5x faster** than RecursiveChunker
 - Good for batch processing
 
@@ -490,7 +528,7 @@ var chunks = chunker.Chunk(text);
 
 ## 🎯 Decision Matrix: Which Chunker to Use?
 
-```
+```text
 Question: What are you processing?
 
 ├─ Source Code?              → CodeChunker
@@ -515,7 +553,7 @@ Question: What are you processing?
 Testing with 10,000 words across 10 documents:
 
 | Chunker | Speed | CPU | Memory | Quality |
-|---------|-------|-----|--------|---------|
+| --- | --- | --- | --- | --- |
 | FastChunker | ⚡⚡⚡ 50ms | Low | Low | Good |
 | TokenChunker | ⚡⚡⚡ 60ms | Low | Low | Fair |
 | SentenceChunker | ⚡⚡ 100ms | Low | Low | Good |
@@ -596,7 +634,3 @@ public async Task CompareChunkersAsync(string text)
 2. **[RAG with Chunkers](TUTORIALS_02_RAG.md)** - Using chunkers in RAG
 3. **[Vector Database Integration](TUTORIALS_04_VECTORDB.md)** - After chunking
 4. **[Pipeline Configuration](TUTORIALS_05_PIPELINES.md)** - Advanced workflows
-
----
-
-**Happy Chunking! 🦛✨**

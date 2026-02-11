@@ -1,13 +1,17 @@
 # 📚 Chonkie.Net - Complete Tutorial Guide
 
-Welcome! This guide will help you learn Chonkie.Net from basics to advanced use cases.
+Welcome! This guide will help you learn Chonkie.Net from basics
+to advanced use cases.
+Use the paths below to pick the right start point.
 
 ---
 
 ## 🎯 Quick Navigation
 
 ### For Absolute Beginners (10 minutes)
+
 Start here to understand the basics:
+
 - **[Quick-Start Guide](TUTORIALS_01_QUICK_START.md)** - Your first chunking example
   - Install Chonkie.Net
   - CHONK! - Create your first chunks
@@ -16,7 +20,9 @@ Start here to understand the basics:
   - Introduction to pipelines
 
 ### For Building RAG Systems (1-2 hours)
+
 Complete walk-through of Retrieval-Augmented Generation:
+
 - **[RAG Tutorial](TUTORIALS_02_RAG.md)** - Build a complete RAG system
   - What is RAG and why it matters
   - CHOMP architecture overview
@@ -30,7 +36,9 @@ Complete walk-through of Retrieval-Augmented Generation:
   - Common patterns and pitfalls
 
 ### For Deep Diving into Chunkers (30-45 minutes)
+
 Understand when and how to use each chunker:
+
 - **[Chunkers Tutorial](TUTORIALS_03_CHUNKERS.md)** - Master all 10 chunkers
   - Overview of all chunkers
   - TokenChunker (simplest)
@@ -48,7 +56,9 @@ Understand when and how to use each chunker:
   - Performance comparison
 
 ### For Vector Database Integration (30-45 minutes)
+
 Store and search your embeddings:
+
 - **[Vector Database Tutorial](TUTORIALS_04_VECTORDB.md)** - All 9 databases
   - What is a vector database?
   - Qdrant (local/cloud)
@@ -65,7 +75,9 @@ Store and search your embeddings:
   - Database selection guide
 
 ### For Advanced Pipeline Configuration (40-60 minutes)
+
 Build production-ready data processing pipelines:
+
 - **[Pipeline Tutorial](TUTORIALS_05_PIPELINES.md)** - Master the CHOMP architecture
   - CHOMP architecture explained
   - Fetchers (data sources)
@@ -84,7 +96,8 @@ Build production-ready data processing pipelines:
 ## 📊 Recommended Learning Paths
 
 ### Path 1: I Just Want to Chunk Text (30 minutes)
-```
+
+```text
 1. Quick-Start Guide (10 min)
    └─ Learn basic chunking
 2. Chunkers Tutorial (20 min)
@@ -96,7 +109,8 @@ Build production-ready data processing pipelines:
 ---
 
 ### Path 2: I Want to Build a RAG System (2-3 hours)
-```
+
+```text
 1. Quick-Start Guide (10 min)
    └─ Understand basics
 2. RAG Tutorial (45 min)
@@ -113,7 +127,8 @@ Build production-ready data processing pipelines:
 ---
 
 ### Path 3: I Need Production-Ready Code (4-5 hours)
-```
+
+```text
 1. Quick-Start Guide (10 min)
 2. RAG Tutorial (45 min)
 3. Chunkers Tutorial (25 min)
@@ -130,7 +145,8 @@ Build production-ready data processing pipelines:
 ---
 
 ### Path 4: I'm Migrating from Python Chonkie (2-3 hours)
-```
+
+```text
 1. Quick-Start Guide (10 min)
    └─ See C# equivalents
 2. Chunkers Tutorial (20 min)
@@ -150,7 +166,9 @@ Build production-ready data processing pipelines:
 ## 🎓 Learning Tips
 
 ### 1. **Try Examples Incrementally**
-Don't just read - actually run the code! Each tutorial has working examples you can copy.
+
+Don't just read - actually run the code!
+Each tutorial has working examples you can copy.
 
 ```csharp
 // Start with this
@@ -167,6 +185,7 @@ var chunks = chunker.Chunk("Your text here");
 ---
 
 ### 2. **Experiment with Parameters**
+
 The "right" settings depend on your data. Try different combinations:
 
 ```csharp
@@ -182,6 +201,7 @@ foreach (var size in new[] { 128, 256, 512, 1024 })
 ---
 
 ### 3. **Understand the "Why"**
+
 Each tutorial explains not just *how* to use features, but *why* you'd use them.
 
 - Why use TokenChunker? (Simple, fast)
@@ -192,15 +212,18 @@ Each tutorial explains not just *how* to use features, but *why* you'd use them.
 ---
 
 ### 4. **Compare with Python**
+
 Chonkie.Net is faithful to Python Chonkie. Compare side-by-side:
 
 **Python:**
+
 ```python
 chunker = RecursiveChunker(chunk_size=512, chunk_overlap=50)
 chunks = chunker.chunk(text)
 ```
 
 **C#:**
+
 ```csharp
 var chunker = new RecursiveChunker(tokenizer, chunkSize: 512, chunkOverlap: 50);
 var chunks = chunker.Chunk(text);
@@ -212,7 +235,7 @@ Notice: Same logic, similar API, C# benefits (types, compiled, faster).
 
 ## 🔗 Document Map
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │         Chonkie.Net Tutorials               │
 ├─────────────────────────────────────────────┤
@@ -235,38 +258,32 @@ Notice: Same logic, similar API, C# benefits (types, compiled, faster).
 ## 📋 All Available Material
 
 ### Getting Started
+
 - [Quick-Start Guide](TUTORIALS_01_QUICK_START.md) - First steps (10 min)
 - [Installation](TUTORIALS_01_QUICK_START.md#-installation) - Setup guide
 
 ### Core Concepts
+
 - [RAG System Tutorial](TUTORIALS_02_RAG.md) - Complete RAG (45 min)
 - [Chunkers Deep Dive](TUTORIALS_03_CHUNKERS.md) - All 10 chunkers (30 min)
 - [Vector Databases](TUTORIALS_04_VECTORDB.md) - All 9 databases (30 min)
 - [Pipelines](TUTORIALS_05_PIPELINES.md) - Advanced workflows (60 min)
-
-### Additional Resources (Coming Soon)
-- Migration Guide (Python → C#)
-- Production Deployment Guide
-- Performance Tuning Guide
-- Troubleshooting FAQ
-
-### API References (Coming Soon)
-- Chunkers API Reference
-- Tokenizers API Reference
-- Embeddings API Reference
-- Vector Databases API Reference
 
 ---
 
 ## ❓ Frequently Asked Questions
 
 ### Q: Which tutorial should I start with?
-**A:** Start with [Quick-Start Guide](TUTORIALS_01_QUICK_START.md) - it takes 10 minutes and gets you chunking immediately.
+
+**A:** Start with [Quick-Start Guide](TUTORIALS_01_QUICK_START.md).
+It takes 10 minutes and gets you chunking immediately.
 
 ---
 
 ### Q: Can I skip tutorials?
+
 **A:** Yes! But it's not recommended. Each tutorial builds on previous concepts:
+
 - Skip Quick-Start only if you already understand tokenization
 - RAG builds on Quick-Start concepts
 - Chunkers deep dive helps optimize RAG
@@ -276,12 +293,15 @@ Notice: Same logic, similar API, C# benefits (types, compiled, faster).
 ---
 
 ### Q: Are there code samples I can copy?
+
 **A:** Yes! Every tutorial has complete, working code examples you can copy directly.
 
 ---
 
 ### Q: What if my use case isn't covered?
+
 **A:** The tutorials cover 95% of common use cases. For advanced scenarios:
+
 1. Check the RAG tutorial (most comprehensive)
 2. Check the Pipelines tutorial (most flexible)
 3. See the [Advanced Git Discussions](https://github.com/gianni-rg/Chonkie.Net/discussions)
@@ -289,7 +309,9 @@ Notice: Same logic, similar API, C# benefits (types, compiled, faster).
 ---
 
 ### Q: Do I need an API key to start?
+
 **A:** No! You can learn with:
+
 - `TokenChunker` - no API needed
 - `RecursiveChunker` - no API needed
 - Local Qdrant - no API needed
@@ -300,9 +322,12 @@ Only advanced tutorials (SemanticChunker, Pinecone, OpenAI) need API keys.
 ---
 
 ### Q: How long does it take to build a RAG system?
+
 **A:**
+
 - Quick prototype: 30 minutes (follow RAG tutorial)
-- Production-ready: 2-3 hours (add pipelines, error handling, logging)
+- Production-ready: 2-3 hours (add pipelines, error handling,
+  logging)
 - Fully optimized: 1-2 weeks (benchmarking, tuning, monitoring)
 
 ---
@@ -310,7 +335,8 @@ Only advanced tutorials (SemanticChunker, Pinecone, OpenAI) need API keys.
 ## 🚀 Getting Help
 
 - **Stuck in a tutorial?** - Check the Troubleshooting section at the end
-- **Code isn't working?** - Try the [Quick-Start](TUTORIALS_01_QUICK_START.md#-troubleshooting) troubleshooting guide
+- **Code isn't working?** - Try the [Quick-Start](TUTORIALS_01_QUICK_START.md#-troubleshooting)
+   troubleshooting guide
 - **Questions?** - Open an issue on [GitHub](https://github.com/gianni-rg/Chonkie.Net/issues)
 
 ---
@@ -330,19 +356,23 @@ Once you've completed the tutorials:
 ## 📖 Table of Contents by Topic
 
 ### Chunking
+
 - [Quick-Start: Different Chunker Types](TUTORIALS_01_QUICK_START.md#-different-chunker-types)
 - [Chunkers Deep Dive](TUTORIALS_03_CHUNKERS.md)
 - [RAG: Choosing Chunking Strategy](TUTORIALS_02_RAG.md#-configuration-tuning)
 
-### Vectorization  
+### Vectorization
+
 - [Quick-Start: Tokenizers](TUTORIALS_01_QUICK_START.md#-tokenizers-explained)
 - [RAG: Embedding Generation](TUTORIALS_02_RAG.md#step-2-embedding-generation)
 
 ### Storage & Search
+
 - [Vector Database Tutorial](TUTORIALS_04_VECTORDB.md)
 - [RAG: Store & Retrieve](TUTORIALS_02_RAG.md#step-3-store-in-vector-database)
 
 ### Workflows
+
 - [Pipeline Tutorial](TUTORIALS_05_PIPELINES.md)
 - [RAG: Complete Architecture](TUTORIALS_02_RAG.md#-rag-architecture)
 

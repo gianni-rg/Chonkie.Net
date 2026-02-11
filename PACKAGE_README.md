@@ -5,14 +5,19 @@
 [![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=.net)](https://dotnet.microsoft.com)
 [![C# 14](https://img.shields.io/badge/C%23-14-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp)
 
-**Chonkie.Net** is an experimental .NET/C# port of Python Chonkie, providing fast, efficient, and robust text chunking for Retrieval-Augmented Generation (RAG) systems. This is an independent port and is not officially affiliated with the original Chonkie project.
+**Chonkie.Net** is an experimental .NET/C# port of Python Chonkie, providing fast,
+efficient, and robust text chunking for Retrieval-Augmented Generation (RAG)
+systems. This is an independent port and is not officially affiliated with the
+original Chonkie project.
 
 ## Key Features
 
 - **Fast & Efficient** - 10-100x faster than Python implementations
 - **11 Specialized Chunkers** - Choose the right chunker for your data type
-- **7 Embedding Providers** - OpenAI, Azure, Gemini, Cohere, VoyageAI, Jina, and ONNX local models
-- **9 Vector Database Integrations** - Pinecone, Qdrant, Chroma, Weaviate, MongoDB, Pgvector, Elasticsearch, Milvus, Turbopuffer
+- **7 Embedding Providers** - OpenAI, Azure, Gemini, Cohere, VoyageAI, Jina, and
+    ONNX local models
+- **9 Vector Database Integrations** - Pinecone, Qdrant, Chroma, Weaviate,
+    MongoDB, Pgvector, Elasticsearch, Milvus, Turbopuffer
 - **5 LLM Providers** - OpenAI, Azure, Groq, Cerebras, Gemini
 - **ONNX Support** - Local embeddings with SentenceTransformers
 - **Complete RAG Pipeline** - End-to-end document processing for RAG
@@ -78,17 +83,30 @@ await vectorDb.WriteAsync(embeddedChunks);
 
 ## Documentation
 
-- **[Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)** - Get started in 5 minutes
-- **[RAG System Tutorial](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md)** - Build a complete RAG system
-- **[Chunker Selection Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_03_CHUNKERS.md)** - Choose the right chunker
-- **[Vector Database Integration](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_04_VECTORDB.md)** - Connect to any vector DB
-- **[Python Migration Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md)** - Coming from Python Chonkie?
-- **[Full Documentation](https://github.com/gianni-rg/Chonkie.Net)** - Complete API reference and guides
+- **[Quick Start Guide][quick-start]** -
+    Get started in 5 minutes
+- **[RAG System Tutorial][rag-tutorial]** -
+    Build a complete RAG system
+- **[Chunker Selection Guide][chunker-guide]** -
+    Choose the right chunker
+- **[Vector Database Integration][vector-db]** -
+    Connect to any vector DB
+- **[Python Migration Guide][migration-guide]** -
+    Coming from Python Chonkie?
+- **[Full Documentation][full-docs]** -
+    Complete API reference and guides
+
+[quick-start]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md
+[rag-tutorial]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md
+[chunker-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_03_CHUNKERS.md
+[vector-db]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_04_VECTORDB.md
+[migration-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md
+[full-docs]: https://github.com/gianni-rg/Chonkie.Net
 
 ## Chunkers (11 Types)
 
 | Chunker | Best For | Speed |
-|---------|----------|-------|
+| --- | --- | --- |
 | **TokenChunker** | Simple, fast splitting | ⚡⚡⚡ |
 | **RecursiveChunker** | Natural documents (RECOMMENDED) | ⚡⚡ |
 | **SentenceChunker** | Sentence boundaries | ⚡⚡ |
@@ -189,8 +207,8 @@ Licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ## Learn More
 
-- **Official Repo:** https://github.com/gianni-rg/Chonkie.Net
-- **Python Chonkie:** https://github.com/chonkie-inc/chonkie
+- **Official Repo:** [https://github.com/gianni-rg/Chonkie.Net](https://github.com/gianni-rg/Chonkie.Net)
+- **Python Chonkie:** [https://github.com/chonkie-inc/chonkie](https://github.com/chonkie-inc/chonkie)
 - **Documentation:** Check the `/docs` folder in the repository
 
 ---

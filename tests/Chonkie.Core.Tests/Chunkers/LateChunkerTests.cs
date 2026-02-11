@@ -270,7 +270,7 @@ public class LateChunkerTests
         Assert.NotEmpty(chunks);
         Assert.All(chunks, chunk =>
         {
-            Assert.True(chunk.Text.Length >= minChars || chunk == chunks.Last());
+            Assert.True(chunk.Text.Length >= minChars || chunk == chunks[chunks.Count - 1]);
         });
     }
 
@@ -293,7 +293,7 @@ public class LateChunkerTests
         {
             Assert.NotNull(chunk.Embedding);
             Assert.Equal(384, chunk.Embedding!.Length);
-            Assert.True(chunk.Embedding.Any(e => e != 0), "Embedding should not be all zeros");
+            Assert.True(chunk.Embedding.Any(e => Math.Abs(e) > 1e-6f), "Embedding should not be all zeros");
         });
     }
 

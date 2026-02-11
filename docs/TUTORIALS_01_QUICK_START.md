@@ -8,12 +8,14 @@
 ## 📦 Installation
 
 ### Option 1: From NuGet (Recommended)
+
 ```powershell
 dotnet add package Chonkie.Core
 dotnet add package Chonkie.Tokenizers
 ```
 
 ### Option 2: Build from Source
+
 ```powershell
 git clone https://github.com/gianni-rg/Chonkie.Net.git
 cd Chonkie.Net
@@ -41,8 +43,8 @@ var chunker = new TokenChunker(
 );
 
 // 3. Chunk your text
-var text = "Chonkie is the no-nonsense chunking library for RAG applications. " +
-           "It's lightweight, fast, and incredibly easy to use!";
+var text = "Chonkie is the no-nonsense chunking library for RAG applications." +
+           " It's lightweight, fast, and incredibly easy to use!";
 
 var chunks = chunker.Chunk(text);
 
@@ -55,8 +57,10 @@ foreach (var chunk in chunks)
 ```
 
 **Output:**
-```
-Chunk: Chonkie is the no-nonsense chunking library for RAG applications. It's lightweight, fast, and incredibly easy to use!
+
+```text
+Chunk: Chonkie is the no-nonsense chunking library for RAG.
+It's lightweight, fast, and incredibly easy to use!
 Tokens: 24
 ```
 
@@ -80,14 +84,15 @@ Console.WriteLine(chunk.EndIndex);      // Position in original text
 
 ### Tokenizers Explained
 
-A **tokenizer** breaks text into tokens. Different tokenizers exist for different needs:
+A **tokenizer** breaks text into tokens. Different tokenizers exist
+for different needs:
 
-| Tokenizer | Use Case | Example |
-|-----------|----------|---------|
-| `WordTokenizer` | Simple, lightweight | Good for prototyping |
-| `CharacterTokenizer` | Character-level control | Pre-processing, analysis |
-| `SharpTokenTokenizer` | GPT-2 compatible (OpenAI) | Production LLM APIs |
-| `HuggingFaceTokenizer` | Custom models via ML.NET | Advanced use cases |
+| Tokenizer             | Use Case             | Example     |
+|-----------------------|----------------------|-------------|
+| `WordTokenizer`       | Simple, lightweight  | Prototyping |
+| `CharacterTokenizer`  | Character control    | Analysis    |
+| `SharpTokenTokenizer` | GPT-2/OpenAI         | Production  |
+| `HuggingFaceTokenizer`| Custom models        | Advanced    |
 
 ```csharp
 // Example: Different tokenizers
@@ -97,18 +102,20 @@ var gpt2Tokenizer = new SharpTokenTokenizer();
 
 var text = "Hello, world!";
 
-Console.WriteLine($"Word tokens: {wordTokenizer.Tokenize(text).Count}");      // 3
-Console.WriteLine($"Char tokens: {charTokenizer.Tokenize(text).Count}");      // 13
-Console.WriteLine($"GPT2 tokens: {gpt2Tokenizer.Tokenize(text).Count}");      // 4
+Console.WriteLine($"Word tokens: {wordTokenizer.Tokenize(text).Count}");   // 3
+Console.WriteLine($"Char tokens: {charTokenizer.Tokenize(text).Count}");   // 13
+Console.WriteLine($"GPT2 tokens: {gpt2Tokenizer.Tokenize(text).Count}");   // 4
 ```
 
 ---
 
 ## 🔀 Different Chunker Types
 
-Chonkie.Net provides **10 built-in chunkers** for different scenarios. Here are the main ones:
+Chonkie.Net provides **10 built-in chunkers** for different scenarios.
+Here are the main ones:
 
 ### 1. TokenChunker - Fixed Token Size (Simplest)
+
 Splits text into chunks of fixed token count.
 
 ```csharp
@@ -126,6 +133,7 @@ var chunks = chunker.Chunk(text);
 ---
 
 ### 2. SentenceChunker - Sentence Boundaries
+
 Respects sentence boundaries while staying within token limits.
 
 ```csharp
@@ -138,11 +146,13 @@ var chunker = new SentenceChunker(
 var chunks = chunker.Chunk(text);
 ```
 
-**Best for:** Natural breaking points, documents with varied sentence lengths
+**Best for:** Natural breaking points, documents with varied sentence
+lengths
 
 ---
 
 ### 3. RecursiveChunker - Hierarchical Splits
+
 Recursively splits by multiple delimiters: paragraphs → sentences → words.
 
 ```csharp
@@ -160,6 +170,7 @@ var chunks = chunker.Chunk(text);
 ---
 
 ### 4. SemanticChunker - Meaning-Aware Grouping
+
 Groups semantically similar sentences together using embeddings.
 
 ```csharp
@@ -211,6 +222,7 @@ foreach (var chunk in result.Chunks)
 ```
 
 **Pipeline steps (in order):**
+
 1. **Chunker** - Split text into chunks
 2. **Refinery** (optional) - Post-process and enhance chunks
 3. **Porter/Handshake** (optional) - Export or store chunks
@@ -268,6 +280,7 @@ for (int i = 0; i < chunks.Count; i++)
 When creating chunkers, you'll see these parameters frequently:
 
 ### `chunkSize` (int)
+
 Maximum **tokens** per chunk. Larger = fewer chunks, potentially losing detail.
 
 ```csharp
@@ -282,6 +295,7 @@ var chunker3 = new TokenChunker(tokenizer, chunkSize: 2048);
 ```
 
 ### `chunkOverlap` (int)
+
 Number of overlapping tokens between consecutive chunks for context preservation.
 
 ```csharp
@@ -296,12 +310,15 @@ var chunker3 = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 150);
 ```
 
 ### For Semantic Chunker: `threshold` (float, 0-1)
+
 Higher threshold = larger chunks (more diverse content in one chunk)  
 Lower threshold = smaller chunks (more similar content grouped)
 
 ```csharp
-var chunker1 = new SemanticChunker(tokenizer, embeddings, threshold: 0.9f);  // Large chunks
-var chunker2 = new SemanticChunker(tokenizer, embeddings, threshold: 0.5f);  // Small chunks
+var chunker1 = new SemanticChunker(
+    tokenizer, embeddings, threshold: 0.9f);  // Large chunks
+var chunker2 = new SemanticChunker(
+    tokenizer, embeddings, threshold: 0.5f);  // Small chunks
 ```
 
 ---
@@ -309,6 +326,7 @@ var chunker2 = new SemanticChunker(tokenizer, embeddings, threshold: 0.5f);  // 
 ## ✅ Next Steps
 
 You now know:
+
 - ✅ How to install Chonkie.Net
 - ✅ How to chunk text with your first chunker
 - ✅ The differences between chunker types
@@ -317,9 +335,12 @@ You now know:
 
 ### Where to Go Next
 
-1. **[Chunkers Tutorial](TUTORIALS_02_CHUNKERS.md)** - Deep dive into each chunker type with examples
-2. **[RAG Tutorial](TUTORIALS_03_RAG.md)** - Build a complete RAG system step-by-step
-3. **[Vector Database Integration](TUTORIALS_04_VECTORDB.md)** - Store and search embeddings
+1. **[RAG Tutorial](TUTORIALS_02_RAG.md)** - Build a complete RAG system
+step-by-step
+2. **[Chunkers Tutorial](TUTORIALS_03_CHUNKERS.md)** - Deep dive into each
+chunker type with examples
+3. **[Vector Database Integration](TUTORIALS_04_VECTORDB.md)** - Store and
+search embeddings
 4. **[Pipeline Configuration](TUTORIALS_05_PIPELINES.md)** - Advanced pipeline patterns
 
 ---
@@ -327,6 +348,7 @@ You now know:
 ## 🐛 Troubleshooting
 
 ### "TokenChunker requires a tokenizer"
+
 ```csharp
 // ❌ Wrong - TokenChunker needs a tokenizer
 var chunker = new TokenChunker(chunkSize: 512);
@@ -336,7 +358,10 @@ var chunker = new TokenChunker(new WordTokenizer(), chunkSize: 512);
 ```
 
 ### "No chunks returned"
-Check your `chunkSize` - if it's larger than your text tokenized length, you'll get one chunk:
+
+Check your `chunkSize` - if it's larger than your text tokenized length,
+you'll get one chunk:
+
 ```csharp
 var tokenizer = new WordTokenizer();
 var text = "Short text";  // 2 tokens
@@ -349,7 +374,9 @@ var chunker = new TokenChunker(tokenizer, chunkSize: 10);
 ```
 
 ### Chunks are too large/small
+
 Adjust `chunkSize` and `chunkOverlap`:
+
 ```csharp
 // Chunks too large? Reduce chunkSize
 var chunker = new TokenChunker(tokenizer, chunkSize: 128);
@@ -357,16 +384,3 @@ var chunker = new TokenChunker(tokenizer, chunkSize: 128);
 // Chunks feel disconnected? Increase overlap
 var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 100);
 ```
-
----
-
-## 📖 API Reference
-
-For complete API documentation, see:
-- [Chunkers API](API_REFERENCE_CHUNKERS.md) (coming soon)
-- [Tokenizers API](API_REFERENCE_TOKENIZERS.md) (coming soon)
-- [Embeddings API](API_REFERENCE_EMBEDDINGS.md) (coming soon)
-
----
-
-**Happy chunking! 🦛✨**

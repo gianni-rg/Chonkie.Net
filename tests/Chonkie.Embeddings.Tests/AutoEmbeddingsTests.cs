@@ -152,6 +152,11 @@ namespace Chonkie.Embeddings.Tests
         [Fact]
         public void GetProvider_Cohere_ReturnsCohereEmbeddings()
         {
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COHERE_API_KEY")))
+            {
+                Assert.Skip("Cohere API key not configured");
+            }
+
             // Act
             var provider = AutoEmbeddings.GetProvider("cohere");
 

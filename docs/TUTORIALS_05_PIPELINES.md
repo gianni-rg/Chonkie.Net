@@ -10,15 +10,15 @@
 
 **CHOMP** is Chonkie's standardized architecture for document processing:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                     CHOMP Architecture                           │
+│                     CHOMP Architecture                          │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  Fetcher → Chef → Chunker → Refinery → Porter/Handshake        │
+│                                                                 │
+│  Fetcher → Chef → Chunker → Refinery → Porter/Handshake         │
 │     ↓        ↓        ↓        ↓              ↓                 │
 │   Input  Process  Split   Enhance         Output                │
-│                                                                  │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 
 1. Fetcher: Get documents from files, APIs, databases
@@ -116,7 +116,7 @@ var result = await FluentPipeline.Create()
 
 **Chefs** transform raw documents into standardized format:
 
-```
+```text
 Raw File → Chef → Document
   │       ├─ TextChef: Plain text
   │       ├─ MarkdownChef: Markdown with structure
@@ -222,6 +222,7 @@ await FluentPipeline.Create()
 **Refineries** post-process chunks (filter, enhance, clean):
 
 Available refineries:
+
 - `OverlapRefinery` - Ensure minimum overlap between chunks
 - `LengthRefinery` - Filter by chunk length
 - `DuplicateRefinery` - Remove duplicate chunks
@@ -281,6 +282,7 @@ await FluentPipeline.Create()
 **Porters** export chunks to different formats:
 
 Available porters:
+
 - `JsonPorter` - Export to JSON
 - Custom porters for CSV, Parquet, etc.
 
@@ -408,14 +410,19 @@ public class ProductionDocumentProcessor
                 var result = await FluentPipeline.Create()
                     .FetchFrom(doc)
                     .ProcessWith(new TextChef())
-                    .ChunkWith(new RecursiveChunker(_tokenizer, chunkSize: 512, chunkOverlap: 50))
+                    .ChunkWith(new RecursiveChunker(
+                        _tokenizer,
+                        chunkSize: 512,
+                        chunkOverlap: 50))
                     .RefineWith(new OverlapRefinery(minOverlap: 25))
                     .RefineWith(new LengthRefinery(minLength: 10))
                     .RunAsync();
 
                 allChunks.AddRange(result.Chunks);
-                _logger.Information("Processed {file}: {count} chunks", 
-                    Path.GetFileName(doc), result.Chunks.Count);
+                _logger.Information(
+                    "Processed {file}: {count} chunks",
+                    Path.GetFileName(doc),
+                    result.Chunks.Count);
             }
 
             _logger.Information("Total chunks created: {count}", allChunks.Count);
@@ -498,7 +505,8 @@ public async Task ValidatePipelineAsync(string testDocPath)
 
     // Print diagnostics
     Console.WriteLine($"✓ Chunks created: {result.Chunks.Count}");
-    Console.WriteLine($"✓ Avg chunk size: {result.Chunks.Average(c => c.TokenCount):F0} tokens");
+    var avgChunkSize = result.Chunks.Average(c => c.TokenCount);
+    Console.WriteLine($"✓ Avg chunk size: {avgChunkSize:F0} tokens");
     Console.WriteLine($"✓ Min chunk: {result.Chunks.Min(c => c.TokenCount)} tokens");
     Console.WriteLine($"✓ Max chunk: {result.Chunks.Max(c => c.TokenCount)} tokens");
 
@@ -565,7 +573,8 @@ await FluentPipeline.Create()
 // ✅ Validate refinery settings
 Console.WriteLine($"Before refinery: {beforeRefinement.Count} chunks");
 Console.WriteLine($"After refinery: {afterRefinement.Count} chunks");
-Console.WriteLine($"Filtered out: {beforeRefinement.Count - afterRefinement.Count} chunks");
+var filteredCount = beforeRefinement.Count - afterRefinement.Count;
+Console.WriteLine($"Filtered out: {filteredCount} chunks");
 ```
 
 ---
@@ -573,20 +582,23 @@ Console.WriteLine($"Filtered out: {beforeRefinement.Count - afterRefinement.Coun
 ## 📈 Pipeline Performance Tips
 
 1. **Use FastChunker for huge documents**
-   ```csharp
+
+    ```csharp
    .ChunkWith(new FastChunker(tokenizer, 512))  // 3-5x faster
    ```
 
 2. **Batch embeddings**
-   ```csharp
+
+    ```csharp
    // Embed 100 at a time, not 1 at a time
    var vectors = await embeddings.EmbedAsync(texts.Take(100));
    ```
 
 3. **Parallel document processing**
-   ```csharp
+
+    ```csharp
    var files = Directory.GetFiles("./documents", "*.txt");
-   
+
    await Parallel.ForEachAsync(files, async file =>
    {
        await ProcessSingle(file);
@@ -594,7 +606,8 @@ Console.WriteLine($"Filtered out: {beforeRefinement.Count - afterRefinement.Coun
    ```
 
 4. **Skip unnecessary steps**
-   ```csharp
+
+    ```csharp
    // Don't use semantic chunking if you don't need it
    // TokenChunker is 5x faster
    ```
@@ -607,8 +620,3 @@ Console.WriteLine($"Filtered out: {beforeRefinement.Count - afterRefinement.Coun
 2. **[RAG System](TUTORIALS_02_RAG.md)** - Complete example
 3. **[Chunkers Deep Dive](TUTORIALS_03_CHUNKERS.md)** - Chunker details
 4. **[Vector Database](TUTORIALS_04_VECTORDB.md)** - Storage options
-5. **[Production Guide](ADVANCED_PRODUCTION_PATTERNS.md)** - Coming soon
-
----
-
-**Happy Pipelining! 🚀✨**
