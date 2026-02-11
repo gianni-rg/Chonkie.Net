@@ -115,7 +115,7 @@ var result = await FluentPipeline.Create()
 
 ## Tests
 
-The project includes a comprehensive test suite with unit and integration tests. You can run the tests from Visual Studio Code or Visual Studio Test Explorer. As alternative, you can run the tests with the .NET CLI, from the root of the repository:
+The project includes a comprehensive test suite with unit and integration tests. You can run the tests from Visual Studio Code or Visual Studio Test Explorer. As an alternative, you can run the tests with the .NET CLI, from the root of the repository:
 
 ```shell
 dotnet test
