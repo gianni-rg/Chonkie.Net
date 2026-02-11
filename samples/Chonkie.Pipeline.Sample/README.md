@@ -20,42 +20,60 @@ var result = await FluentPipeline.Create()
 
 The pipeline follows the **CHOMP architecture**:
 
-```
-Fetch → Process → Chunk → Refine → Export
+```text
+Fetch → Process → Chunk → Refine → Export → Store
 ```
 
 ### 1. **Fetch** (Optional - can use direct text)
+
 Load data from files, directories, or other sources
+
 ```csharp
 .FetchFrom(new FileFetcher(), "document.txt")
 .FetchFrom(new FileFetcher(), "./docs", "*.md")
 ```
 
 ### 2. **Process** (Optional)
+
 Clean and preprocess text
+
 ```csharp
 .ProcessWith(new TextChef())
 .ProcessWith(new MarkdownChef())
 ```
 
 ### 3. **Chunk** (Required)
+
 Split text into chunks
+
 ```csharp
 .ChunkWith(new TokenChunker(tokenizer, chunkSize: 512))
 .ChunkWith(new RecursiveChunker(tokenizer, chunkSize: 512))
 ```
 
 ### 4. **Refine** (Optional)
+
 Post-process and optimize chunks
+
 ```csharp
 .RefineWith(new OverlapRefinery(minOverlap: 8))
 .RefineWith(new EmbeddingsRefinery(embeddings))
 ```
 
 ### 5. **Export** (Optional)
+
 Save results to files or databases
+
 ```csharp
 .ExportTo(new JsonPorter(), "output.json")
+```
+
+### 6. **Store** (Optional)
+
+Write chunks to a vector database (handshake)
+
+```csharp
+.StoreIn("qdrant", new { url = "http://localhost:6333", collection = "docs" })
 ```
 
 ## Running the Sample
@@ -120,13 +138,13 @@ var result = await FluentPipeline.Create()
 
 ### Demo 4: Semantic Pipeline
 
-Pattern for semantic chunking (expandable with embeddings):
+Semantic chunking with embeddings (falls back to recursive chunking if embeddings are not configured):
 
 ```csharp
 var result = await FluentPipeline.Create()
     .WithText(text)
     .ProcessWith(new TextChef())
-    .ChunkWith(new RecursiveChunker(tokenizer, chunkSize: 15))
+    .ChunkWith(new SemanticChunker(tokenizer, embeddings))
     .RunAsync();
 ```
 
@@ -142,13 +160,16 @@ var result = await new Pipeline()
     .ProcessWith("text")
     .ChunkWith("recursive", new { chunk_size = 40 })
     .RefineWith("overlap", new { context_size = 8 })
-    .ExportWith("json", new { path = "chomp_output.json" })
     .RunAsync();
 ```
 
 **Use Case**: Configuration-driven pipelines, parity with Python CHOMP examples
 
-### Demo 6: RAG Tutorial Walkthrough (Optional)
+### Demo 6: Semantic RAG Pipeline
+
+Runs end-to-end semantic chunking with embeddings, then stores and retrieves from Qdrant.
+
+### Demo 7: RAG Tutorial Walkthrough (Optional)
 
 Run with `--rag` to enable the end-to-end RAG flow:
 
@@ -163,6 +184,18 @@ The RAG demo covers:
 - Writing to Qdrant
 - Retrieving top-k context
 - Generating an answer with OpenAI/Azure OpenAI Genies (optional)
+
+LLM configuration (optional for generation):
+
+```text
+OPENAI_API_KEY=your-key
+```
+
+```text
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_DEPLOYMENT_LLM=your-llm-deployment
+```
 
 ### Embeddings Configuration
 
@@ -180,7 +213,7 @@ OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
 ```
 
 ```text
-CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH=./models/all-MiniLM-L6-v2
+CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
 ### Qdrant Configuration (RAG Demo)
@@ -193,6 +226,7 @@ CHONKIE_QDRANT_COLLECTION=rag_tutorial
 ## Benefits of Fluent API
 
 ### ✅ Readable Code
+
 ```csharp
 // Clear, self-documenting pipeline
 var result = await FluentPipeline.Create()
@@ -203,6 +237,7 @@ var result = await FluentPipeline.Create()
 ```
 
 ### ✅ Composable
+
 ```csharp
 // Build reusable pipeline templates
 var basePipeline = FluentPipeline.Create()
@@ -215,15 +250,17 @@ var exportPipeline = basePipeline.ExportTo(porter, path);
 ```
 
 ### ✅ Declarative
+
 ```csharp
 // Describe WHAT you want, not HOW to do it
-Pipeline.Create()
-    .FetchFrom(fetcher, "./docs")
-    .ChunkWith(chunker)
-    .ExportTo(porter, "output.json");
+new Pipeline()
+    .FetchFrom("file", new { path = "./docs" })
+    .ChunkWith("recursive", new { chunk_size = 512 })
+    .ExportWith("json", new { path = "output.json" });
 ```
 
 ### ✅ Type-Safe
+
 Full IntelliSense support and compile-time checking
 
 ## Pipeline Result
@@ -261,6 +298,7 @@ foreach (var chunk in result.FinalChunks)
 This .NET implementation mirrors Python's Pipeline API:
 
 **Python:**
+
 ```python
 doc = (Pipeline()
     .fetch_from("file", path="doc.txt")
@@ -271,6 +309,7 @@ doc = (Pipeline()
 ```
 
 **.NET:**
+
 ```csharp
 var result = await FluentPipeline.Create()
     .FetchFrom(new FileFetcher(), "doc.txt")
@@ -279,6 +318,12 @@ var result = await FluentPipeline.Create()
     .RefineWith(new OverlapRefinery(minOverlap: 50))
     .RunAsync();
 ```
+
+## FluentPipeline vs Pipeline
+
+`FluentPipeline` is a sample-only helper defined in the demo program to show a typed, fluent pipeline.
+`Pipeline` is the library API (`Chonkie.Pipeline.Pipeline`) that uses string aliases and supports config-driven pipelines and handshakes.
+Use `FluentPipeline` for quick, strongly typed demos and `Pipeline` when you want a library-backed, configurable CHOMP pipeline.
 
 ## Customizing Pipelines
 
@@ -313,7 +358,7 @@ var result = await pipeline
 
 // Recursive with custom separators
 .ChunkWith(new RecursiveChunker(
-    tokenizer, 
+    tokenizer,
     chunkSize: 512,
     separators: ["\n\n", "\n", ". ", " "]))
 
@@ -345,6 +390,7 @@ catch (InvalidOperationException ex)
 ## Use Cases
 
 ### RAG Knowledge Base Ingestion
+
 ```csharp
 await FluentPipeline.Create()
     .FetchFrom(new FileFetcher(), "./knowledge_base", "*.md")
@@ -356,6 +402,7 @@ await FluentPipeline.Create()
 ```
 
 ### Document Analysis
+
 ```csharp
 await FluentPipeline.Create()
     .FetchFrom(new FileFetcher(), "./reports")
@@ -365,6 +412,7 @@ await FluentPipeline.Create()
 ```
 
 ### Content Migration
+
 ```csharp
 await FluentPipeline.Create()
     .FetchFrom(new FileFetcher(), "./old_content")
@@ -379,14 +427,3 @@ await FluentPipeline.Create()
 - **Core Chunking**: See [Chonkie.Sample](../Chonkie.Sample/) for basic chunking
 - **Infrastructure**: See [Chonkie.Infrastructure.Sample](../Chonkie.Infrastructure.Sample/) for component-based approach
 - **Python Pipeline**: See [Python Pipeline Docs](https://docs.chonkie.ai/oss/pipelines) for original implementation
-
-## Future Enhancements
-
-This fluent pipeline API can be extended with:
-
-- [ ] Multiple refinery chaining
-- [ ] Handshake support (vector database connectors)
-- [ ] Async streaming for large datasets
-- [ ] Pipeline configuration serialization/deserialization
-- [ ] Progress reporting and cancellation tokens
-- [ ] Pipeline recipes (pre-configured templates)

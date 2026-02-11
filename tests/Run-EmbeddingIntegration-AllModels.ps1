@@ -1,6 +1,6 @@
 param(
     [string]$ModelsPath = (Join-Path $PSScriptRoot "..\models"),
-    [string]$TestProject = (Join-Path $PSScriptRoot "..\tests\Chonkie.Embeddings.Integration.Tests\Chonkie.Embeddings.Integration.Tests.csproj"),
+    [string]$TestProject = (Join-Path $PSScriptRoot ".\Chonkie.Embeddings.Integration.Tests\Chonkie.Embeddings.Integration.Tests.csproj"),
     [string]$Filter = "FullyQualifiedName~SentenceTransformerEmbeddingsIntegrationTests",
     [switch]$RunAllProvidersPerModel,
     [switch]$ContinueOnFailure
@@ -24,7 +24,7 @@ if ($models.Count -eq 0)
     throw "No model folders found under: $ModelsPath"
 }
 
-$resultsRoot = Join-Path $PSScriptRoot "..\tests\Chonkie.Embeddings.Integration.Tests\TestResults\Models"
+$resultsRoot = Join-Path $PSScriptRoot ".\Chonkie.Embeddings.Integration.Tests\TestResults\Models"
 New-Item -Path $resultsRoot -ItemType Directory -Force | Out-Null
 
 $failedModels = New-Object System.Collections.Generic.List[string]
@@ -38,7 +38,7 @@ foreach ($model in $models)
         continue
     }
 
-    $env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH = $model.FullName
+    $env:CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH = $model.FullName
 
     $modelResultsDir = Join-Path $resultsRoot $model.Name
     New-Item -Path $modelResultsDir -ItemType Directory -Force | Out-Null
@@ -65,13 +65,13 @@ foreach ($model in $models)
         $failedModels.Add($model.Name) | Out-Null
         if (-not $ContinueOnFailure)
         {
-            $env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH = $null
+            $env:CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH = $null
             exit $LASTEXITCODE
         }
     }
 }
 
-$env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH = $null
+$env:CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH = $null
 
 if ($failedModels.Count -gt 0)
 {

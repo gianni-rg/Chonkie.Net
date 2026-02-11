@@ -195,7 +195,7 @@ $env:COHERE_API_KEY="your-key"
 $env:GEMINI_API_KEY="your-key"
 $env:JINA_API_KEY="your-key"
 $env:VOYAGE_API_KEY="your-key"
-$env:CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH="path/to/model.onnx"
+$env:CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH="path/to/model.onnx"
 ```
 
 ### Using Dependency Injection

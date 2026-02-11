@@ -4,7 +4,7 @@
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
 [![Status](https://img.shields.io/badge/status-experimental-green)](STATUS_DASHBOARD.md)
-[![Tests](https://img.shields.io/badge/tests-932_passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-930_passing-brightgreen)](tests/)
 
 A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie), the lightweight ingestion Python library for fast, efficient and robust RAG pipelines.
 
@@ -56,7 +56,7 @@ Chonkie.Net/
 ├── benchmarks/               # Performance benchmarks
 ├── docs/                     # Technical documentation
 ├── models/                   # AI models (ONNX, etc.)
-├── scripts/                  # Automation scripts
+├── scripts/                  # Automation and helper scripts
 ├── .editorconfig             # Code style configuration
 ├── Directory.Build.props     # Shared MSBuild properties
 ├── Chonkie.Net.sln           # Visual Studio solution
@@ -113,6 +113,40 @@ var result = await FluentPipeline.Create()
     .RunAsync();
 ```
 
+## Tests
+
+The project includes a comprehensive test suite with unit and integration tests. You can run the tests from Visual Studio Code or Visual Studio Test Explorer. As an alternative, you can run the tests with the .NET CLI, from the root of the repository:
+
+```shell
+dotnet test
+```
+
+### Integration test dependencies
+
+> Generally integration tests should be able to run out of the box, but some of them require specific dependencies, such as ONNX models or API keys for third party services. If those dependencies are not present, the related tests will be *skipped* with a warning message.
+
+`test.runsettings` file can be used to configure a set of variables for specifying paths and other settings. You can also override them with OS environment variables.
+
+- **ONNX models**: Place required ONNX models in the `./models/` folder or set an environment variable pointing to a models directory (see examples below). Embedding integration tests iterate over the models present in that folder (see [./scripts/README.md](scripts/README.md) for details).
+
+  To run embedding integration tests for all supported models, use the provided script:
+
+  ```shell
+  ./tests/Run-EmbeddingIntegration-AllModels.ps1
+  ```
+
+- **Third party services**: some tests require access to third party services, such as Azure OpenAI, Gemini, Cohere, etc. You can set the required API keys and endpoints as OS environment variables, or use the `test.runsettings` file to specify them. Tests that require those services will be skipped if the required variables are not set.
+
+- **Local Infrastructure**: some tests require access to a local infrastructure, such as a local LLM server or a local vector database. You can set the required endpoints and credentials as OS environment variables, or use the `test.runsettings` file to specify them. Tests that require those services will be skipped if the required variables are not set. A preset docker compose file with all the required infrastructure for local dev/testing is available in `docker-compose.handshakes.yml`.
+
+  Just run `docker compose -f docker-compose.handshakes.yml up -d` or `podman compose -f docker-compose.handshakes.yml up -d` to get everything up and running.
+
+## ONNX Models
+
+Some of the chunkers and embedding providers rely on neural models, that can be converted to ONNX format for runtime use in .NET with ONNX Runtime. You can find some scripts in the `scripts/` folder to convert HuggingFace models or local checkpoints to ONNX format, and then use them in .NET.
+
+Please check the [scripts/README.md](scripts/README.md) for more details and examples.
+
 ## Documentation
 
 You can find all the technical documentation in the [docs/](docs/) folder. There are some getting started guides, and in the [samples/](/samples) folder you can find more complete examples of how to use the library and its features.
@@ -130,8 +164,7 @@ I'm more than happy to receive any kind of contribution to this experimental pro
 
 Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*.
 
-> Development is mainly done on Windows, so other platforms are not directly developed, tested or supported (but the CI/CD pipeline builds and tests for macOS and Linux as well).  
-> An help is kindly appreciated in make the application work on other platforms as well.
+> Development is mainly done on Windows, so other platforms are not directly developed, tested, or supported (although the CI/CD pipeline builds and tests for macOS and Linux as well). Help is kindly appreciated in making the libraries work on other platforms as well.
 
 Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started!
 
@@ -141,7 +174,6 @@ Inspired by the amazing Python community and the need for a .NET equivalent, thi
 
 ## License
 
-You may find specific license information for third party software in the [third-party-programs.txt](./third-party-programs.txt) file.  
-Where not otherwise specified, everything is licensed under the [APACHE 2.0 License](./LICENSE).
+This project, and where not otherwise specified, is licensed under the [APACHE 2.0 License](./LICENSE).
 
 Copyright (C) 2025-2026 Gianni Rosa Gallina.

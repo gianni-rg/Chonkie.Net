@@ -77,7 +77,7 @@ The Pipeline sample has been extended to support **full semantic chunking with e
 The sample automatically detects and uses the first available embeddings provider:
 
 1. **SentenceTransformers** (Local, Offline)
-   - Environment variable: `CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH`
+   - Environment variable: `CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH`
    - Default model: `all-MiniLM-L6-v2` (384 dimensions)
    - Best for: Development, offline use, privacy-sensitive applications
 

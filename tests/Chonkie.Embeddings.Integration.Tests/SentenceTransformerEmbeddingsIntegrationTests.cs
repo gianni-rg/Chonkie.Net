@@ -13,7 +13,7 @@ namespace Chonkie.Embeddings.Integration.Tests;
 /// </summary>
 public class SentenceTransformerEmbeddingsIntegrationTests
 {
-    private const string ModelPathEnvVar = "CHONKIE_SENTENCE_TRANSFORMER_MODEL_PATH";
+    private const string ModelPathEnvVar = "CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH";
 
     /// <summary>
     /// Tests embedding with real model returns a valid embedding.

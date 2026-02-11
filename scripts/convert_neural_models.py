@@ -7,7 +7,7 @@ which can then be used with the C# NeuralChunker for high-performance neural chu
 
 Usage:
     python convert_neural_models.py --model mirth/chonky_distilbert_base_uncased_1 --output ./models/chonky_distilbert
-    
+
 Requirements:
     pip install transformers torch optimum[onnxruntime] onnx onnxruntime
 """
@@ -60,25 +60,25 @@ def convert_model_to_onnx(
 ) -> bool:
     """
     Convert a token classification model to ONNX format.
-    
+
     Args:
         model_name: HuggingFace model name or path
         output_dir: Output directory for the ONNX model
         use_optimum: Use optimum library for export (recommended)
         quantize: Quantize the model for smaller size/faster inference
-        
+
     Returns:
         True if conversion was successful, False otherwise
     """
-    
+
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    
+
     logger.info(f"Converting model: {model_name}")
     logger.info(f"Output directory: {output_path.absolute()}")
     logger.info(f"Options: optimum={use_optimum}, quantize={quantize}")
     print()
-    
+
     # Step 1: Download and load the configuration
     logger.info("Step 1/5: Loading model configuration...")
     try:
@@ -90,7 +90,7 @@ def convert_model_to_onnx(
     except Exception as e:
         logger.error(f"✗ Failed to load configuration: {e}")
         return False
-    
+
     # Step 2: Load the model and tokenizer
     logger.info("\nStep 2/5: Loading model and tokenizer...")
     try:
@@ -100,7 +100,7 @@ def convert_model_to_onnx(
     except Exception as e:
         logger.error(f"✗ Failed to load model: {e}")
         return False
-    
+
     # Step 3: Export to ONNX using optimum if available
     logger.info("\nStep 3/5: Exporting to ONNX format...")
     if use_optimum and ORTModelForTokenClassification is not None:
@@ -118,7 +118,7 @@ def convert_model_to_onnx(
     else:
         if not _export_onnx_manual(model, tokenizer, output_path):
             return False
-    
+
     # Step 4: Save tokenizer
     logger.info("\nStep 4/5: Saving tokenizer...")
     try:
@@ -127,7 +127,7 @@ def convert_model_to_onnx(
     except Exception as e:
         logger.error(f"✗ Failed to save tokenizer: {e}")
         return False
-    
+
     # Step 5: Save configuration and metadata
     logger.info("\nStep 5/5: Saving metadata...")
     try:
@@ -135,7 +135,7 @@ def convert_model_to_onnx(
         config_path = output_path / "config.json"
         with open(config_path, "w") as f:
             json.dump(json.loads(config.to_json_string()), f, indent=2)
-        
+
         # Save metadata
         metadata = {
             "model_name": model_name,
@@ -148,23 +148,23 @@ def convert_model_to_onnx(
             "framework": "pt",
             "onnx_converted": True
         }
-        
+
         metadata_path = output_path / "metadata.json"
         with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
-        
+
         logger.info("✓ Metadata saved")
     except Exception as e:
         logger.error(f"✗ Failed to save metadata: {e}")
         return False
-    
+
     print()
     logger.info("=" * 60)
     logger.info("✓ Conversion successful!")
     logger.info(f"Model saved to: {output_path.absolute()}")
     logger.info("=" * 60)
     print()
-    
+
     # Print usage information
     logger.info("\nUsage in Chonkie.Net:")
     logger.info("-" * 60)
@@ -184,7 +184,7 @@ chunker2.InitializeOnnxModel(modelPath);
 // Chunk text
 var chunks = chunker.Chunk(longText);
     """)
-    
+
     return True
 
 
@@ -194,12 +194,12 @@ def _export_onnx_manual(model, tokenizer, output_path: Path) -> bool:
     """
     try:
         logger.info("Performing manual ONNX export...")
-        
+
         # Create dummy inputs
         input_ids = torch.ones(1, 512, dtype=torch.long)
         attention_mask = torch.ones(1, 512, dtype=torch.long)
         token_type_ids = torch.zeros(1, 512, dtype=torch.long)
-        
+
         # Export
         onnx_path = output_path / "model.onnx"
         torch.onnx.export(
@@ -217,10 +217,10 @@ def _export_onnx_manual(model, tokenizer, output_path: Path) -> bool:
             opset_version=14,
             do_constant_folding=True
         )
-        
+
         logger.info("✓ Manual ONNX export successful")
         return True
-        
+
     except Exception as e:
         logger.error(f"✗ Manual ONNX export failed: {e}")
         return False
@@ -231,15 +231,15 @@ def convert_all_defaults() -> None:
     logger.info("Converting all default Chonky models to ONNX format")
     logger.info("=" * 60)
     print()
-    
+
     output_base = Path("./models")
-    
+
     for name, model_id in DEFAULT_MODELS.items():
         output_dir = output_base / name
         logger.info(f"\n{'=' * 60}")
         logger.info(f"Converting: {model_id}")
         logger.info(f"{'=' * 60}")
-        
+
         try:
             success = convert_model_to_onnx(
                 model_id,
@@ -258,46 +258,46 @@ def main():
     parser = argparse.ArgumentParser(
         description="Convert Chonky models to ONNX format for Chonkie.Net"
     )
-    
+
     parser.add_argument(
         "--model",
         type=str,
         help="HuggingFace model name or path to convert"
     )
-    
+
     parser.add_argument(
         "--output",
         type=str,
         default=None,
         help="Output directory for the ONNX model"
     )
-    
+
     parser.add_argument(
         "--all",
         action="store_true",
         help="Convert all default Chonky models"
     )
-    
+
     parser.add_argument(
         "--no-optimum",
         action="store_true",
         help="Don't use optimum library, perform manual ONNX export"
     )
-    
+
     parser.add_argument(
         "--quantize",
         action="store_true",
         help="Quantize the model for smaller size and faster inference"
     )
-    
+
     parser.add_argument(
         "--list-models",
         action="store_true",
         help="List available default models"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Handle list models
     if args.list_models:
         logger.info("Available default Chonky models:")
@@ -305,20 +305,20 @@ def main():
             stride = MODEL_STRIDES.get(model_id, "unknown")
             logger.info(f"  {name:20s} -> {model_id:40s} (stride: {stride})")
         return
-    
+
     # Handle convert all
     if args.all:
         convert_all_defaults()
         return
-    
+
     # Handle convert single model
     if not args.model:
         parser.print_help()
         sys.exit(1)
-    
+
     model_name = args.model
     output_dir = args.output
-    
+
     # Auto-detect output directory if not provided
     if not output_dir:
         # Try to find matching default model
@@ -326,22 +326,22 @@ def main():
             if model_id == model_name or model_name.endswith(name):
                 output_dir = f"./models/{name}"
                 break
-        
+
         if not output_dir:
             # Use model name as output directory
             model_base = model_name.split("/")[-1]
             output_dir = f"./models/{model_base}"
-    
+
     logger.info(f"Converting: {model_name}")
     logger.info(f"Output: {output_dir}")
-    
+
     success = convert_model_to_onnx(
         model_name,
         output_dir,
         use_optimum=not args.no_optimum,
         quantize=args.quantize
     )
-    
+
     sys.exit(0 if success else 1)
 
 

@@ -47,4 +47,22 @@ ChunkVisualizer.Compare(new Dictionary<string, IReadOnlyList<Chunk>>
     ["Recursive (30)"] = recursiveChunks
 });
 
-Console.WriteLine("\n=== Visualization Demo Complete! ===");
+// Demo 5: Chunk Summary Statistics
+Console.WriteLine("\n\n=== Demo 5: Chunk Summary Statistics ===\n");
+ChunkVisualizer.PrintSummary(chunks);
+
+// Demo 6: Bar Chart Visualization
+Console.WriteLine("=== Demo 6: Chunk Size Distribution ===\n");
+ChunkVisualizer.PrintBarChart(chunks);
+
+// Demo 7: Highlighted Text with Boundaries
+Console.WriteLine("=== Demo 7: Text with Highlighted Boundaries ===\n");
+ChunkVisualizer.PrintHighlighted(chunks, sampleText);
+
+// Demo 8: HTML Export
+Console.WriteLine("=== Demo 8: HTML Export ===\n");
+var htmlFilePath = "chunks_visualization.html";
+ChunkVisualizer.SaveHtml(htmlFilePath, chunks, "Token Chunker Analysis");
+Console.WriteLine($"Open {htmlFilePath} in your browser to view the visualization.\n");
+
+Console.WriteLine("=== Visualization Demo Complete! ===");
