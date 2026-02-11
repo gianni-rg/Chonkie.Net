@@ -26,7 +26,7 @@
 3. Chunker: Split documents into manageable chunks
 4. Refinery: Post-process, enhance, filter chunks
 5. Porter/Handshake: Export or store results
-```text
+```
 
 **Key:** Pipeline components automatically reorder to follow CHOMP! ✨
 
