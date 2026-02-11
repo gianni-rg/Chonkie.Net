@@ -326,9 +326,6 @@ This pipeline pattern is ideal for:
 - **Core Chunking**: See [Chonkie.Sample](../Chonkie.Sample/) for basic chunking examples and all chunker types
 - **Fluent Pipelines**: See [Chonkie.Pipeline.Sample](../Chonkie.Pipeline.Sample/) for chainable pipeline construction patterns
 - **Visualization**: See [Chonkie.Visualizer.Sample](../Chonkie.Visualizer.Sample/) for console visualization utilities
-- **Vector Databases**: See [Vector Database Tutorial](../../docs/TUTORIALS_04_VECTORDB.md) for detailed setup guides for each provider
-- **Handshakes API**: See [API Reference - Handshakes](../../docs/API_REFERENCE_HANDSHAKES.md) for the unified interface details
-- **Main Project**: Return to [Chonkie.Net README](../../README.md) for project overview and quick start
 
 ## Architecture
 

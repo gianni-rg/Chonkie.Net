@@ -84,16 +84,16 @@ public record Shipment(string Id, int Packages);
 
         DemoCodeChunker(CodeSample);
         DemoTableChunker(TableSample);
-        DemoHeaderRepetition();
-        DemoInvalidTableLogging();
 
         DemoMarkdownProcessing(MarkdownSample);
-        DemoMarkdownDocument();
-
         DemoSemanticChunker(SampleText);
         DemoLateChunker(SampleText);
         DemoNeuralChunker(SampleText);
         DemoSlumberChunker(SampleText);
+
+        DemoMarkdownDocument();
+        DemoInvalidTableLogging();
+        DemoHeaderRepetition();
 
         Console.WriteLine("\n=== Sample Application Complete ===");
     }

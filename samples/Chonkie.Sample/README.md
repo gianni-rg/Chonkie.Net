@@ -20,6 +20,8 @@ The sample includes examples of:
 12. **Neural Chunker** - ONNX-backed chunking (fallback-aware)
 13. **Slumber Chunker** - LLM-guided chunking (fallback-aware)
 14. **MarkdownDocument** - Structured markdown metadata
+15. **Invalid Table Logging** - Handling invalid markdown tables
+16. **Header Repetition Mode** - Table header repetition options
 
 ## Running the sample
 
@@ -39,6 +41,7 @@ dotnet run
 ## Sample Output
 
 The application will demonstrate each chunker type using a sample text about Artificial Intelligence, showing:
+
 - The number of chunks created
 - A preview of each chunk
 - Token counts for each chunk
@@ -80,7 +83,3 @@ CHONKIE_SAMPLE_OFFLINE=1
 ```text
 CHONKIE_NEURAL_MODEL_PATH=./models/distilbert
 ```
-
-## Learn More
-
-For more information about Chonkie.Net, see the main [README](../../README.md).
