@@ -1,6 +1,6 @@
 # Development Notes
 
-This file contains quick development notes and reminders for maintaining the Chonkie.NET project.
+This file contains quick development notes and reminders for maintaining the Chonkie.Net project.
 
 ## Maintaining Documentation
 

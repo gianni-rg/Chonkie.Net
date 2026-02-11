@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-Chonkie.NET is a port of the Python Chonkie library to .NET/C#, aiming for complete feature parity. This document provides a comprehensive comparison of implemented and planned features between the two versions.
+Chonkie.Net is a port of the Python Chonkie library to .NET/C#, aiming for complete feature parity. This document provides a comprehensive comparison of implemented and planned features between the two versions.
 
 ### Overall Status
 
@@ -583,7 +583,7 @@ services.Configure<TokenChunkerOptions>(configuration.GetSection("Chunker"));
 
 ### Summary
 
-Chonkie.NET has made significant progress with **60% overall completion**. The core infrastructure is solid:
+Chonkie.Net has made significant progress with **60% overall completion**. The core infrastructure is solid:
 
 **Strengths:**
 - ✅ Core chunkers working well (5/9 complete)

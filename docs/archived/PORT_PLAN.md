@@ -1,4 +1,4 @@
-# 🦛 Chonkie.NET - Port Plan
+# 🦛 Chonkie.Net - Port Plan
 
 **Version:** 1.1  
 **Last Updated:** December 16, 2025  

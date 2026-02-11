@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the requirements and considerations for implementing additional advanced chunkers that are marked as optional in Phase 3 of the Chonkie.NET port.
+This document outlines the requirements and considerations for implementing additional advanced chunkers that are marked as optional in Phase 3 of the Chonkie.Net port.
 
 ## Implemented Chunkers
 
