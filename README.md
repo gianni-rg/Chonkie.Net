@@ -56,7 +56,7 @@ Chonkie.Net/
 ├── benchmarks/               # Performance benchmarks
 ├── docs/                     # Technical documentation
 ├── models/                   # AI models (ONNX, etc.)
-├── scripts/                  # Automation and helpers scripts
+├── scripts/                  # Automation and helper scripts
 ├── .editorconfig             # Code style configuration
 ├── Directory.Build.props     # Shared MSBuild properties
 ├── Chonkie.Net.sln           # Visual Studio solution
