@@ -164,7 +164,7 @@ I'm more than happy to receive any kind of contribution to this experimental pro
 
 Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*.
 
-> Development is mainly done on Windows, so other platforms are not directly developed, tested or supported (but the CI/CD pipeline builds and tests for macOS and Linux as well). An help is kindly appreciated in make the libraries work on other platforms as well.
+> Development is mainly done on Windows, so other platforms are not directly developed, tested, or supported (although the CI/CD pipeline builds and tests for macOS and Linux as well). Help is kindly appreciated in making the libraries work on other platforms as well.
 
 Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started!
 
