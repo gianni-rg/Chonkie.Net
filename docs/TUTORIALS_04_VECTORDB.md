@@ -2,15 +2,17 @@
 
 **Time to complete:** 20-30 minutes  
 **Level:** Intermediate  
-**What you'll learn:** How to store and retrieve embeddings with different vector databases
+**What you'll learn:** How to store and retrieve embeddings with different
+vector databases
 
 ---
 
 ## 📚 What is a Vector Database?
 
-A **vector database** is a specialized database that stores and searches **embeddings** (vectors of numbers):
+A **vector database** is a specialized database that stores and searches
+**embeddings** (vectors of numbers):
 
-```
+```text
 Regular Database:          Vector Database:
 ┌──────────────┐          ┌──────────────────┐
 │ ID | Name    │          │ ID | Text | Vec  │
@@ -25,6 +27,7 @@ Search: WHERE id = 1      └─────────────────
 ```
 
 **Key Operations:**
+
 1. **Write** - Store embeddings + metadata
 2. **Search** - Find similar embeddings (vectors close in space)
 3. **Delete** - Remove outdated documents
@@ -36,7 +39,7 @@ Search: WHERE id = 1      └─────────────────
 Chonkie.Net implements **9 vector database integrations** (Handshakes):
 
 | Database | Best For | Deployment | Cost |
-|----------|----------|------------|------|
+| -------- | -------- | ---------- | ---- |
 | **Qdrant** | Modern, local-first | Local, Cloud | Free (local) |
 | **Pinecone** | Fully managed, serverless | SaaS | $$$ |
 | **Weaviate** | Open-source, flexible | Self-hosted, Cloud | Free |
@@ -93,11 +96,13 @@ IHandshake db = new PineconeHandshake(apiKey);
 ### Setup
 
 #### Option A: Docker (Fastest)
+
 ```bash
 docker run -p 6333:6333 qdrant/qdrant
 ```
 
 #### Option B: Local Binary
+
 ```bash
 # Download from https://qdrant.tech/documentation/quick-start/
 ./qdrant --storage-path ./qdrant-storage
@@ -175,7 +180,7 @@ services:
 
 **Best for:** Production, fully managed, no ops burden
 
-### Setup
+### Pinecone Setup
 
 ```csharp
 // Get API key from https://app.pinecone.io/
@@ -220,7 +225,7 @@ Console.WriteLine($"Found {results.Count} similar documents");
 
 ### Cost Estimation
 
-```
+```text
 Pinecone Serverless:
 - Write: $0.25 per 1M vectors stored/month
 - Query: $0.24 per 1M queries
@@ -261,6 +266,7 @@ await handshake.DeleteCollectionAsync("documents");
 ```
 
 ### Key Features
+
 - Open-source (AGPLv3)
 - No cost for self-hosting
 - Good for learning and development
@@ -271,7 +277,7 @@ await handshake.DeleteCollectionAsync("documents");
 
 **Best for:** Prototyping, lightweight deployments, simplicity
 
-### Setup
+### Chroma Setup
 
 ```bash
 # Option 1: Docker
@@ -281,7 +287,7 @@ docker run -p 8000:8000 chromadb/chroma:latest
 var handshake = new ChromaHandshake(url: "http://localhost:8000");
 ```
 
-### Usage
+### Chroma Usage
 
 ```csharp
 using Chonkie.Handshakes.Chroma;
@@ -305,7 +311,7 @@ var results = await handshake.SearchAsync(
 
 **Best for:** Existing PostgreSQL databases, hybrid SQL+vector queries
 
-### Setup
+### PostgreSQL Setup
 
 ```sql
 -- Enable pgvector extension
@@ -324,7 +330,7 @@ CREATE TABLE embeddings (
 CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
 ```
 
-### Usage
+### PostgreSQL Usage
 
 ```csharp
 using Chonkie.Handshakes.Pgvector;
@@ -361,7 +367,7 @@ LIMIT 10;
 
 **Best for:** MongoDB ecosystem, document storage + vectors
 
-### Setup
+### MongoDB Setup
 
 ```csharp
 using Chonkie.Handshakes.MongoDB;
@@ -372,7 +378,7 @@ var handshake = new MongoDBHandshake(
 );
 ```
 
-### Usage
+### MongoDB Usage
 
 ```csharp
 // Store
@@ -387,6 +393,7 @@ var results = await handshake.SearchAsync(
 ```
 
 ### Benefits
+
 - Combines document storage + vector search
 - BSON document flexibility
 - Good for content + metadata
@@ -397,13 +404,13 @@ var results = await handshake.SearchAsync(
 
 **Best for:** Full-text search + vector search combined
 
-### Setup
+### Elasticsearch Setup
 
 ```bash
 docker run -p 9200:9200 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:latest
 ```
 
-### Usage
+### Elasticsearch Usage
 
 ```csharp
 using Chonkie.Handshakes.Elasticsearch;
@@ -419,7 +426,7 @@ await handshake.WriteAsync(records, "documents_index");
 var results = await handshake.SearchAsync(embedding, "documents_index", topK: 10);
 ```
 
-### Hybrid Search
+### Elasticsearch Hybrid Search
 
 ```csharp
 // Elasticsearch excels at combining:
@@ -448,13 +455,13 @@ var elasticsearchQuery = new
 
 **Best for:** High-scale deployments, performance-critical applications
 
-### Docker Setup
+### Milvus Docker Setup
 
 ```bash
 docker run -p 19530:19530 -p 9091:9091 milvusdb/milvus:latest
 ```
 
-### Usage
+### Milvus Usage
 
 ```csharp
 using Chonkie.Handshakes.Milvus;
@@ -477,7 +484,7 @@ var results = await handshake.SearchAsync(embedding, "documents", topK: 5);
 
 **Best for:** Edge computing, real-time latency, distributed deployments
 
-### Setup
+### Turbopuffer Setup
 
 ```csharp
 using Chonkie.Handshakes.Turbopuffer;
@@ -499,6 +506,7 @@ var results = await handshake.SearchAsync(embedding, "collection", topK: 5);
 ## 🔄 Complete Workflow: Local Development to Production
 
 ### Phase 1: Development (Local)
+
 ```csharp
 // Start with free, local qdrant
 var db = new QdrantHandshake("localhost:6333");
@@ -508,6 +516,7 @@ await ProcessDocuments(db);  // Same code...
 ```
 
 ### Phase 2: Scale Up (Still Local)
+
 ```csharp
 // Switch to self-hosted Weaviate
 var db = new WeaviateHandshake("http://localhost:8080");
@@ -516,6 +525,7 @@ await ProcessDocuments(db);  // ...exact same interface!
 ```
 
 ### Phase 3: Production (Cloud)
+
 ```csharp
 // Deploy to Pinecone
 var db = new PineconeHandshake(apiKey);
@@ -579,7 +589,7 @@ var reranked = initial
 
 ## 📊 Comparison: Choosing a Vector Database
 
-```
+```text
 Architecture:
 - Local development?           → Qdrant (Docker)
 - Self-hosted scale?           → Weaviate, Milvus
@@ -610,6 +620,7 @@ Scale Requirements:
 ## 🚨 Common Issues & Solutions
 
 ### Issue 1: "Connection Refused"
+
 ```csharp
 // ❌ Database not running
 var db = new QdrantHandshake("localhost:6333");
@@ -624,9 +635,10 @@ var db = new QdrantHandshake("localhost:6333");
 ---
 
 ### Issue 2: "Collection Not Found"
+
 ```csharp
 // ❌ Typo in collection name
-await db.SearchAsync(embedding, "documnets");  // Wrong spelling
+await db.SearchAsync(embedding, "documents");  // Wrong spelling
 
 // ✅ Use consistent names
 const string COLLECTION = "documents";
@@ -637,6 +649,7 @@ await db.SearchAsync(embedding, COLLECTION);
 ---
 
 ### Issue 3: "Dimension Mismatch"
+
 ```csharp
 // ❌ Embeddings of different sizes
 var openAI = new OpenAIEmbeddings(); // 1536 dimensions
@@ -662,11 +675,7 @@ var emb2 = await embeddings.EmbedAsync(["text2"]);
 
 ## 📚 Additional Resources
 
-- **Qdrant Documentation:** https://qdrant.tech/documentation/
-- **Pinecone Documentation:** https://docs.pinecone.io/
-- **Weaviate Documentation:** https://weaviate.io/developers/weaviate
-- **PostgreSQL pgvector:** https://github.com/pgvector/pgvector
-
----
-
-**Happy Searching! 🔍✨**
+- **Qdrant Documentation:** <https://qdrant.tech/documentation/>
+- **Pinecone Documentation:** <https://docs.pinecone.io/>
+- **Weaviate Documentation:** <https://weaviate.io/developers/weaviate>
+- **PostgreSQL pgvector:** <https://github.com/pgvector/pgvector>

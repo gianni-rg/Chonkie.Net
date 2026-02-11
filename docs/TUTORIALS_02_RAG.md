@@ -9,6 +9,7 @@
 ## 📚 What is RAG?
 
 **RAG (Retrieval-Augmented Generation)** combines:
+
 1. **Retrieval** - Find relevant documents/chunks from a knowledge base
 2. **Augmentation** - Add those chunks to your LLM prompt
 3. **Generation** - Let the LLM generate an answer based on the augmented context
@@ -18,7 +19,7 @@ This lets LLMs answer questions about your **private data** without retraining.
 ### RAG vs. Fine-tuning
 
 | Aspect | RAG | Fine-tuning |
-|--------|-----|-----------|
+| ------ | --- | ----------- |
 | Update knowledge | ✅ Easy (add docs) | ❌ Expensive (retrain) |
 | Private data | ✅ Safe (stays local) | ❌ Less safe |
 | Speed | ✅ Fast | ❌ Slow |
@@ -29,7 +30,7 @@ This lets LLMs answer questions about your **private data** without retraining.
 
 ## 🏗️ RAG Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                     RAG Pipeline                            │
 ├─────────────────────────────────────────────────────────────┤
@@ -82,7 +83,8 @@ public class DocumentProcessor
         // Process with pipeline
         var result = await FluentPipeline.Create()
             .WithText(content)
-            .ChunkWith(new RecursiveChunker(_tokenizer, chunkSize: 512, chunkOverlap: 50))
+            .ChunkWith(new RecursiveChunker(_tokenizer, chunkSize: 512,
+                chunkOverlap: 50))
             .RunAsync();
 
         return result.Chunks;
@@ -335,7 +337,8 @@ public class RAGApplication
 ```
 
 **Output:**
-```
+
+```text
 📄 Processing documents...
 ✅ Created 245 chunks
 
@@ -348,10 +351,17 @@ public class RAGApplication
 🚀 RAG System Ready! Ask questions:
 
 Question: What is machine learning?
-Answer: Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. Based on the provided context, it involves algorithms processing vast amounts of data to identify patterns and make predictions...
+Answer: Machine learning is a subset of artificial intelligence 
+that enables systems to learn and improve from experience without 
+being explicitly programmed. Based on the provided context, it 
+involves algorithms processing vast amounts of data to identify 
+patterns and make predictions...
 
 Question: How does semantic chunking work?
-Answer: Semantic chunking groups semantically similar sentences together using embeddings. It respects meaning boundaries rather than just token limits, resulting in more coherent chunks that preserve context better than simple token-based chunking...
+Answer: Semantic chunking groups semantically similar sentences 
+together using embeddings. It respects meaning boundaries rather 
+than just token limits, resulting in more coherent chunks that 
+preserve context better than simple token-based chunking...
 ```
 
 ---
@@ -392,6 +402,7 @@ var retriever = new RAGRetriever(vectorDb, embeddings, topK: 5);
 ## 🎯 RAG Patterns & Best Practices
 
 ### Pattern 1: Simple RAG (What we built above)
+
 ✅ Good for: Small to medium documents  
 ❌ Issues: Noise from irrelevant chunks
 
@@ -404,6 +415,7 @@ var answer = await generator.GenerateAnswerAsync(question, context);
 ---
 
 ### Pattern 2: Re-ranking RAG
+
 ✅ Better relevance filtering before LLM
 
 ```csharp
@@ -421,6 +433,7 @@ var answer = await generator.GenerateAnswerAsync(question, reranked);
 ---
 
 ### Pattern 3: Hybrid RAG
+
 ✅ Combines keyword search + semantic search
 
 ```csharp
@@ -444,6 +457,7 @@ var answer = await generator.GenerateAnswerAsync(question, combined);
 ## ⚠️ Common RAG Pitfalls & Solutions
 
 ### Problem 1: Chunks Too Small (Loss of Context)
+
 ```csharp
 // ❌ Too small - loses context
 var chunker = new TokenChunker(tokenizer, chunkSize: 50);
@@ -455,6 +469,7 @@ var chunker = new TokenChunker(tokenizer, chunkSize: 512, chunkOverlap: 50);
 ---
 
 ### Problem 2: Chunks Too Large (Noise)
+
 ```csharp
 // ❌ Too large - mixes unrelated topics
 var chunker = new TokenChunker(tokenizer, chunkSize: 4096);
@@ -466,6 +481,7 @@ var chunker = new TokenChunker(tokenizer, chunkSize: 512);
 ---
 
 ### Problem 3: Irrelevant Retrieval
+
 ```csharp
 // ❌ Just top-1, may miss context
 var results = await vectorDb.SearchAsync(embedding, collection, topK: 1);
@@ -478,6 +494,7 @@ var reranked = results.Take(3).ToList();  // Re-rank logic here
 ---
 
 ### Problem 4: Stale Data
+
 ```csharp
 // Update chunks periodically
 public async Task RefreshDocumentsAsync()
@@ -497,7 +514,7 @@ public async Task RefreshDocumentsAsync()
 ## 📊 Performance Considerations
 
 | Operation | Time | Notes |
-|-----------|------|-------|
+| --------- | ---- | ----- |
 | Chunk 1000 pages | ~5s | Fast, local |
 | Embed 1000 chunks | ~30s | API calls, batch processing |
 | Store 1000 vectors | ~2s | Vector DB insert |
@@ -510,11 +527,9 @@ public async Task RefreshDocumentsAsync()
 
 ## 🔗 Next Steps
 
-1. **[RAG with Different Chunkers](TUTORIALS_02_CHUNKERS.md)** - Try different chunking strategies
-2. **[Vector Database Guide](TUTORIALS_04_VECTORDB.md)** - Use different vector databases (Pinecone, Weaviate, etc.)
-3. **[Advanced Pipelines](TUTORIALS_05_PIPELINES.md)** - Multi-step processing workflows
-4. **[Production Patterns](ADVANCED_RAG_PATTERNS.md)** - Scaling, caching, monitoring (coming soon)
-
----
-
-**Happy Building! 🚀**
+1. **[RAG with Different Chunkers](TUTORIALS_03_CHUNKERS.md)** - Try
+   different chunking strategies
+2. **[Vector Database Guide](TUTORIALS_04_VECTORDB.md)** - Use different
+   vector databases (Pinecone, Weaviate, etc.)
+3. **[Advanced Pipelines](TUTORIALS_05_PIPELINES.md)** - Multi-step
+   processing workflows

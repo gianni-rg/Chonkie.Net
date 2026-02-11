@@ -3,7 +3,6 @@
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-14.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![License](https://img.shields.io/github/license/gianni-rg/Chonkie.Net.svg)](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE)
-[![Status](https://img.shields.io/badge/status-experimental-green)](STATUS_DASHBOARD.md)
 [![Tests](https://img.shields.io/badge/tests-930_passing-brightgreen)](tests/)
 
 A .NET port of [Chonkie](https://github.com/chonkie-inc/chonkie), the lightweight ingestion Python library for fast, efficient and robust RAG pipelines.
@@ -165,8 +164,6 @@ I'm more than happy to receive any kind of contribution to this experimental pro
 Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*.
 
 > Development is mainly done on Windows, so other platforms are not directly developed, tested, or supported (although the CI/CD pipeline builds and tests for macOS and Linux as well). Help is kindly appreciated in making the libraries work on other platforms as well.
-
-Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get started!
 
 ## Acknowledgements
 
