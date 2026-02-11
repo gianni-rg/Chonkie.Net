@@ -37,7 +37,7 @@ namespace Chonkie.Embeddings.Cohere
         {
             if (string.IsNullOrEmpty(apiKey))
                 throw new ArgumentNullException(nameof(apiKey));
-            
+
             _model = model;
             Dimension = dimension;
             _apiUrl = apiUrl ?? GetDefaultApiUrl();
@@ -69,7 +69,7 @@ namespace Chonkie.Embeddings.Cohere
                 var content = new StringContent(JsonSerializer.Serialize(requestBody));
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                    var response = await _httpClient.PostAsync(_apiUrl, content, cancellationToken);
+                var response = await _httpClient.PostAsync(_apiUrl, content, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
