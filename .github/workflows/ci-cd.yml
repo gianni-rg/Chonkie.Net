@@ -32,6 +32,12 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Set prerelease version suffix
+      shell: pwsh
+      run: |
+        $suffix = "preview.${{ github.run_number }}"
+        "VersionSuffix=$suffix" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -71,6 +77,12 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Set prerelease version suffix
+      shell: pwsh
+      run: |
+        $suffix = "preview.${{ github.run_number }}"
+        "VersionSuffix=$suffix" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -94,6 +106,12 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Set prerelease version suffix
+      shell: pwsh
+      run: |
+        $suffix = "preview.${{ github.run_number }}"
+        "VersionSuffix=$suffix" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -101,7 +119,19 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Pack NuGet packages
-      run: dotnet pack --configuration Release --no-build --output ./artifacts
+      run: |
+        dotnet pack src/Chonkie.Core/Chonkie.Core.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Tokenizers/Chonkie.Tokenizers.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Chunkers/Chonkie.Chunkers.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Embeddings/Chonkie.Embeddings.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Refineries/Chonkie.Refineries.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Fetchers/Chonkie.Fetchers.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Chefs/Chonkie.Chefs.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Porters/Chonkie.Porters.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Handshakes/Chonkie.Handshakes.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Genies/Chonkie.Genies.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Pipeline/Chonkie.Pipeline.csproj --configuration Release --no-build --output ./artifacts
+        dotnet pack src/Chonkie.Net/Chonkie.Net.csproj --configuration Release --no-build --output ./artifacts
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

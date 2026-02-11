@@ -14,10 +14,15 @@
     <RepositoryUrl>https://github.com/gianni-rg/Chonkie.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>chunking;rag;ai;nlp;text-processing;embeddings;vector-database;llm;document-processing</PackageTags>
-    <Version>0.1.0</Version>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix Condition="'$(VersionSuffix)' == ''">preview.local</VersionSuffix>
     <Description>The lightweight ingestion library for fast, efficient and robust RAG pipelines. Chonkie.Net provides production-ready chunkers, embeddings, vector database integrations, and complete RAG system support.</Description>
     <PackageReadmeFile>PACKAGE_README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)PACKAGE_README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <!-- Code analysis -->
   <PropertyGroup>

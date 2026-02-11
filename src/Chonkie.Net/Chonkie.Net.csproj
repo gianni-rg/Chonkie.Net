@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Chonkie.Net</PackageId>
+    <Description>Meta-package that depends on all Chonkie.Net libraries.</Description>
+    <PackageType>Dependency</PackageType>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chonkie.Core\Chonkie.Core.csproj" />
+    <ProjectReference Include="..\Chonkie.Tokenizers\Chonkie.Tokenizers.csproj" />
+    <ProjectReference Include="..\Chonkie.Chunkers\Chonkie.Chunkers.csproj" />
+    <ProjectReference Include="..\Chonkie.Embeddings\Chonkie.Embeddings.csproj" />
+    <ProjectReference Include="..\Chonkie.Refineries\Chonkie.Refineries.csproj" />
+    <ProjectReference Include="..\Chonkie.Fetchers\Chonkie.Fetchers.csproj" />
+    <ProjectReference Include="..\Chonkie.Chefs\Chonkie.Chefs.csproj" />
+    <ProjectReference Include="..\Chonkie.Porters\Chonkie.Porters.csproj" />
+    <ProjectReference Include="..\Chonkie.Handshakes\Chonkie.Handshakes.csproj" />
+    <ProjectReference Include="..\Chonkie.Genies\Chonkie.Genies.csproj" />
+    <ProjectReference Include="..\Chonkie.Pipeline\Chonkie.Pipeline.csproj" />
+  </ItemGroup>
+
+</Project>
