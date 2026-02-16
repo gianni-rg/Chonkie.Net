@@ -113,13 +113,6 @@ If you are contributing a new file or significantly modifying an existing file, 
    - Minor bug fixes or documentation changes may not require header additions
 5. **External Dependencies**: Files that are derived from or closely follow external projects should maintain original copyright notices. See NOTICE file for attribution details.
 
-## Automation
-
-Tools like the following can help automate license header management:
-
-- **Apache Rat**: Checks for proper license headers
-- **EditorConfig**: Can enforce header consistency
-
 ## Questions?
 
 If you're unsure about copyright headers for your contribution, please ask in the pull request or check existing files in the same directory for examples.

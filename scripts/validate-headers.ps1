@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 # Copyright 2025-2026 Gianni Rosa Gallina and Contributors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/env pwsh
 # Validate and optionally fix Apache License headers in source files
 # Usage:
 #   pwsh validate-headers.ps1                    # Validate staged files (pre-commit mode)
