@@ -79,7 +79,7 @@ if ($All) {
     $filesToCheck = Get-ChildItem -Path $projectRoot -Recurse -File -Include "*.cs", "*.py" |
         Where-Object {
             $_.FullName -notmatch '(\.github|\.vscode|models|packages|bin|obj|\.vs|\.git|\.generated\.cs|scripts.hooks)' -and
-            $_.FullName -notmatch '\\\..*' # Skip hidden directories
+            $_.FullName -notmatch '([\\/])\..*' # Skip hidden directories (cross-platform separators)
         }
 }
 else {
