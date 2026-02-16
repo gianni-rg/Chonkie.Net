@@ -165,7 +165,7 @@ jobs:
     - name: Publish packages to NuGet.org
       if: steps.validate-tag.outputs.is_stable == 'true' && secrets.NUGET_API_KEY != ''
       run: |
-        dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json
 
     - name: Normalize GitHub repository owner to lowercase
       run: echo "REPO_OWNER_LOWER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
