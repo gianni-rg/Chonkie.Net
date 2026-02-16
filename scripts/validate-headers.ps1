@@ -59,6 +59,15 @@ $pythonHeader = @"
 # limitations under the License.
 "@
 
+function Get-PythonHeaderStartIndex {
+    param(
+        [string]$Content
+    )
+
+    $match = [regex]::Match($Content, '\A(?:#![^\r\n]*\r?\n)?(?:[ \t]*\r?\n)*')
+    return $match.Length
+}
+
 $missingHeaders = @()
 $fixedFiles = @()
 $filesChecked = 0
@@ -115,14 +124,28 @@ foreach ($file in $filesToCheck) {
         $headerToAdd = $csharpHeader
     }
     elseif ($extension -eq ".py") {
-        $hasHeader = $content.StartsWith("# Copyright 2025-2026")
+        $pythonStartIndex = Get-PythonHeaderStartIndex -Content $content
+        $hasHeader = $content.Substring($pythonStartIndex).StartsWith("# Copyright 2025-2026")
         $headerToAdd = $pythonHeader
     }
 
     if (-not $hasHeader) {
         if ($Fix) {
             # Add header to file
-            $newContent = $headerToAdd + "`n`n" + $content
+            if ($extension -eq ".py") {
+                $pythonStartIndex = Get-PythonHeaderStartIndex -Content $content
+                if ($pythonStartIndex -gt 0) {
+                    $leadingContent = $content.Substring(0, $pythonStartIndex)
+                    $rest = $content.Substring($pythonStartIndex)
+                    $newContent = $leadingContent + $headerToAdd + "`n`n" + $rest
+                }
+                else {
+                    $newContent = $headerToAdd + "`n`n" + $content
+                }
+            }
+            else {
+                $newContent = $headerToAdd + "`n`n" + $content
+            }
             Set-Content -Path $fullPath -Value $newContent -Encoding UTF8 -NoNewline
             $fixedFiles += $displayPath
             if ($Verbose) { Write-Host "Fixed: $displayPath" -ForegroundColor Cyan }

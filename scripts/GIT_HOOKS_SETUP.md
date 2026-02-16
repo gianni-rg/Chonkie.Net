@@ -33,16 +33,16 @@ chmod +x scripts/hooks/pre-commit
 The validation is performed by `scripts/validate-headers.ps1`, which:
 
 1. **Checks staged files** - Only validates files that are being committed
-2. **Filters by extension** - Only checks `.cs`, `.py`, and `.md` files
+2. **Filters by extension** - Only checks `.cs`, `.py` files
 3. **Validates headers** - Ensures each file starts with the appropriate copyright header
 4. **Provides feedback** - Shows which files are missing headers and where to find templates
 
 ### Supported File Types
 
-| Extension | Header Style |
-|-----------|--------------|
-| `.cs` | C# line comments (`//`) |
-| `.py` | Python comments (`#`) |
+| Extension | Header Style            |
+|-----------|-------------------------|
+| `.cs`     | C# line comments (`//`) |
+| `.py`     | Python comments (`#`)   |
 
 ## Header Templates
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright 2025-2026 Gianni Rosa Gallina and Contributors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/env python3
 """
 Script to convert Sentence Transformer models to ONNX format for use with Chonkie.Net.
 
