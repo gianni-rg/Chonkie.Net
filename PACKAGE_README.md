@@ -42,8 +42,7 @@ using Chonkie.Tokenizers;
 // Create a chunker
 var chunker = new RecursiveChunker(
     tokenizer: new WordTokenizer(),
-    chunkSize: 512,
-    maxOverlap: 50
+    chunkSize: 512
 );
 
 // Chunk your text
@@ -76,32 +75,22 @@ var vectorDb = new PineconeHandshake(
     embeddingModel: embeddings
 );
 
-// Embed and store chunks
-var embeddedChunks = await embeddings.EmbedBatchAsync(chunks);
-await vectorDb.WriteAsync(embeddedChunks);
+// Store chunks with embeddings (vectorDb embeds internally)
+await vectorDb.WriteAsync(chunks);
 ```
 
 ## Documentation
 
-- **[Quick Start Guide][quick-start]** -
+- **[Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)** -
     Get started in 5 minutes
-- **[RAG System Tutorial][rag-tutorial]** -
+- **[RAG System Tutorial](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md)** -
     Build a complete RAG system
-- **[Chunker Selection Guide][chunker-guide]** -
+- **[Chunker Selection Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_03_CHUNKERS.md)** -
     Choose the right chunker
-- **[Vector Database Integration][vector-db]** -
+- **[Vector Database Integration](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_04_VECTORDB.md)** -
     Connect to any vector DB
-- **[Python Migration Guide][migration-guide]** -
+- **[Python Migration Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md)** -
     Coming from Python Chonkie?
-- **[Full Documentation][full-docs]** -
-    Complete API reference and guides
-
-[quick-start]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md
-[rag-tutorial]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_02_RAG.md
-[chunker-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_03_CHUNKERS.md
-[vector-db]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_04_VECTORDB.md
-[migration-guide]: https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/MIGRATION_GUIDE_PYTHON_TO_NET.md
-[full-docs]: https://github.com/gianni-rg/Chonkie.Net
 
 ## Chunkers (11 Types)
 
@@ -162,14 +151,21 @@ await vectorDb.WriteAsync(chunks);
 ### 2. Code Analysis
 
 ```csharp
-var codeChunker = new CodeChunker(language: "csharp", chunkSize: 1024);
+var codeChunker = new CodeChunker(
+    tokenizer: new WordTokenizer(),
+    chunkSize: 1024
+);
 var chunks = codeChunker.Chunk(sourceCode);
 ```
 
 ### 3. Semantic Search
 
 ```csharp
-var semanticChunker = new SemanticChunker(embeddings, threshold: 0.5f);
+var semanticChunker = new SemanticChunker(
+    tokenizer: new WordTokenizer(),
+    embeddingModel: embeddings,
+    threshold: 0.5f
+);
 var chunks = semanticChunker.Chunk(text);
 // Chunks grouped by semantic meaning
 ```
@@ -185,11 +181,10 @@ var pipeline = new Pipeline()
 
 ## Why Chonkie.Net?
 
-✅ **Performance** - On-par or better than Python alternatives  
 ✅ **Type Safety** - Full C# 14 support  
 ✅ **Almost Production Ready** - 900+ tests, zero warnings  
 ✅ **Extensively Documented** - Tutorials and guides  
-✅ **Complete Features** - All major RAG components included  
+✅ **Complete Features** - Feature parity with Python Chonkie, all major RAG components included  
 
 ## Minimum Requirements
 
@@ -210,7 +205,3 @@ Licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
 - **Official Repo:** [https://github.com/gianni-rg/Chonkie.Net](https://github.com/gianni-rg/Chonkie.Net)
 - **Python Chonkie:** [https://github.com/chonkie-inc/chonkie](https://github.com/chonkie-inc/chonkie)
 - **Documentation:** Check the `/docs` folder in the repository
-
----
-
-**Ready to build amazing RAG systems?** Start with the [Quick Start Guide](https://github.com/gianni-rg/Chonkie.Net/blob/main/docs/TUTORIALS_01_QUICK_START.md)!
