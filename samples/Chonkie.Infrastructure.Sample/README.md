@@ -168,13 +168,13 @@ TURBOPUFFER_NAMESPACE=chonkie_samples
 
 The sample automatically detects embeddings providers in this order (falls back to next if not configured):
 
-**1. Local Sentence Transformers (Recommended for offline/local development)**
+1. Local Sentence Transformers (Recommended for offline/local development)
 
 ```text
 CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
-**2. Azure OpenAI**
+1. Azure OpenAI
 
 ```text
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
@@ -182,7 +182,7 @@ AZURE_OPENAI_API_KEY=your-key
 AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT=text-embedding-3-small
 ```
 
-**3. OpenAI**
+1. OpenAI
 
 ```text
 OPENAI_API_KEY=your-key
@@ -190,7 +190,7 @@ OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
 OPENAI_EMBEDDINGS_DIMENSION=1536 (optional)
 ```
 
-**Fallback: Demo Embeddings**
+1. Fallback: Demo Embeddings
 
 If no embeddings provider is configured, the sample uses a deterministic demo embeddings generator (SHA256-based, no external dependencies). This is useful for testing without API keys, but produces non-semantic embeddings.
 
