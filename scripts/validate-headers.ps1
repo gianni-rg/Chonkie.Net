@@ -166,7 +166,8 @@ if ($Fix -and $fixedFiles.Count -gt 0) {
     # For pre-commit, ask to stage the changes
     if (-not $All) {
         Write-Host "Please stage the fixed files before committing:" -ForegroundColor Yellow
-        Write-Host "  git add $($fixedFiles -join ' ')" -ForegroundColor Cyan
+        $quotedFiles = $fixedFiles | ForEach-Object { "`"$_`"" } | Join-String -Separator ' '
+        Write-Host "  git add $quotedFiles" -ForegroundColor Cyan
     }
     exit 0
 }
