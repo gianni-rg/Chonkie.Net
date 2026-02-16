@@ -11,7 +11,7 @@ on:
       publish_to_github_packages:
         description: 'Publish packages to GitHub Packages (for testing)'
         type: boolean
-        default: true
+        default: false
 
 env:
   DOTNET_VERSION: '10.0.x'
