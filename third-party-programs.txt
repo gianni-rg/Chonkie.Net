@@ -56,9 +56,9 @@ PRIMARY DEPENDENCIES
    Repository: https://github.com/openai/openai-dotnet
    Purpose: OpenAI API client
 
-7. Microsoft.ML.Tokenizer
+7. Microsoft.ML.Tokenizers
    License: MIT License
-   Repository: https://github.com/microsoft/tokenizers
+   Repository: https://github.com/dotnet/machinelearning
    Purpose: Tokenization library for NLP
 
 8. System.Numerics.Tensors
