@@ -161,24 +161,24 @@ The project is constantly evolving and contributions are warmly welcomed.
 
 I'm more than happy to receive any kind of contribution to this experimental project: from helpful feedbacks to bug reports, documentation, usage examples, feature requests, or directly code contribution for bug fixes and new and/or improved features.
 
-Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*.
+Feel free to file issues and pull requests on the repository and I'll address them as much as I can, *with a best effort approach during my spare time*. DO NOT expect a super fast turnaround, but I'll do my best to keep the project active and responsive.
 
 > Development is mainly done on Windows, so other platforms are not directly developed, tested, or supported (although the CI/CD pipeline builds and tests for macOS and Linux as well). Help is kindly appreciated in making the libraries work on other platforms as well.
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for:
 
 - How to get started with development
 - Code style guidelines
 - Testing requirements
 - Pull request process
 
-All contributors are expected to uphold the [Code of Conduct](CODE_OF_CONDUCT.md).
+All contributors are expected to uphold the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## Acknowledgements
 
 Inspired by the amazing Python community and the need for a .NET equivalent, this project could not have been possible without their work: the original Chonkie has been created by [Bhavnick Minhas](https://github.com/bhavnicksm) and [Shreyash Nigam](https://github.com/Primus). Please check out the original project for more details and to support their work on [GitHub](https://github.com/chonkie-inc/chonkie).
 
-See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a list of contributors to this project.
+See [CONTRIBUTORS.md](./CONTRIBUTORS.md) for a list of contributors to this project.
 
 ## License
 

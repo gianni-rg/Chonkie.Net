@@ -422,3 +422,6 @@ models/
 
 # Visual Studio Code Workspace files
 *.code-workspace
+
+# Git Hooks
+.git/hooks/

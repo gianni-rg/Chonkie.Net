@@ -47,18 +47,30 @@ ONNX Runtime:
 - Project: https://github.com/microsoft/onnxruntime
 - License: MIT License
 
-Semantic Kernel:
+AI SDKs:
 
-- Project: https://github.com/microsoft/semantic-kernel
-- License: MIT License
+- OpenAI: https://github.com/openai/openai-dotnet (MIT License)
+- Azure.AI.OpenAI: https://github.com/Azure/azure-sdk-for-net (MIT License)
 
-BenchmarkDotNet:
+Vector Database Clients:
 
-- Project: https://github.com/dotnet/BenchmarkDotNet
-- License: MIT License
+- MongoDB.Driver: https://github.com/mongodb/mongo-csharp-driver (Apache 2.0)
+- Npgsql & Pgvector: https://github.com/npgsql/npgsql (PostgreSQL License)
+- Pinecone.Client: https://github.com/pinecone-io/pinecone-dotnet-client (Apache 2.0)
+- Qdrant.Client: https://github.com/qdrant/qdrant-dotnet (Apache 2.0)
+- Weaviate.Client: https://github.com/weaviate/weaviate-dotnet-client (BSD)
+- Elastic.Clients.Elasticsearch: https://github.com/elastic/elasticsearch-net (MIT/Elastic License)
 
-For additional license information, please refer to the documentation in
-individual packages or visit their respective repositories.
+Testing & Analysis:
+
+- xunit.v3: https://github.com/xunit/xunit (Apache 2.0)
+- NSubstitute: https://github.com/nsubstitute/NSubstitute (BSD)
+- Shouldly: https://github.com/shouldly/shouldly (BSD)
+- coverlet: https://github.com/coverlet-coverage/coverlet (MIT License)
+
+For complete license information on all dependencies and transitive packages,
+please refer to the third-party-programs.txt file in the repository or visit
+the respective project repositories.
 
 ================================================================================
 
@@ -66,9 +78,10 @@ DEPENDENCIES
 
 A complete list of dependencies and their licenses can be found by:
 
-1. Checking the .csproj files in the src/ directory
-2. Running: dotnet list package --vulnerable
-3. Consulting NuGet.org pages for each package
+1. Reviewing the third-party-programs.txt file in the repository
+2. Checking the .csproj files in the src/ directory
+3. Running: dotnet list package
+4. Consulting NuGet.org pages for each package
 
 All direct dependencies of this project are licensed under compatible
 open-source licenses (Apache 2.0, MIT, BSD, etc.).
