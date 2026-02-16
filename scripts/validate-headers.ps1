@@ -125,7 +125,7 @@ foreach ($file in $filesToCheck) {
             $newContent = $headerToAdd + "`n`n" + $content
             Set-Content -Path $fullPath -Value $newContent -Encoding UTF8 -NoNewline
             $fixedFiles += $displayPath
-            if ($Verbose) { Write-Host "✏️  Fixed: $displayPath" -ForegroundColor Cyan }
+            if ($Verbose) { Write-Host "Fixed: $displayPath" -ForegroundColor Cyan }
         }
         else {
             $missingHeaders += $displayPath
@@ -134,20 +134,20 @@ foreach ($file in $filesToCheck) {
 }
 
 if ($Fix -and $fixedFiles.Count -gt 0) {
-    Write-Host "✅ License header fixes completed" -ForegroundColor Green
+    Write-Host "License header fixes completed" -ForegroundColor Green
     Write-Host "Fixed $($fixedFiles.Count) file(s):" -ForegroundColor Green
     $fixedFiles | ForEach-Object { Write-Host "  ✓ $_" }
     Write-Host ""
 
     # For pre-commit, ask to stage the changes
     if (-not $All) {
-        Write-Host "⚠️  Please stage the fixed files before committing:" -ForegroundColor Yellow
+        Write-Host "Please stage the fixed files before committing:" -ForegroundColor Yellow
         Write-Host "  git add $($fixedFiles -join ' ')" -ForegroundColor Cyan
     }
     exit 0
 }
 elseif ($missingHeaders.Count -gt 0) {
-    Write-Host "❌ License header validation failed" -ForegroundColor Red
+    Write-Host "License header validation failed" -ForegroundColor Red
     Write-Host ""
     Write-Host "The following files are missing Apache License headers:" -ForegroundColor Yellow
     foreach ($file in $missingHeaders) {
@@ -170,5 +170,5 @@ elseif ($missingHeaders.Count -gt 0) {
 }
 
 $mode = if ($All) { "all source files" } else { "$filesChecked staged file(s)" }
-Write-Host "✅ License header validation passed ($mode)" -ForegroundColor Green
+Write-Host "License header validation passed ($mode)" -ForegroundColor Green
 exit 0

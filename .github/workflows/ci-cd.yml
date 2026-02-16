@@ -95,7 +95,56 @@ jobs:
     - name: Check code formatting
       run: dotnet format --verify-no-changes --verbosity diagnostic
 
-  package:
+    - name: Validate Apache License Headers
+      shell: pwsh
+      run: |
+        $projectRoot = Get-Location
+        $headerFiles = @()
+
+        # Get all source files that should have headers
+        $filesToCheck = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
+          $_.Extension -in @('.cs', '.py') -and
+          $_.FullName -notmatch '(\.github|\.vscode|models|packages|bin|obj|\.vs|\.git|\.generated\.cs|^\.)'
+        }
+
+        $csharpHeaderStart = "// Copyright 2025-2026 Gianni Rosa Gallina"
+        $pythonHeaderStart = "# Copyright 2025-2026 Gianni Rosa Gallina"
+        $markdownHeaderStart = "<!-- *Copyright 2025-2026"
+
+        $missingHeaders = @()
+
+        foreach ($file in $filesToCheck) {
+          $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
+          if ([string]::IsNullOrWhiteSpace($content)) { continue }
+
+          $hasHeader = $false
+
+          if ($file.Extension -eq '.cs') {
+            $hasHeader = $content.StartsWith($csharpHeaderStart)
+          }
+          elseif ($file.Extension -eq '.py') {
+            $hasHeader = $content.StartsWith($pythonHeaderStart)
+          }
+          elseif ($file.Extension -eq '.md') {
+            $hasHeader = $content -match "^<!--\s*Copyright 2025-2026"
+          }
+
+          if (-not $hasHeader) {
+            $missingHeaders += $file.FullName -replace [regex]::Escape($projectRoot), "."
+          }
+        }
+
+        if ($missingHeaders.Count -gt 0) {
+          Write-Host "::error::License header validation failed" -ForegroundColor Red
+          Write-Host "Files missing Apache License headers:"
+          $missingHeaders | ForEach-Object { Write-Host "  ::error::$_" }
+          Write-Host "See LICENSE_HEADERS.md for header templates."
+          exit 1
+        }
+
+        Write-Host "✅ License header validation passed"
+
+  create-nuget-packages:
     name: Create NuGet Packages
     runs-on: ubuntu-latest
     needs: build-and-test
