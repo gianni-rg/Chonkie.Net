@@ -40,54 +40,7 @@ jobs:
     - name: Check all source files for license headers
       shell: pwsh
       run: |
-        $projectRoot = Get-Location
-
-        # Get all source files that should have headers (C# and Python only)
-        $filesToCheck = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
-          $_.Extension -in @('.cs', '.py') -and
-          $_.FullName -notmatch '(\.github|\.vscode|models|packages|bin|obj|\.vs|\.git|\.generated\.cs|scripts/hooks)' -and
-          $_.FullName -notmatch '\\\..*'
-        }
-
-        $csharpHeaderStart = "// Copyright 2025-2026"
-        $pythonHeaderStart = "# Copyright 2025-2026"
-
-        $missingHeaders = @()
-        $filesChecked = 0
-
-        foreach ($file in $filesToCheck) {
-          $filesChecked++
-          $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
-          if ([string]::IsNullOrWhiteSpace($content)) { continue }
-
-          $hasHeader = $false
-
-          if ($file.Extension -eq '.cs') {
-            $hasHeader = $content.StartsWith($csharpHeaderStart)
-          }
-          elseif ($file.Extension -eq '.py') {
-            $hasHeader = $content.StartsWith($pythonHeaderStart)
-          }
-
-          if (-not $hasHeader) {
-            $missingHeaders += $file.FullName -replace [regex]::Escape($projectRoot), "." -replace '\\', '/'
-          }
-        }
-
-        Write-Host "Checked $filesChecked source files"
-
-        if ($missingHeaders.Count -gt 0) {
-          Write-Host "::error::License header validation failed"
-          Write-Host "Files missing Apache License headers:"
-          $missingHeaders | ForEach-Object {
-            Write-Host "  - $_"
-            Write-Host "::error::$_"
-          }
-          Write-Host "See https://github.com/${{ github.repository }}/blob/${{ github.ref }}/LICENSE_HEADERS.md for header templates."
-          exit 1
-        }
-
-        Write-Host "✅ All $filesChecked files have valid license headers"
+        pwsh scripts/validate-headers.ps1 -All
 
     - name: Auto-fix headers (if enabled)
       if: github.event.inputs.auto_fix == 'true' && github.event_name == 'workflow_dispatch'
