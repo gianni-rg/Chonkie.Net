@@ -174,7 +174,7 @@ The sample automatically detects embeddings providers in this order (falls back 
 CHONKIE_SENTENCE_TRANSFORMERS_MODEL_PATH=./models/all-MiniLM-L6-v2
 ```
 
-1. Azure OpenAI
+2. Azure OpenAI
 
 ```text
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
@@ -182,7 +182,7 @@ AZURE_OPENAI_API_KEY=your-key
 AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT=text-embedding-3-small
 ```
 
-1. OpenAI
+3. OpenAI
 
 ```text
 OPENAI_API_KEY=your-key
@@ -190,7 +190,7 @@ OPENAI_EMBEDDINGS_MODEL=text-embedding-3-small
 OPENAI_EMBEDDINGS_DIMENSION=1536 (optional)
 ```
 
-1. Fallback: Demo Embeddings
+4. Fallback: Demo Embeddings
 
 If no embeddings provider is configured, the sample uses a deterministic demo embeddings generator (SHA256-based, no external dependencies). This is useful for testing without API keys, but produces non-semantic embeddings.
 
