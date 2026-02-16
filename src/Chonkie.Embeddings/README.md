@@ -1,11 +1,14 @@
 # Chonkie.Embeddings
 
-The `Chonkie.Embeddings` library provides a unified interface for working with multiple embedding providers in .NET. It supports both cloud-based APIs and local ONNX models for generating text embeddings.
+The `Chonkie.Embeddings` library provides a unified interface for working
+with multiple embedding providers in .NET. It supports both cloud-based APIs
+and local ONNX models for generating text embeddings.
 
 ## Features
 
 - **Unified Interface**: Single `IEmbeddings` interface for all providers
-- **Multiple Providers**: OpenAI, Azure OpenAI, Cohere, Gemini, Jina AI, Voyage AI, and Sentence Transformers (ONNX)
+- **Multiple Providers**: OpenAI, Azure OpenAI, Cohere, Gemini, Jina AI,
+  Voyage AI, and Sentence Transformers (ONNX)
 - **Batch Processing**: Efficient batch embedding generation
 - **Auto Provider Selection**: Factory pattern for automatic provider loading
 - **Extensible**: Easy to add custom embedding providers
@@ -43,7 +46,8 @@ var embedding = await embeddings.EmbedAsync("Hello, world!");
 
 ### Using Sentence Transformers (ONNX)
 
-First, convert a model to ONNX format (see [ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md)):
+First, convert a model to ONNX format (see
+[ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md)):
 
 ```bash
 # Install conversion tools
@@ -111,20 +115,38 @@ foreach (var embedding in embeddings)
 
 ### Cloud APIs
 
-| Provider | Class | Environment Variable | Default Model | Dimension |
-|----------|-------|---------------------|---------------|-----------|
-| OpenAI | `OpenAIEmbeddings` | `OPENAI_API_KEY` | text-embedding-ada-002 | 1536 |
-| Azure OpenAI | `AzureOpenAIEmbeddings` | `AZURE_OPENAI_API_KEY` | (deployment-based) | 1536 |
-| Cohere | `CohereEmbeddings` | `COHERE_API_KEY` | embed-english-v3.0 | 1024 |
-| Gemini | `GeminiEmbeddings` | `GEMINI_API_KEY` | embedding-001 | 768 |
-| Jina AI | `JinaEmbeddings` | `JINA_API_KEY` | jina-embeddings-v2-base-en | 768 |
-| Voyage AI | `VoyageAIEmbeddings` | `VOYAGE_API_KEY` | voyage-2 | 1024 |
+| Provider     | Class                   | Environment Variable   |
+|--------------|-------------------------|------------------------|
+| OpenAI       | `OpenAIEmbeddings`      | `OPENAI_API_KEY`       |
+| Azure OpenAI | `AzureOpenAIEmbeddings` | `AZURE_OPENAI_API_KEY` |
+| Cohere       | `CohereEmbeddings`      | `COHERE_API_KEY`       |
+| Gemini       | `GeminiEmbeddings`      | `GEMINI_API_KEY`       |
+| Jina AI      | `JinaEmbeddings`        | `JINA_API_KEY`         |
+| Voyage AI    | `VoyageAIEmbeddings`    | `VOYAGE_API_KEY`       |
+
+| Provider     | Default Model          | Dimension |
+|--------------|------------------------|-----------|
+| OpenAI       | text-embedding-ada-002 | 1536      |
+| Azure OpenAI | (deployment-based)     | 1536      |
+| Cohere       | embed-english-v3.0     | 1024      |
+| Gemini       | embedding-001          | 768       |
+| Jina AI      | jina-embeddings-v2     | 768       |
+| Voyage AI    | voyage-2               | 1024      |
 
 ### Local Models
 
-| Provider | Class | Requirements | Features |
-|----------|-------|-------------|----------|
-| Sentence Transformers | `SentenceTransformerEmbeddings` | ONNX model file | Proper tokenization, pooling strategies, batch processing, offline inference |
+| Provider              | Class                           |
+|-----------------------|---------------------------------|
+| Sentence Transformers | `SentenceTransformerEmbeddings` |
+
+**Requirements:** ONNX model file
+
+**Features:**
+
+- Proper tokenization
+- Pooling strategies
+- Batch processing
+- Offline inference
 
 #### Sentence Transformers Features
 
@@ -137,11 +159,14 @@ foreach (var embedding in embeddings)
 - ✅ Compatible with HuggingFace Sentence Transformers
 
 **Recommended Models:**
+
 - `sentence-transformers/all-MiniLM-L6-v2` (384 dim, fast)
 - `sentence-transformers/all-mpnet-base-v2` (768 dim, high quality)
-- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (384 dim, multilingual)
+- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+  (384 dim, multilingual)
 
-See the [ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md) for detailed instructions.
+See the [ONNX Model Conversion Guide](../../docs/ONNX_MODEL_CONVERSION_GUIDE.md)
+for detailed instructions.
 
 ## Custom Providers
 
@@ -155,7 +180,9 @@ public class MyCustomEmbeddings : IEmbeddings
     public string Name => "my-custom";
     public int Dimension => 512;
 
-    public async Task<float[]> EmbedAsync(string text, CancellationToken cancellationToken = default)
+    public async Task<float[]> EmbedAsync(
+        string text,
+        CancellationToken cancellationToken = default)
     {
         // Your custom embedding logic
         return new float[Dimension];
@@ -183,7 +210,8 @@ AutoEmbeddings.RegisterProvider("my-custom", () => new MyCustomEmbeddings());
 
 ### Using Environment Variables
 
-The `AutoEmbeddings` factory automatically reads API keys from environment variables:
+The `AutoEmbeddings` factory automatically reads API keys from environment
+variables:
 
 ```bash
 # Windows PowerShell
@@ -215,9 +243,10 @@ var embeddings = serviceProvider.GetRequiredService<IEmbeddings>();
 
 ## Performance Considerations
 
-### Batch Processing
+### Efficient Batch Processing
 
-Always use `EmbedBatchAsync` when processing multiple texts for better performance:
+Always use `EmbedBatchAsync` when processing multiple texts for better
+performance:
 
 ```csharp
 // ❌ Slower - multiple API calls
@@ -232,8 +261,10 @@ var embeddings = await provider.EmbedBatchAsync(texts);
 
 ### Local vs Cloud
 
-- **Cloud APIs**: Best for production with varying workloads, no local resources required
-- **Local ONNX**: Best for high-throughput scenarios, offline processing, or cost optimization
+- **Cloud APIs**: Best for production with varying workloads, no local
+  resources required
+- **Local ONNX**: Best for high-throughput scenarios, offline processing, or
+  cost optimization
 
 ### Cancellation Support
 
@@ -256,6 +287,7 @@ catch (OperationCanceledException)
 ## Error Handling
 
 All providers may throw exceptions for:
+
 - Invalid API keys
 - Network errors
 - Rate limiting
@@ -284,8 +316,12 @@ catch (ArgumentException ex)
 var embeddings = new OpenAIEmbeddings(apiKey: "your-key");
 
 // Embed query and documents
-var queryEmbedding = await embeddings.EmbedAsync("What is the capital of France?");
-var documents = new[] { "Paris is the capital of France", "London is the capital of the UK" };
+var queryEmbedding = await embeddings.EmbedAsync(
+    "What is the capital of France?");
+var documents = new[] {
+    "Paris is the capital of France",
+    "London is the capital of the UK"
+};
 var docEmbeddings = await embeddings.EmbedBatchAsync(documents);
 
 // Compute cosine similarity
@@ -316,4 +352,5 @@ Apache-2.0
 
 ## Contributing
 
-Contributions are welcome! Please see the [CONTRIBUTING.md](../CONTRIBUTING.md) file for details.
+Contributions are welcome! Please see the
+[CONTRIBUTING.md](../CONTRIBUTING.md) file for details.

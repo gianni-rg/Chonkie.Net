@@ -1,0 +1,236 @@
+Chonkie.Net Third Party Software Licensing
+
+This file contains the list of third party software contained and/or used by
+this project and their required notices and/or license terms. This third party
+software, even if included with the distribution of this software, may be
+governed by separate license terms, including without limitation, third party
+license terms, and open source software license terms. These separate license
+terms govern your use of the third party programs as set forth in the
+"third-party-programs.txt" or other similarly-named text file.
+
+Third party programs and their corresponding required notices and/or license
+terms are listed below.
+
+For the most up-to-date and authoritative license information, visit:
+- NuGet: https://www.nuget.org
+- Open Source License Information: https://opensource.org/licenses
+
+================================================================================
+
+DEPENDENCIES AND LICENSES
+
+Note: This project's direct and transitive dependencies use compatible
+open-source licenses including MIT License, Apache License 2.0, and BSD licenses.
+
+================================================================================
+
+PRIMARY DEPENDENCIES
+
+1. Microsoft.ML.OnnxRuntime
+   License: MIT License
+   Repository: https://github.com/microsoft/onnxruntime
+   Purpose: ONNX Runtime for machine learning model inference
+
+2. Microsoft.Extensions.AI
+   License: MIT License
+   Repository: https://github.com/dotnet/extensions
+   Purpose: AI extension abstractions for .NET
+
+3. Microsoft.Extensions.AI.Abstractions
+   License: MIT License
+   Repository: https://github.com/dotnet/extensions
+   Purpose: Core AI abstractions for .NET
+
+4. Microsoft.Extensions.AI.OpenAI
+   License: MIT License
+   Repository: https://github.com/dotnet/extensions
+   Purpose: OpenAI provider for Microsoft.Extensions.AI
+
+5. Azure.AI.OpenAI
+   License: MIT License
+   Repository: https://github.com/Azure/azure-sdk-for-net
+   Purpose: Azure OpenAI client library
+
+6. OpenAI-DotNet
+   License: MIT License
+   Repository: https://github.com/openai/openai-dotnet
+   Purpose: OpenAI API client
+
+7. Microsoft.ML.Tokenizers
+   License: MIT License
+   Repository: https://github.com/dotnet/machinelearning
+   Purpose: Tokenization library for NLP
+
+8. System.Numerics.Tensors
+   License: MIT License
+   Repository: https://github.com/dotnet/runtime
+   Purpose: Tensor operations for numeric computing
+
+9. MongoDB.Driver
+   License: Apache License 2.0
+   Repository: https://github.com/mongodb/mongo-csharp-driver
+   Purpose: MongoDB database driver
+
+10. Npgsql
+    License: PostgreSQL License (BSD-like)
+    Repository: https://github.com/npgsql/npgsql
+    Purpose: PostgreSQL database driver
+
+11. Pgvector
+    License: BSD License
+    Repository: https://github.com/pgvector/pgvector-dotnet
+    Purpose: PostgreSQL vector extension support
+
+12. Pinecone.Client
+    License: Apache License 2.0
+    Repository: https://github.com/pinecone-io/pinecone-dotnet-client
+    Purpose: Pinecone vector database client
+
+13. Qdrant.Client
+    License: Apache License 2.0
+    Repository: https://github.com/qdrant/qdrant-dotnet
+    Purpose: Qdrant vector database client
+
+14. Weaviate.Client
+    License: BSD License
+    Repository: https://github.com/weaviate/weaviate-dotnet-client
+    Purpose: Weaviate vector database client
+
+15. Elastic.Clients.Elasticsearch
+    License: MIT License / Elastic License
+    Repository: https://github.com/elastic/elasticsearch-net
+    Purpose: Elasticsearch client library
+
+16. OllamaSharp
+    License: MIT License
+    Repository: https://github.com/awaesomee/OllamaSharp
+    Purpose: Ollama API client for local LLMs
+
+17. Microsoft.Extensions.DependencyInjection.Abstractions
+    License: MIT License
+    Repository: https://github.com/dotnet/extensions
+    Purpose: Dependency injection abstractions
+
+18. Microsoft.Extensions.Logging.Abstractions
+    License: MIT License
+    Repository: https://github.com/dotnet/extensions
+    Purpose: Logging abstractions
+
+19. Microsoft.Extensions.Http.Resilience
+    License: MIT License
+    Repository: https://github.com/dotnet/extensions
+    Purpose: HTTP resilience patterns and policies
+
+20. Markdig
+    License: BSD License
+    Repository: https://github.com/xoofx/markdig
+    Purpose: Markdown parser
+
+================================================================================
+
+TESTING DEPENDENCIES
+
+21. xunit.v3
+    License: Apache License 2.0
+    Repository: https://github.com/xunit/xunit
+    Purpose: Unit testing framework
+
+22. xunit.runner.visualstudio
+    License: Apache License 2.0
+    Repository: https://github.com/xunit/visualstudio.xunit
+    Purpose: Visual Studio test runner for xUnit
+
+23. NSubstitute
+    License: BSD License
+    Repository: https://github.com/nsubstitute/NSubstitute
+    Purpose: Mocking framework for unit tests
+
+24. Shouldly
+    License: BSD License
+    Repository: https://github.com/shouldly/shouldly
+    Purpose: Assertion framework for readable tests
+
+25. Microsoft.NET.Test.Sdk
+    License: MIT License
+    Repository: https://github.com/microsoft/vstest
+    Purpose: Test platform and SDK for .NET
+
+26. coverlet.collector
+    License: MIT License
+    Repository: https://github.com/coverlet-coverage/coverlet
+    Purpose: Code coverage tool
+
+================================================================================
+
+INFRASTRUCTURE DEPENDENCIES
+
+27. Microsoft.VisualStudio.Azure.Containers.Tools.Targets
+    License: MIT License
+    Repository: https://github.com/microsoft/containers
+    Purpose: Container tools for Visual Studio
+
+================================================================================
+
+MIT License Summary
+-------------------
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+
+Apache License 2.0 Summary
+--------------------------
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+================================================================================
+
+ATTRIBUTION
+
+Primary inspiration and reference architecture:
+- Chonkie (https://github.com/chonkie-inc/chonkie)
+  License: MIT License
+
+================================================================================
+
+TRANSITIVE DEPENDENCIES
+
+This project may include additional transitive dependencies through the
+packages listed above. All transitive dependencies are compatible with
+Apache License 2.0 and MIT License.
+
+To view the complete dependency tree with all transitive dependencies, run:
+
+    dotnet list package --include-transitive
+
+To check for vulnerable packages, run:
+
+    dotnet list package --vulnerable
+
+================================================================================

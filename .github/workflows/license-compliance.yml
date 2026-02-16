@@ -1,0 +1,85 @@
+name: License Compliance Check
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+      - '*.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+      - '*.md'
+  workflow_dispatch:
+    inputs:
+      auto_fix:
+        description: 'Auto-fix missing headers (creates commit)'
+        type: boolean
+        default: false
+
+jobs:
+  check-headers:
+    name: Validate Apache License Headers
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup PowerShell
+      shell: bash
+      run: |
+        # pwsh is pre-installed on ubuntu-latest
+        pwsh --version
+
+    - name: Check all source files for license headers
+      shell: pwsh
+      continue-on-error: ${{ github.event.inputs.auto_fix == 'true' }}
+      run: |
+        pwsh scripts/validate-headers.ps1 -All
+
+    - name: Auto-fix headers (if enabled)
+      if: github.event.inputs.auto_fix == 'true' && github.event_name == 'workflow_dispatch'
+      shell: pwsh
+      run: |
+        pwsh scripts/validate-headers.ps1 -All -Fix -Verbose
+        $gitStatus = git status --porcelain
+
+        if ($gitStatus) {
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ci: automatically add missing Apache License headers"
+          git push
+          Write-Host "✅ Auto-fixed files and pushed changes"
+        } else {
+          Write-Host "ℹ️  No files needed fixing"
+        }
+      continue-on-error: true
+
+  compliance-report:
+    name: Generate Compliance Report
+    runs-on: ubuntu-latest
+    if: always()
+    needs: check-headers
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create compliance summary
+      shell: bash
+      run: |
+        echo "## License Compliance Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ All source files include Apache License 2.0 headers" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "For more information, see:" >> $GITHUB_STEP_SUMMARY
+        echo "- [LICENSE_HEADERS.md](LICENSE_HEADERS.md)" >> $GITHUB_STEP_SUMMARY
+        echo "- [NOTICE](NOTICE)" >> $GITHUB_STEP_SUMMARY
+        echo "- [third-party-programs.txt](third-party-programs.txt)" >> $GITHUB_STEP_SUMMARY

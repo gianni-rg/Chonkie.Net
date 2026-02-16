@@ -1,0 +1,89 @@
+Chonkie.Net
+Copyright 2025-2026 Gianni Rosa Gallina
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+================================================================================
+
+NOTICE
+
+This product is based on or derived from the Chonkie project
+(https://github.com/chonkie-inc/chonkie), which is licensed under the MIT License.
+
+Original Chonkie Project:
+
+- Repository: https://github.com/chonkie-inc/chonkie
+- License: MIT License
+- Authors: Chonkie Contributors
+
+This is an independent .NET implementation and port of the Chonkie library.
+It is not officially affiliated with the original Chonkie project.
+All credit for the original design and implementation goes to the Chonkie team.
+
+================================================================================
+
+THIRD-PARTY COMPONENTS
+
+This software includes or depends on third-party components subject to the
+following licenses:
+
+Microsoft.Extensions.* Libraries:
+
+- Project: https://github.com/dotnet/extensions
+- License: MIT License
+
+ONNX Runtime:
+
+- Project: https://github.com/microsoft/onnxruntime
+- License: MIT License
+
+AI SDKs:
+
+- OpenAI: https://github.com/openai/openai-dotnet (MIT License)
+- Azure.AI.OpenAI: https://github.com/Azure/azure-sdk-for-net (MIT License)
+
+Vector Database Clients:
+
+- MongoDB.Driver: https://github.com/mongodb/mongo-csharp-driver (Apache 2.0)
+- Npgsql & Pgvector: https://github.com/npgsql/npgsql (PostgreSQL License)
+- Pinecone.Client: https://github.com/pinecone-io/pinecone-dotnet-client (Apache 2.0)
+- Qdrant.Client: https://github.com/qdrant/qdrant-dotnet (Apache 2.0)
+- Weaviate.Client: https://github.com/weaviate/weaviate-dotnet-client (BSD)
+- Elastic.Clients.Elasticsearch: https://github.com/elastic/elasticsearch-net (MIT/Elastic License)
+
+Testing & Analysis:
+
+- xunit.v3: https://github.com/xunit/xunit (Apache 2.0)
+- NSubstitute: https://github.com/nsubstitute/NSubstitute (BSD)
+- Shouldly: https://github.com/shouldly/shouldly (BSD)
+- coverlet: https://github.com/coverlet-coverage/coverlet (MIT License)
+
+For complete license information on all dependencies and transitive packages,
+please refer to the third-party-programs.txt file in the repository or visit
+the respective project repositories.
+
+================================================================================
+
+DEPENDENCIES
+
+A complete list of dependencies and their licenses can be found by:
+
+1. Reviewing the third-party-programs.txt file in the repository
+2. Checking the .csproj files in the src/ directory
+3. Running: dotnet list package
+4. Consulting NuGet.org pages for each package
+
+All direct dependencies of this project are licensed under compatible
+open-source licenses (Apache 2.0, MIT, BSD, etc.).
+
+================================================================================
