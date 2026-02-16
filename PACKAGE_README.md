@@ -198,7 +198,7 @@ Contributions are welcome! Please visit [GitHub Repository](https://github.com/g
 
 ## License
 
-Licensed under Apache License 2.0. See [LICENSE](LICENSE) for details.
+Licensed under Apache License 2.0. See [LICENSE](https://github.com/gianni-rg/Chonkie.Net/blob/main/LICENSE) for details.
 
 ## Learn More
 
