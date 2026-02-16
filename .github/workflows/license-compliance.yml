@@ -39,6 +39,7 @@ jobs:
 
     - name: Check all source files for license headers
       shell: pwsh
+      continue-on-error: ${{ github.event.inputs.auto_fix == 'true' }}
       run: |
         pwsh scripts/validate-headers.ps1 -All
 
