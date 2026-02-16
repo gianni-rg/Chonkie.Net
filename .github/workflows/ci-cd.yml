@@ -167,7 +167,10 @@ jobs:
       run: |
         dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
+    - name: Normalize GitHub repository owner to lowercase
+      run: echo "REPO_OWNER_LOWER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
     - name: Publish packages to GitHub Packages
       if: github.event_name == 'workflow_dispatch' && inputs.publish_to_github_packages == 'true'
       run: |
-        dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
+        dotnet nuget push "./artifacts/*.nupkg" --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/$REPO_OWNER_LOWER/index.json" --skip-duplicate
